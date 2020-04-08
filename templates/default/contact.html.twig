@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - Bibliothèque virtuelle{% endblock %}
+
+{% block body %}
+<h1 class="col-12 my-3 mx-0 p-0">Formulaire de contact</h1>
+
+<form class="col-12 col-md-10 col-lg-9 mx-auto">
+  <div class="form-group">
+    <label for="email">Votre adresse email</label>
+    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
+    <small id="emailHelp" class="form-text text-muted">Votre email ne sera jamais partagée ou revendue à un tiers.</small>
+  </div>
+  <div class="form-group">
+    <label for="subject">Sujet</label>
+    <select class="form-control" id="subject" name="subject">
+      <option value="contact">Demande de contact</option>
+      <option value="partenariat">Demande de partenariat</option>
+      <option value="suppression">Demande de suppression de compte</option>
+      <option value="reclamation">Suggestion ou réclamation</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="content">Votre message</label>
+    <textarea class="form-control" id="content" rows="10" name="content"></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary" disabled data-toggle="tooltip" data-placement="right" title="Contact possible prochainement">Envoyer</button>
+</form>
+
+{% endblock %}

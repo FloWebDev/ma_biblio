@@ -1,0 +1,13 @@
+#main_container {
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-height: 90vh;
+}
+
+.home_container {
+    /* border: 1px solid black; */
+}
+
+#book_img_home {
+    width: 200px;
+}

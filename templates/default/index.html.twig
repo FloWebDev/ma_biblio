@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bibliothèque virtuelle - Accueil{% endblock %}
+
+{% block body %}
+<!-- 1er home container -->
+<div class="home_container col-lg-6 my-3 pb-3">
+    <h1 class="col-12 my-3 mx-0 p-0">{{ website_title|raw }}</h1>
+    <img src="{{ asset('assets/media/default/book.png') }}" class="img-fluid d-none d-lg-inline" alt="book_img_home" id="book_img_home">
+    <!-- 1er bloc -->
+    <div class="card col-12 my-3 bg-info text-dark">
+    <div class="card-body">
+        <h5 class="card-title">Votre bibliothèque virtuelle</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Créer mes listes de lectures</h6>
+        <p class="card-text">Créez gratuitement votre bibliothèque virtuelle. Aucune application à télécharger.<br>
+        Appication 100% responsive (s'adapte à toutes les tailles d'écran).
+        Créez vos listes de lectures (lus, en cours, whish-list, abandonnés) et donner une note à chacun de vos livres lus.</p>
+    </div>
+    </div>
+    <!-- 2nd bloc -->
+    <div class="card col-12 my-3 bg-info text-dark">
+    <div class="card-body">
+        <h5 class="card-title">Votre profil de lecteur</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Plaisir de partager</h6>
+        <p class="card-text">Créez votre profil de lecteur et partagez-le, ainsi que votre whish-list, sur les réseaux sociaux.<br>
+        Accéder au profil des autres lecteurs pour consulter leurs bibliothèques, et vous donner ainsi de nouvelles envies.<br>
+        Vous restez libre de rendre privé votre profil à tout moment. Dans ce cas, votre profil n'est plus accessible qu'à vous-même.</p>
+    </div>
+    </div>
+    <!-- 3ème bloc -->
+    <div class="card col-12 my-3 bg-info text-dark">
+    <div class="card-body">
+        <h5 class="card-title">Service 100% gratuit</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Aucun service complémentaire payant</h6>
+        <p class="card-text">Service 100% gratuit (et le restera).<br>
+        De nouveaux services et fonctionnalités arriveront prochainement.
+    </div>
+    </div>
+    <!-- 4ème bloc -->
+    <div class="card col-12 my-3 bg-info text-dark">
+    <div class="card-body">
+        <h5 class="card-title">Une maîtrise totale de vos informations</h5>
+        <h6 class="card-subtitle mb-2 text-muted">En toute transparence</h6>
+        <p class="card-text">Vous pouvez à tout moment demander la suppression ou la désactivation temporaire de votre compte.<br>
+        Dans le premier cas, toutes les informations concernant votre compte seront supprimées (demanière irréversible).<br>
+        Dans le second cas, vous pourrez à tout moment demander la réactivation de votre compte.</p></p>
+    </div>
+    </div>
+</div>
+
+<!-- 2nd home container -->
+<div class="home_container col-lg-6 my-3 pb-3">
+<h2 class="col-12 my-3 mx-0 p-0">Classements littéraires</h2>
+
+<h3 class="col-12 my-3 mx-0 p-0"><i class="fas fa-trophy text-warning"></i> Livres les plus lus par notre communauté</h2>
+{% if book_read_list %}
+<ul class="list-group">
+    {% for class, book in book_read_list %}
+    <li class="list-group-item"><span class="badge badge-dark badge-pill">{{ loop.index }}</span> {{ book }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+    <h3 class="col-12 my-3 mx-0 p-0">A venir très prochainement</h2>
+{% endif %}
+
+<h3 class="col-12 my-3 mx-0 p-0"><i class="fas fa-trophy text-warning"></i> Livres les mieux notés par notre communauté</h2>
+{% if book_note_list %}
+<ul class="list-group">
+    {% for class, book in book_note_list %}
+    <li class="list-group-item"><span class="badge badge-dark badge-pill">{{ loop.index }}</span> {{ book }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+    <h3 class="col-12 my-3 mx-0 p-0">A venir très prochainement</h2>
+{% endif %}
+
+</div>
+{% endblock %}
