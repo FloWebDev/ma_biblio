@@ -3,9 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Table(name="app_user")
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("username", message="Identifiant déjà utilisé")
  * @UniqueEntity("email", message="Adresse email déjà utilisée")
  */
-class User implements UserInterface
+class User implements UserInterface, \Serializable, EquatableInterface
 {
     /**
      * @ORM\Id()
@@ -47,6 +48,18 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=256)
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     * 
+     * @Assert\File(
+     *     maxSize = "1024k",
+     *     uploadIniSizeErrorMessage = "L'avatar ne doit pas dépasser une taille de {{ limit }} {{ suffix }}.",
+     *     mimeTypes = {"image/png", "image/jpeg"},
+     *     mimeTypesMessage = "L'avatar doit être au format PNG ou JPEG"
+     * )
+     */
+    private $avatar;
 
     /**
      * @ORM\Column(type="string", length=128, unique=true)
@@ -83,7 +96,8 @@ class User implements UserInterface
      */
     private $role;
 
-    public function __construct() {
+    public function __construct()
+    {
         // Valeurs par défaut
         $this->created_at = new \DateTime();
         $this->public = true;
@@ -95,6 +109,40 @@ class User implements UserInterface
         return $this->username;
     }
 
+    public function serialize()
+    {
+        return serialize($this->id);
+    }
+
+    public function unserialize($serialized)
+    {
+        $this->id = unserialize($serialized);
+    }
+
+    /**
+     * The equality comparison should neither be done by referential equality
+     * nor by comparing identities (i.e. getId() === getId()).
+     *
+     * However, you do not need to compare every attribute, but only those that
+     * are relevant for assessing whether re-authentication is required.
+     *
+     * @return bool
+     */
+    public function isEqualTo(UserInterface $user): bool
+    {
+        $res = true;
+
+        if (!$user instanceof self) {
+            $res = false;
+        }
+
+        if ($this->getId() !== $user->getId()) {
+            $res = false;
+        }
+
+        return $res;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,12 +150,13 @@ class User implements UserInterface
 
     /**
      * A visual identifier that represents this user.
+     * @link https://www.php.net/manual/fr/functions.returning-values.php#example-170
      *
      * @see UserInterface
      */
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
-        return (string) $this->username;
+        return $this->username;
     }
 
     public function setUsername(string $username): self
@@ -135,12 +184,12 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword($password): self
     {
         $this->password = $password;
 
@@ -184,6 +233,24 @@ class User implements UserInterface
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /*
+     ATTENTION : lorsque je manipule des objets du type "file", je ne peux pas garder 
+     les types d'entrée et de retour automatiquement générés par Symfony, qui ocassionent
+     la perte du type objet et ses données au profit d'une seule chaine de caractere
+     contenant uniquement le path par défaut d'upload de fichier de chez PHP
+    */
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar($avatar): self
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }

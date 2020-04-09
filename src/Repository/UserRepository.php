@@ -36,6 +36,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function checkSlug(string $slug): bool
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT count(id) AS nb FROM app_user WHERE slug = :slug;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['slug' => $slug]);
+        $res = $stmt->fetch();
+
+        $res = ($res['nb'] > 0 ? true : false);
+
+        return $res;
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */
