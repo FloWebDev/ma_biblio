@@ -111,12 +111,24 @@ class User implements UserInterface, \Serializable, EquatableInterface
 
     public function serialize()
     {
-        return serialize($this->id);
+        return serialize(array(
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt,
+        ));
     }
 
     public function unserialize($serialized)
     {
-        $this->id = unserialize($serialized);
+        list (
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt
+        ) = unserialize($serialized, array('allowed_classes' => false));
     }
 
     /**
@@ -159,7 +171,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
         return $this->username;
     }
 
-    public function setUsername(string $username): self
+    public function setUsername(?string $username): self
     {
         $this->username = $username;
 
@@ -189,7 +201,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
         return $this->password;
     }
 
-    public function setPassword($password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
@@ -218,7 +230,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 

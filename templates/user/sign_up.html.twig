@@ -5,6 +5,6 @@
 {% block body %}
 <h1 class="col-12 my-3 mx-0 p-0">Inscription</h1>
 
-{% include('user/_form.html.twig') %}
+{% include 'user/_form.html.twig' with { 'form': form } %}
 
 {% endblock %}

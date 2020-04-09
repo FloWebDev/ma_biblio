@@ -6,15 +6,17 @@ use App\Entity\User;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Validator\Constraints\CaptchaConstraint;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -55,6 +57,22 @@ class UserType extends AbstractType
                             'minMessage' => 'Mot de passe trop court. Minimum {{ limit }} caractères',
                             'maxMessage' => 'Mot de passe trop long. Maximum {{ limit }} caractères',
                         ])
+                    ]
+                ])
+                ->add('captcha', IntegerType::class, [
+                    'label' => 'Renseignez les 4 chiiffres présents dans l\'image (*)',
+                    'mapped' => false,
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Veuillez saisir le nombre affiché dans l\'image.'
+                        ]),
+                        new Length([
+                            'min'        => 4,
+                            'max'        => 4,
+                            'minMessage' => 'Nombre de caractères minimum attendus : {{ limit }}',
+                            'maxMessage' => 'Nombre de caractères maximum attendus : {{ limit }}'
+                        ]),
+                        new CaptchaConstraint()
                     ]
                 ]);
             } else {

@@ -1,4 +1,20 @@
 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-    {{ form_widget(form) }}
-    <input type="submit" class="btn btn-dark" value="valider">
+    {# {{ form_widget(form) }} #}
+    {{ form_row(form.username) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.password) }}
+    {% if app.user %}
+    {{ form_row(form.avatar) }}
+    {{ form_row(form.bio) }}
+    {{ form_row(form.public) }}
+    {% endif %}
+    {% if captcha is defined %}
+    <p><img src="{{ 'data:image/jpeg;base64,' ~ captcha }}" class="img-fluid" alt="captcha" title="captcha"></p>
+    {{ form_row(form.captcha) }}
+    {% endif %}
+    {% if not app.user %}
+    <input type="submit" class="btn btn-dark mb-2" value="Inscription">
+    {% else %}
+    <input type="submit" class="btn btn-dark mb-2" value="Sauvegarder les modifications">
+    {% endif %}
 {{ form_end(form) }}

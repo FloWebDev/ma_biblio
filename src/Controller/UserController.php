@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Role;
 use App\Entity\User;
+use App\Util\Captcha;
 use App\Util\Slugger;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,7 +30,7 @@ class UserController extends AbstractController
     /**
      * @Route("/inscription", name="sign_up", methods={"GET", "POST"})
      */
-    public function signUp(Request $request, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Slugger $slugger)
+    public function signUp(Request $request, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Slugger $slugger, Captcha $captcha)
     {
         $newUser = new User();
         $form    = $this->createForm(UserType::class, $newUser);
@@ -85,7 +86,7 @@ class UserController extends AbstractController
 
 
         return $this->render('user/sign_up.html.twig', [
-            'controller_name' => 'UserController',
+            'captcha' => $captcha->createCaptcha(),
             'form'            => $form->createView()
         ]);
     }
