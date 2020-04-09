@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+
+{% block body %}
+<h1 class="col-12 my-3 mx-0 p-0">Profil de {{ user.username|upper }}</h1>
+{% if app.user %}
+    <a href="{{ path('user_update', {id: app.user.id}) }}">Modifier mon profil</a>
+{% endif %}
+{% endblock %}

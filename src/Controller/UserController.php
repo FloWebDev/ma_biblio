@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 
 class UserController extends AbstractController
 {
@@ -24,6 +26,17 @@ class UserController extends AbstractController
     {
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
+        ]);
+    }
+
+    /**
+     * @Route("/profil/{slug}", name="dashboard", methods={"GET"})
+     * @ParamConverter("user", options={"mapping": {"slug": "slug"}})
+     */
+    public function dashboard(User $user)
+    {
+        return $this->render('user/dashboard.html.twig', [
+            'user' => $user
         ]);
     }
 
