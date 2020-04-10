@@ -50,7 +50,7 @@ class DefaultController extends AbstractController
         ];
 
         return $this->render('default/index.html.twig', [
-            'website_title'  => '<i class="fas fa-book"></i>  Bookstore',
+            'website_title'  => '<i class="fas fa-book"></i> ' . $this->getParameter('website_title'),
             'book_read_list' => $bookReadList,
             'book_note_list' => $bookNoteList
         ]);
