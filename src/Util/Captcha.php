@@ -25,16 +25,16 @@ class Captcha {
         $this->session->set('captcha', $captchaCode);
 
         // Création de l'image
-        $img = imagecreate(100, 30);
+        $img = imagecreate(120, 50);
 
         // Lien vers le fichier font
         $font = $this->kernel->getProjectDir() . '/public/assets/font/destroy.ttf';
 
         // RGB colors
-        $bg = imagecolorallocate($img, 230, 70, 60); // automatiquement la couleur de fond car 1ère couleur déclarée
+        $bg = imagecolorallocate($img, 40, 60, 80); // automatiquement la couleur de fond car 1ère couleur déclarée
         $textcolor = imagecolorallocate($img, 255, 255, 255);
 
-        $this->imagettftext_cr($img, 10, 0, 50, 12, $textcolor, $font, $captchaCode);
+        $this->imagettftext_cr($img, 20, 0, 60, 20, $textcolor, $font, $captchaCode);
 
         ob_start(); 
         imagejpeg($img, NULL, 100);

@@ -1,11 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion - Bibliothèque virtuelle{% endblock %}
+{% block title %}Connexion - {{ website_title }}{% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('assets/css/viewPassword.css') }}">
 {% endblock %}
 
 {% block body %}
+<section class="page-section mt-5" id="connexion">
+    <div class="container">
+        <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Connexion</h2>
+
 <form method="post" class="mx-auto">
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -17,7 +21,6 @@
         </div>
     {% endif %} #}
 
-    <h1 class="h3 mb-3 font-weight-normal mt-3">Connexion</h1>
     <div class="form-group">
     <label for="inputUsername">Identifiant</label>
         <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" required autofocus>
@@ -46,10 +49,13 @@
         </div>
     #}
 
-    <button class="btn btn-lg btn-dark mt-2" type="submit">
+    <button class="btn btn-primary btn-xl" type="submit">
         Connexion
     </button>
 </form>
+
+</div>
+</section>
 {% endblock %}
 
 {% block javascripts %}

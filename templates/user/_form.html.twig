@@ -13,8 +13,8 @@
     {{ form_row(form.captcha) }}
     {% endif %}
     {% if not app.user %}
-    <input type="submit" class="btn btn-dark mb-2" value="Inscription">
+    <input type="submit" class="btn btn-primary btn-xl" value="Inscription">
     {% else %}
-    <input type="submit" class="btn btn-dark mb-2" value="Sauvegarder les modifications">
+    <input type="submit" class="btn btn-primary btn-xl" value="Sauvegarder les modifications">
     {% endif %}
 {{ form_end(form) }}

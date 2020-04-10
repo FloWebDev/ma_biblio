@@ -1,13 +1,5 @@
-#main_container {
-    justify-content: flex-start;
-    align-items: flex-start;
-    min-height: 90vh;
-}
-
-.home_container {
-    /* border: 1px solid black; */
-}
-
-#book_img_home {
-    width: 200px;
+#books_img_home {
+    border-radius: 50%;
+    border: 2px solid #0b6674;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }

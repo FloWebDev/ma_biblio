@@ -135,7 +135,7 @@ class UserType extends AbstractType
             ->add('username', TextType::class, [
                 'label' => 'Pseudo (*)',
                 'attr' => [
-                    'placeholder' => 'toto75'
+                    'placeholder' => 'Lettres et chiffres uniquement (pas d\'espace)'
                 ],
                 'constraints' => [
                     new NotBlank([

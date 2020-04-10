@@ -1,5 +1,41 @@
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <div class="container">
+                <div class="row">
+                    <!-- Footer Location-->
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <h4 class="text-uppercase mb-4">Responsive</h4>
+                        <p class="lead mb-0">Disponible sur tous supports <br />Ordinateur, tablette, smartphone</p>
+                    </div>
+                    <!-- Footer Social Icons-->
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <h4 class="text-uppercase mb-4">Partagez</h4>
+                        <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-linkedin-in"></i></a>
+                        {# <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-dribbble"></i></a> #}
+                    </div>
+                    <!-- Footer About Text-->
+                    <div class="col-lg-4">
+                        <h4 class="text-uppercase mb-4">A propos du site</h4>
+                        <p class="lead mb-0">
+                            <a href="{{ path('legal_notice') }}">Mentions légales</a><br>
+                            <a href="{{ path('terms_of_service') }}">CGU</a><br>
+                            <a href="{{ path('contact') }}">Contact</a><br>
+                            <a href="https://florianmathevon.com" target="_blank">FloWebDev</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Copyright Section-->
+        <section class="copyright py-4 text-center text-white">
+            <div class="container"><small>Copyright &copy; {{ website_title }} 2020-{{ "now"|date("Y") }} - FloWebDev - Tous droits réservés</small></div>
+        </section>
+
+{# 
 <p class="col-12 text-light bg-dark text-center">
     <a href="{{ path('legal_notice') }}" class="text-light bg-dark">Mentions légales<a> - 
     <a href="{{ path('terms_of_service') }}" class="text-light bg-dark">CGU<a> - 
     <a href="{{ path('contact') }}" class="text-light bg-dark">Contact<a>
-</p>
+</p> #}

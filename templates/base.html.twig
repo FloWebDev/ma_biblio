@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Bibliothèque virtuelle - Création d'une bibliothèque-librairie en ligne">
-    <meta name="keywords" content="bibliothèque,bibliotheque,librairie,virutelle">
-    <meta name="author" content="Florian Mathevon">
-    <title>{% block title %}Bibliothèque virtuelle{% endblock %}</title>
-    <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    {% block stylesheets %}{% endblock %}
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <meta name="description" content="Bibliothèque virtuelle - Création d'une bibliothèque-librairie en ligne">
+        <meta name="keywords" content="bibliothèque,bibliotheque,librairie,virutelle">
+        <meta name="author" content="Florian Mathevon">
+        <title>{% block title %}Bibliothèque virtuelle{% endblock %}</title>
+        <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
+        <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
 
-    <div class="container-fluid">
-        <header class="row col-12 mx-0">
-            {{ include('_navbar.html.twig') }}
-        </header>
+        <!-- Font Awesome icons (free version)-->
+        {# <script src="https://use.fontawesome.com/releases/v5.12.1/js/all.js" crossorigin="anonymous"></script> #}
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link rel="stylesheet" href="{{ asset('assets/css/startbootstrap-styles.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+        {% block stylesheets %}
+        {% endblock %}
+    </head>
+    <body id="page-top">
 
-        <div class="row col-12 mx-0" id="main_container">
-            {% block body %}
-            {% endblock %}
-        </div>
+{{ include('_navbar.html.twig') }}
 
-        <footer class="row col-12 mx-0">
-            {{ include('_footer.html.twig') }}
-        </footer>
-    </div>
+{% block body %}
 
-    <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-    {% block javascripts %}{% endblock %}
-</body>
+{% endblock %}
+
+{{ include('_footer.html.twig') }}
+
+        <!-- Bootstrap core JS-->
+        <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <!-- Third party plugin JS-->
+        <script src="{{ asset('assets/jquery/jquery.easing.min.js') }}"></script>
+        <!-- Contact form JS-->
+        {# <script src="assets/mail/jqBootstrapValidation.js"></script> #}
+        {# <script src="assets/mail/contact_me.js"></script> #}
+        <!-- Core theme JS-->
+        <script src="{{ asset('assets/js/startbootstrap-scripts.js') }}"></script>
+
+        {% block javascripts %}
+        {% endblock %}
+
+    </body>
 </html>

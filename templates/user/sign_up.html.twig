@@ -1,10 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Inscription - {{ website_title }}{% endblock %}
 
 {% block body %}
-<h1 class="col-12 my-3 mx-0 p-0">Inscription</h1>
+<section class="page-section mt-5" id="inscription">
+    <div class="container">
+        <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Inscription</h2>
 
 {% include 'user/_form.html.twig' with { 'form': form } %}
+
+</div>
+</section>
 
 {% endblock %}
