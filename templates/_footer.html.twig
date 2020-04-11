@@ -10,9 +10,9 @@
                     <!-- Footer Social Icons-->
                     <div class="col-lg-4 mb-5 mb-lg-0">
                         <h4 class="text-uppercase mb-4">Partagez</h4>
-                        <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-twitter"></i></a>
-                        <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-linkedin-in"></i></a>
+                        <i class="btn btn-outline-light btn-social mx-1 fab fa-fw fa-facebook-f share_facebook social_network" data-sitename="{{ website_title }}" data-url="{{ app.request.scheme ~'://' ~ app.request.httpHost ~ path(app.request.attributes.get('_route')) }}"></i>
+                        <i class="btn btn-outline-light btn-social mx-1 fab fa-fw fa-twitter share_twitter social_network" data-sitename="{{ website_title }}" data-url="{{ app.request.scheme ~'://' ~ app.request.httpHost ~ path(app.request.attributes.get('_route')) }}"></i>
+                        <i class="btn btn-outline-light btn-social mx-1 fab fa-fw fa-linkedin-in share_linkedin social_network" data-sitename="{{ website_title }}" data-url="{{ app.request.scheme ~'://' ~ app.request.httpHost ~ path(app.request.attributes.get('_route')) }}"></i>
                         {# <a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-dribbble"></i></a> #}
                     </div>
                     <!-- Footer About Text-->
