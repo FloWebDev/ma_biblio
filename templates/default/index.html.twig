@@ -18,8 +18,40 @@
                 <p class="masthead-subheading font-weight-light mb-0">Créez votre bibliothèque virtuelle</p>
             </div>
         </header>
+
+        <!-- About Section-->
+        <section class="page-section mb-0" id="about">
+            <div class="container">
+                <!-- About Section Heading-->
+                <h2 class="page-section-heading text-center text-uppercase text-secondary">Votre bibliothèque virtuelle</h2>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- About Section Content-->
+                <div class="row">
+                    <div class="col-lg-4 ml-auto">
+                        <p class="lead">Créez gratuitement votre bibliothèque virtuelle en y ajoutant tous vos livres.</p>
+                        <p class="lead">Aucune application à télécharger. Appication 100% responsive (s'adapte à toutes les tailles d'écran).</p>
+                        <p class="lead">Créez vos listes de lectures (lus, en cours, whish-list, abandonnés) et donner une note à chacun de vos livres.</p>
+                    </div>
+                    <div class="col-lg-4 mr-auto">
+                        <p class="lead">Créez votre profil de lecteur et votre bibliothèque, et partagez-les sur les réseaux sociaux.</p>
+                        <p class="lead">Accéder au profil des autres lecteurs pour consulter leurs bibliothèques, et vous donner ainsi de nouvelles envies.</p>
+                        <p class="lead">Vous restez libre de rendre privés ou publics votre profil et votre bibliothèque à tout moment.</p>
+                        </div>
+                </div>
+                <!-- About Section Button-->
+                <div class="text-center mt-4">
+                    <a class="btn btn-xl btn-outline-light" href="{{ path('sign_up') }}"><i class="fas fa-sign-in-alt"></i> Inscription</a>
+                </div>
+            </div>
+        </section>
+
         <!-- Portfolio Section-->
-        <section class="page-section portfolio" id="portfolio">
+        <section class="page-section bg-primary text-white  portfolio" id="portfolio">
             <div class="container">
                 <!-- Portfolio Section Heading-->
                 <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Livres à la une</h2>
@@ -45,37 +77,7 @@
                 </div>
             </div>
         </section>
-        <!-- About Section-->
-        <section class="page-section bg-primary text-white mb-0" id="about">
-            <div class="container">
-                <!-- About Section Heading-->
-                <h2 class="page-section-heading text-center text-uppercase text-white">Un service gratuit</h2>
-                <!-- Icon Divider-->
-                <div class="divider-custom divider-light">
-                    <div class="divider-custom-line"></div>
-                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-                    <div class="divider-custom-line"></div>
-                </div>
-                <!-- About Section Content-->
-                <div class="row">
-                    <div class="col-lg-4 ml-auto">
-                        <p class="lead">Créez gratuitement votre bibliothèque virtuelle. Aucune application à télécharger.<br>
-                            Appication 100% responsive (s'adapte à toutes les tailles d'écran).<br>
-                            Créez vos listes de lectures (lus, en cours, whish-list, abandonnés) et donner une note à chacun de vos livres lus.
-                        </p>
-                    </div>
-                    <div class="col-lg-4 mr-auto">
-                        <p class="lead">Créez votre profil de lecteur et partagez-le, ainsi que votre whish-list, sur les réseaux sociaux.<br>
-                            Accéder au profil des autres lecteurs pour consulter leurs bibliothèques, et vous donner ainsi de nouvelles envies.<br>
-                            Vous restez libre de rendre privé votre profil à tout moment. Dans ce cas, votre profil n'est plus accessible qu'à vous-même.
-                        </p></div>
-                </div>
-                <!-- About Section Button-->
-                <div class="text-center mt-4">
-                    <a class="btn btn-xl btn-outline-light" href="{{ path('sign_up') }}"><i class="fas fa-sign-in-alt"></i> Inscription</a>
-                </div>
-            </div>
-        </section>
+
         <!-- Contact Section-->
         <section class="page-section" id="contact">
             <div class="container">
@@ -91,7 +93,18 @@
                 <div class="row">
                     <div class="col-lg-8 mx-auto">
                         <!-- To configure the contact form email address, go to mail/contact_me.php and update the email address in the PHP file on line 19.-->
-                        <form id="contactForm" name="sentMessage" novalidate="novalidate">
+                        {{ form_start(contact_form, {'attr': {'novalidate': 'novalidate'}}) }}
+                            {# {{ form_widget(form) }} #}
+                            {{ form_row(contact_form.email) }}
+                            {{ form_row(contact_form.object) }}
+                            {{ form_row(contact_form.body) }}
+                            {# Ajout de l'image captcha générée par le service Captcha #}
+                            <p><img src="{{ 'data:image/jpeg;base64,' ~ captcha }}" class="img-fluid" alt="captcha" title="captcha"></p>
+                            {{ form_row(contact_form.captcha) }}
+                            {# Bouton de validation du formulaire #}
+                            <input type="submit" class="btn btn-primary" value="Envoyer">
+                        {{ form_end(contact_form) }}
+                        {# <form id="contactForm" name="sentMessage" novalidate="novalidate">
                             <div class="control-group">
                                 <div class="form-group floating-label-form-group controls mb-0 pb-2">
                                     <label>Name</label><input class="form-control" id="name" type="text" placeholder="Name" required="required" data-validation-required-message="Please enter your name." />
@@ -119,7 +132,7 @@
                             <br />
                             <div id="success"></div>
                             <div class="form-group"><button class="btn btn-primary btn-xl" id="sendMessageButton" type="submit">Send</button></div>
-                        </form>
+                        </form> #}
                     </div>
                 </div>
             </div>
@@ -127,9 +140,9 @@
 
 
                 <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
-                <div class="scroll-to-top d-lg-none position-fixed">
+                {# <div class="scroll-to-top d-lg-none position-fixed">
                     <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
-                </div>
+                </div> #}
                 <!-- Portfolio Modals-->
                 <!-- Star Books Modal-->
                 {% for book in star_book %}

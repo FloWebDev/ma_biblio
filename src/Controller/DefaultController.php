@@ -2,19 +2,61 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Util\Book;
+use App\Util\Captcha;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email AS EmailMime;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Validator\Constraints\CaptchaConstraint;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/", name="home_page", methods={"GET"})
+     * @link https://symfony.com/doc/current/mailer.html
+     * 
+     * @Route("/", name="home_page", methods={"GET", "POST"})
      */
-    public function homePage()
+    public function homePage(Request $request, MailerInterface $mailer, Captcha $captcha)
     {
-        $preStarBook = Book::BOOK;
+        $contactForm = $this->createContactForm();
+        $contactForm->handleRequest($request);
 
+        if ($contactForm->isSubmitted() && $contactForm->isValid()) {
+            $data = $contactForm->getData();
+            // dd($data);
+
+            $email = (new EmailMime())
+            ->from(new Address($this->getParameter('webmaster_email'), $this->getParameter('website_title')))
+            ->to($this->getParameter('webmaster_email'))
+            //->cc('cc@example.com')
+            //->bcc('bcc@example.com')
+            ->replyTo($data['email'])
+            //->priority(Email::PRIORITY_HIGH)
+            ->subject($this->getParameter('website_title') . ' - ' . $data['object'])
+            ->text($data['body'])
+            ->html('<p>' . nl2br($data['body']) . '</p>');
+
+            $mailer->send($email);
+        
+            $this->addFlash(
+                'success',
+                'Email envoyé avec succès.'
+            );
+
+            return $this->redirectToRoute('home_page');
+        }
+
+        $preStarBook = Book::BOOK;
         shuffle($preStarBook);
 
         $starBook = array();
@@ -23,47 +65,10 @@ class DefaultController extends AbstractController
             $starBook[] = $preStarBook[$i];
         }
 
-        $bookReadList = [
-            '1984 - George Orwell',
-            'Le Seigneur des anneaux - Intégrale - J.R.R. Tolkien',
-            'L\'Étranger - Albert Camus',
-            'Voyage au bout de la nuit - Louis-Ferdinand Céline',
-            'Les Fleurs du mal - Charles Baudelaire',
-            'Le Petit Prince - Antoine de Saint-Exupéry',
-            'La Horde du Contrevent - Alain Damasio',
-            'L\'Écume des jours - Boris Vian',
-            'Harry Potter à l\'école des sorciers - J. K. Rowling',
-            'Dune - Le Cycle de Dune, tome 1 - Frank Herbert',
-
-        ];
-
-        $bookNoteList = [
-            'Le Parfum - Patrick Süskind',
-            'Fondation - Le Cycle de Fondation, tome 1 - Oscar Wilde',
-            'La Nuit des temps - René Barjavel',
-            'Crime et Châtiment - Fiodor Dostoïevski',
-            'Orgueil et Préjugés - Jane Austen',
-            'Les Liaisons dangereuses - Choderlos de Laclos',
-            'Cyrano de Bergerac - Edmond Rostand',
-            'Harry Potter et les Reliques de la Mort - Harry Potter, tome 7 - J. K. Rowling',
-            'L\'Attrape-cœurs - J. D. Salinger',
-            'Dix petits Nègres - Agatha Christie',
-            // 'Le Meilleur des mondes - Aldous Huxley',
-            // 'Cent ans de solitude - Gabriel García Márquez',
-            // 'Lolita - Vladimir Nabokov',
-            // 'Des souris et des hommes - John Steinbeck',
-            // 'Les Frères Karamazov - Fiodor Dostoïevski',
-            // 'Le Comte de Monte-Cristo - Alexandre Dumas',
-            // 'L\'Insoutenable Légèreté de l\'être - Milan Kundera',
-            // 'La Ferme des animaux - George Orwell',
-            // 'Ubik - Philip K. Dick',
-            // 'Bilbo le Hobbit - J.R.R. Tolkien'
-        ];
-
         return $this->render('default/index.html.twig', [
             'star_book'      => $starBook,
-            'book_read_list' => $bookReadList,
-            'book_note_list' => $bookNoteList
+            'captcha' => $captcha->createCaptcha(),
+            'contact_form' => $contactForm->createView()
         ]);
     }
 
@@ -86,13 +91,77 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/contact", name="contact", methods={"GET"})
-     */
-    public function contact()
-    {
-        return $this->render('default/contact.html.twig', [
-            'controller_name' => 'DefaultController',
-        ]);
+    private function createContactForm() {
+
+        // https://symfony.com/doc/current/form/without_class.html
+        $form = $this->createFormBuilder(null)
+        ->add('email', EmailType::class, [
+            'label' => 'Votre adresse email (*)',
+            'attr' => [
+                'placeholder' => 'email'
+            ],
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez renseigner votre adresse email.'
+                ]),
+                new Email([
+                    'mode' => 'loose',
+                    'message' => 'L\'adresse email saisie n\'est pas valide.'
+                ])
+            ]
+        ])
+        ->add('object', ChoiceType::class, [
+            'label' => 'Sujet (*)',
+            'required' => true,
+            'choices' => [
+                'Contact (divers)' => 'contact',
+                'Demande de partenariat' => 'partenariat',
+                'Demande de suppression (ou désactivation) de compte' => 'suppression',
+                'Réclamation ou suggestion' => 'reclamation'
+            ],
+            'expanded' => false,
+            'multiple' => false,
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez sélectionner un sujet.',
+                ])
+            ]
+        ])
+        ->add('body', TextareaType::class, [
+            'label' => 'Votre message (*)',
+            'attr' => [
+                'rows' => 7,
+                'placeholder' => 'Message'
+            ],
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez saisir un message.',
+                ])
+            ]
+        ])
+        ->add('captcha', IntegerType::class, [
+            'label' => 'Renseignez les 4 chiiffres présents dans l\'image (*)',
+            'attr' => [
+                'placeholder' => '????'
+            ],
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Saissisez le nombre affiché dans l\'image.'
+                ]),
+                new Length([
+                    'min'        => 4,
+                    'max'        => 4,
+                    'minMessage' => 'Nombre de caractères minimum attendus : {{ limit }}',
+                    'maxMessage' => 'Nombre de caractères maximum attendus : {{ limit }}'
+                ]),
+                new CaptchaConstraint([
+                    // 'message' => 'test' // Pas besoin dans ce cas, car le message d'erreur
+                    // est déjà écrit dans la class CaptchaConstraint
+                ])
+            ]
+        ])
+        ->getForm();
+
+        return $form;
     }
 }
