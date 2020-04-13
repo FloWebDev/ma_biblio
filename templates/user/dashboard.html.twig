@@ -34,7 +34,7 @@
         {% if books %}
         <div>
             <p class="text-center mt-3">
-            <a href="{{ path('user_update', {id: user.id}) }}" class="card-link h5"><i class="fas fa-book"></i> Bibliothèque</a>
+            <a href="{{ path('book', {slug: user.slug}) }}" class="card-link h5"><i class="fas fa-book"></i> Bibliothèque</a>
             </p>
             <ul class="list-group list-group-flush">
             {% for book in books %}

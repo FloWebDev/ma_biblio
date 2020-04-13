@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bibliothèque virtuelle {{ user.username|upper }} - {{ website_title }}{% endblock %}
+
+{% block body %}
+<section class="page-section mt-5" id="dashboard">
+    <div class="container">
+        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Bibliothèque {{ user.username|upper }}</h2>
+        {{ slug }}
+</div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}
