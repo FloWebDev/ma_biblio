@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
+use App\Validator\Constraints\SlugConstraint;
 use App\Validator\Constraints\CaptchaConstraint;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
@@ -146,6 +147,9 @@ class UserType extends AbstractType
                         'max' => 120,
                         'minMessage' => 'Pseudo trop court. Minimum {{ limit }} caractères.',
                         'maxMessage' => 'Pseudo trop long. Maximum {{ limit }} caractères.'
+                    ]),
+                    new SlugConstraint([
+                            
                     ])
                 ]
             ])

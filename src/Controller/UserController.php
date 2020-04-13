@@ -142,22 +142,9 @@ class UserController extends AbstractController
             // but, the original `$task` variable has also been updated
             // $user = $form->getData();
 
+            // Création du slug et enregistrement pour le nouvel utlisateur
             $slug = $slugger->sluggify($newUser->getUsername());
-
-            // Vérification de la constraint d'unicité pour le slug
-            $userRepo = $this->getDoctrine()->getRepository(User::class);
-            $res = $userRepo->checkSlug($slug);
-
-            if ($res) {
-                $this->addFlash(
-                    'danger',
-                    'Identifiant déjà utilisé.'
-                );
-
-                return $this->redirectToRoute('sign_up');
-            } else {
-                $newUser->setSlug($slug);
-            }
+            $newUser->setSlug($slug);
 
             // Encodage du mot de passe
             $encodedPassword = $encoder->encodePassword($newUser, $newUser->getPassword());
@@ -245,24 +232,9 @@ class UserController extends AbstractController
             // $user = $form->getData();
 
             if ($user->getUsername() !== $currentUsername) {
+                // On enregistre un nouveau slug qu'en cas de changement de l'identifiant
                 $slug = $slugger->sluggify($user->getUsername());
-
-                // Vérification de la constraint d'unicité pour le slug
-                $userRepo = $this->getDoctrine()->getRepository(User::class);
-                $res = $userRepo->checkSlug($slug);
-
-                if ($res) {
-                    $this->addFlash(
-                        'danger',
-                        'Identifiant déjà utilisé.'
-                    );
-
-                    return $this->redirectToRoute('user_update', [
-                        'id' => $user->getId()
-                    ]);
-                } else {
-                    $user->setSlug($slug);
-                }
+                $user->setSlug($slug);
             }
 
             // Gestion de la modification du mot de passe

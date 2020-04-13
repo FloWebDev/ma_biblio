@@ -23,9 +23,12 @@
         <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar {{ user.username }}" title="Uploader un nouvel avatar" id="avatar_profil" 
         {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}style="cursor: pointer;"{% endif %}>
         {% endif %}
-        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id and user.avatar %}
+        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
         <div class="text-center mt-1 mb-3">
+            {% if user.avatar %}
             <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link">Supprimer avatar</a><br>
+            {% endif %}
+            <a href="{{ path('user_update', {id: user.id}) }}" class="card-link">Modifier profil</a>
         </div>
         {% endif %}
         {% if books %}
@@ -73,11 +76,7 @@
             {{ user.username|upper }} n'a pas encore écrit sa bio.
             {% endif %}
         </p>
-        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id and user.avatar %}
-        <p>
-        <a href="{{ path('user_update', {id: user.id}) }}" class="card-link">Modifier profil</a>
-        </p>
-    {% endif %}
+        <i class="fas fa-book-open"></i> <i class="fas fa-dog"></i> <i class="fas fa-cat"></i> <i class="fas fa-glasses"></i>
         </div>
     </div>
 </div>
