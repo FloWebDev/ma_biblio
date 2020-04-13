@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UserController!{% endblock %}
+{% block title %}Profil {{ user.username|upper }} - {{ website_title }}{% endblock %}
 
 {% block body %}
 <section class="page-section mt-5" id="dashboard">
@@ -8,7 +8,41 @@
         <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Profil de {{ user.username|upper }}</h2>
 
 {% if app.user %}
-    <a href="{{ path('user_update', {id: app.user.id}) }}">Modifier mon profil</a>
+<div class="row col-12">
+    <div class="card mt-3 col-12 col-lg-3">
+        {% if app.user.avatar %}
+        <img class="card-img-top" src="{{ asset(avatar_repo ~ '/' ~ app.user.avatar) }}" alt="Card image cap" id="avatar_profil">
+        {% else %}
+        <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="Card image cap" id="avatar_profil">
+        {% endif %}
+        <div class="card-body">
+        <a href="{{ path('user_update', {id: app.user.id}) }}" class="card-link">Modifier mon profil</a>
+        <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+
+
+    <div class="card mt-3 col-12 col-lg-9">
+        <div class="card-body col-lg-9">
+        <h5 class="card-title">{{ user.username|upper }}</h5>
+        <p class="card-text">
+            Login : {{ user.username }}<br>
+            Date d'inscription : {{ user.createdAt|date("m/d/Y") }}<br>
+            Date dernière connexion : {{ user.connectedAt|date("m/d/Y") }}<br>
+            Email: Date d'inscription : {{ user.email }}
+        </p>
+        </div>
+        <ul class="list-group list-group-flush">
+        <li class="list-group-item">Cras justo odio</li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+        <div class="card-body">
+        <a href="{{ path('user_update', {id: app.user.id}) }}" class="card-link">Modifier mon profil</a>
+        <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 </div>

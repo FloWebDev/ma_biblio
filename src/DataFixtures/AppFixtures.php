@@ -2,9 +2,12 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Book;
 use App\Entity\Role;
 use App\Entity\User;
 use App\Util\Slugger;
+use App\Entity\Category;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -29,6 +32,37 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
+        // Création des catégories intiales
+        $category1 = new Category();
+        $category1->setReference('ct' . uniqid());
+        $category1->setName('Livres lus');
+        $category1->setOrderZ(1);
+        $manager->persist($category1);
+
+        $category2 = new Category();
+        $category2->setReference('ct' . uniqid());
+        $category2->setName('Lectures');
+        $category2->setOrderZ(2);
+        $manager->persist($category2);
+
+        $category3 = new Category();
+        $category3->setReference('ct' . uniqid());
+        $category3->setName('Pile à lire (PAL)');
+        $category3->setOrderZ(3);
+        $manager->persist($category3);
+
+        $category4 = new Category();
+        $category4->setReference('ct' . uniqid());
+        $category4->setName('Whish-List');
+        $category4->setOrderZ(4);
+        $manager->persist($category4);
+
+        $category5 = new Category();
+        $category5->setReference('ct' . uniqid());
+        $category5->setName('Abandonnés');
+        $category5->setOrderZ(5);
+        $manager->persist($category5);
+
         // Création du rôle ROLE_ADMIN
         $adminRole = new Role();
         $adminRole->setCode('ROLE_ADMIN');
@@ -52,6 +86,22 @@ class AppFixtures extends Fixture
         $adminUser->setRole($adminRole);
         $manager->persist($adminUser);
 
+        for ($i = 1; $i <= 30; $i++) {
+            $book = new Book();
+            $book->setReference('bk' . uniqid());
+            $book->setTitle('Titre Livre' . $i);
+            $book->setSubtitle('blabla blabla blabla');
+            $book->setAuthor('Auteur' . $i . '#' . 'Auteur' . ($i+1));
+            $book->setPublishedDate(1970 + $i);
+            $book->setIsbn13('1234567891234');
+            $book->setIsbn10('1234567890');
+            $book->setImage('http://books.google.com/books/content?id=PVaa4TnXveAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
+            $book->setLitteralCategory('Catégorie' . $i . '#' . 'Catégorie' . ($i+1));
+            $book->setNote(random_int(1, 20));
+            $book->setUser($adminUser);
+            $manager->persist($book);
+        }
+
         // Créatio de l'utilisateur Utilisateur
         $user = new User();
         $user->setUsername('user');
@@ -61,10 +111,29 @@ class AppFixtures extends Fixture
         $user->setSlug($slug);
         $user->setEmail('user@bookstore.com');
         $user->setRole($userRole);
+        $book->setCategory($category1);
         $manager->persist($user);
+
+        for ($i = 1; $i <= 20; $i++) {
+            $book = new Book();
+            $book->setReference('bk' . uniqid());
+            $book->setTitle('Titre Livre' . $i);
+            $book->setSubtitle('blabla blabla blabla');
+            $book->setAuthor('Auteur' . $i . '#' . 'Auteur' . ($i+1));
+            $book->setPublishedDate(1970 + $i);
+            $book->setIsbn13('1234567891234');
+            $book->setIsbn10('1234567890');
+            $book->setImage('http://books.google.com/books/content?id=PVaa4TnXveAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
+            $book->setLitteralCategory('Catégorie' . $i . '#' . 'Catégorie' . ($i+1));
+            $book->setNote(random_int(1, 20));
+            $book->setUser($user);
+            $book->setCategory($category1);
+            $manager->persist($book);
+        }
 
         // Création de plusieurs utilisateurs fictifs
         for ($i = 1; $i <= 10; $i++) {
+            dump($i);
             $user = new User();
             $user->setUsername('usedséèçAlàA' . $i);
             $encodedPassword = $this->passwordEncoder->encodePassword($user, 'user' . $i);
@@ -74,6 +143,23 @@ class AppFixtures extends Fixture
             $user->setEmail('user' . $i . '@bookstore.com');
             $user->setRole($userRole);
             $manager->persist($user);
+
+            for ($b = 1; $b <= 15; $b++) {
+                $book = new Book();
+                $book->setReference('bk' . uniqid());
+                $book->setTitle('Titre Livre' . $b);
+                $book->setSubtitle('blabla blabla blabla');
+                $book->setAuthor('Auteur' . $b . '#' . 'Auteur' . ($b+1));
+                $book->setPublishedDate(1970 + $b);
+                $book->setIsbn13('1234567891234');
+                $book->setIsbn10('1234567890');
+                $book->setImage('http://books.google.com/books/content?id=PVaa4TnXveAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
+                $book->setLitteralCategory('Catégorie' . $b . '#' . 'Catégorie' . ($b+1));
+                $book->setNote(random_int(1, 20));
+                $book->setUser($user);
+                $book->setCategory($category1);
+                $manager->persist($book);
+            }
         }
 
         $manager->flush();

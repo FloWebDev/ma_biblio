@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -96,12 +98,18 @@ class User implements UserInterface, \Serializable, EquatableInterface
      */
     private $role;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Book", mappedBy="user")
+     */
+    private $books;
+
     public function __construct()
     {
         // Valeurs par défaut
         $this->created_at = new \DateTime();
         $this->public = true;
         $this->active = true;
+        $this->books = new ArrayCollection();
     }
 
     public function __toString()
@@ -335,6 +343,37 @@ class User implements UserInterface, \Serializable, EquatableInterface
     public function setRole(?Role $role): self
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Book[]
+     */
+    public function getBooks(): Collection
+    {
+        return $this->books;
+    }
+
+    public function addBook(Book $book): self
+    {
+        if (!$this->books->contains($book)) {
+            $this->books[] = $book;
+            $book->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBook(Book $book): self
+    {
+        if ($this->books->contains($book)) {
+            $this->books->removeElement($book);
+            // set the owning side to null (unless already changed)
+            if ($book->getUser() === $this) {
+                $book->setUser(null);
+            }
+        }
 
         return $this;
     }

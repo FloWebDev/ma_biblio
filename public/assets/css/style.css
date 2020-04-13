@@ -3,3 +3,14 @@
     border: 2px solid #0b6674;
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
+
+#avatar_profil {
+    display: block;
+    margin: 0 auto;
+    margin-top: 1rem;
+    border-radius: 50%;
+    border: 1px solid black;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    width: 150px; 
+    height: 150px;
+}

@@ -1,6 +1,4 @@
-var socialNetwork = {
-    init: function() {
-        console.log('network');
+(function() {
         var twitters = document.querySelectorAll('.share_twitter');
         
         twitters.forEach(twitter => {
@@ -38,8 +36,4 @@ var socialNetwork = {
                 window.open(shareUrl, '_blank');
             });
         });
-    }
-
-};
-
-document.addEventListener('DOMContentLoaded', socialNetwork.init);
+})();
