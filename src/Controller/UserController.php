@@ -7,15 +7,18 @@ use App\Entity\User;
 use App\Util\Captcha;
 use App\Util\Slugger;
 use App\Form\UserType;
+use App\Repository\UserRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints\File as FileValidator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
@@ -30,13 +33,97 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/profil/{slug}", name="dashboard", methods={"GET"})
+     * @Route("/profil/{slug}", name="dashboard", methods={"GET", "POST"})
      * @ParamConverter("user", options={"mapping": {"slug": "slug"}})
      */
-    public function dashboard(User $user)
+    public function dashboard(User $user, UserRepository $userRepo, CategoryRepository $categoryRepo, Request $request)
     {
+        /**
+         * Création du formulaire avatar
+         * 
+         * @link https://symfony.com/doc/current/form/without_class.html
+         */
+        $avatarForm = $this->createFormBuilder(null)
+        ->add('avatar', FileType::class, [
+            'label' => 'Avatar / photo de profil (PNG, JPEG)',
+            'attr' => [
+            ],
+            'constraints' => [
+                new FileValidator([
+                    'maxSize' => '1024k',
+                    'uploadIniSizeErrorMessage' => "L'avatar ne doit pas dépasser une taille de {{ limit }} {{ suffix }}.",
+                    'mimeTypes' => [
+                        'image/png',
+                        'image/jpeg',
+                    ],
+                    'mimeTypesMessage' => 'L\'avatar doit être au format PNG ou JPEG',
+                ])
+            ]
+        ])->getForm();
+
+        $avatarForm->handleRequest($request);
+
+        if ($avatarForm->isSubmitted() && $avatarForm->isValid()) {
+            // Récupération de l'avatar actuel
+            $currentAvatar = $user->getAvatar();
+            $data = $avatarForm->getData();
+
+            // Gestion de l'avatar
+            $avatar = $data['avatar'];
+
+            // this condition is needed because the 'avatar' field is not required
+            // so the file must be processed only when a file is uploaded
+            if ($avatar) {
+                if (!empty($currentAvatar) && $avatar != $currentAvatar) {
+                    $fileToDelete = $this->getParameter('avatar_directory') . '/' . $currentAvatar;
+                    if (file_exists($fileToDelete)) {
+                        unlink($fileToDelete);
+                    }
+                }
+
+                $safeFilename = uniqid() . time();
+                $newFilename = $safeFilename . '.' . $avatar->guessExtension();
+
+                // Move the file to the directory where avatars are stored
+                try {
+                    $avatar->move(
+                        $this->getParameter('avatar_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    throw new \Exception('Erreur lors de l\'upload du fichier');
+                }
+
+                // updates the 'avatar' property to store
+                $user->setAvatar($newFilename);
+            } else {
+                $user->setAvatar($currentAvatar);
+            }
+
+            // Validation de l'enregistrement en base
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash(
+                'success',
+                'Avatar modifié avec succès.'
+            );
+
+            return $this->redirectToRoute('dashboard', [
+                'slug' => $user->getSlug()
+            ]);
+        }
+
+        $books = $categoryRepo->getBookByCategoryAndUser(intval($user->getId()));
+        $sqliteVersion = \SQLite3::version();
+        $userNumber = $userRepo->userCount();
+
         return $this->render('user/dashboard.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . '-' . $user->getId(),
+            'books' => $books,
+            'avatar_form' => $avatarForm->createView(),
+            'sqlite_version' => $sqliteVersion,
+            'userNb' => $userNumber
         ]);
     }
 
@@ -127,12 +214,22 @@ class UserController extends AbstractController
         $currentUsername = $user->getUsername();
         $currentPassword = $user->getPassword();
 
-        // Je récupère l'ancien avatar
+        /*
+         Pour garder un comportement similaire a ce que j'ai en création d'un utilisateur,
+         je dois prendre mon nouveau nom de fichier puis le transformer en un objet du type File 
+         afin de pouvoir effectuer un guessExtension() etc...
+         Sinon a terme je vais stocker une chaine contenant /tmp/789875etc....
+         */
+
+        /*
+         Actuellement j'autorise dans ma colonne avatar de ma table app_user le nullable. De ce fait, je souhaite convertir mon nom de fichier en type file UNIQUEMENT si celui-ci existe.
+        Dans le cas contraire, c'est handlerequest qui se chargera d'effectuer la recuperation d'un objet du type fileUpload comme dans la fonction new
+         */
         $currentAvatar = $user->getAvatar();
         if (!empty($currentAvatar)) {
             $file = $this->getParameter('avatar_directory') . '/' . $currentAvatar;
             if (file_exists($file)) {
-                $user->setAvatar(new File($this->getParameter('avatar_directory') . '/' . $currentAvatar));
+                $user->setAvatar(new File($file));
             } else {
                 $user->setAvatar(null);
             }
@@ -181,8 +278,8 @@ class UserController extends AbstractController
             $avatar = $user->getAvatar();
             // $avatar = $form->get('avatar')->getData();
 
-            // this condition is needed because the 'brochure' field is not required
-            // so the PDF file must be processed only when a file is uploaded
+            // this condition is needed because the 'avatar' field is not required
+            // so the file must be processed only when a file is uploaded
             if ($avatar) {
                 if (!empty($currentAvatar) && $avatar != $currentAvatar) {
                     $fileToDelete = $this->getParameter('avatar_directory') . '/' . $currentAvatar;
@@ -194,7 +291,7 @@ class UserController extends AbstractController
                 $safeFilename = uniqid() . time();
                 $newFilename = $safeFilename . '.' . $avatar->guessExtension();
 
-                // Move the file to the directory where brochures are stored
+                // Move the file to the directory where avatars are stored
                 try {
                     $avatar->move(
                         $this->getParameter('avatar_directory'),
@@ -217,11 +314,57 @@ class UserController extends AbstractController
                 'Modifications effectuées avec succès.'
             );
 
-            return $this->redirectToRoute('home_page');
+            return $this->redirectToRoute('dashboard', [
+                'slug' => $user->getSlug()
+            ]);
         }
 
         return $this->render('user/update.html.twig', [
             'form'            => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/user/{id}/avatar-delete", name="user_avatar_delete", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function avatarDelete($id, User $user, EntityManagerInterface $em) {
+        $currentUser = $this->getUser();
+
+        if ($currentUser->getId() != $user->getId()) {
+            $this->addFlash(
+                'danger',
+                'Vous ne pouvez pas supprimer l\'avater d\'un autre utilisateur.'
+            );
+
+            return $this->redirectToRoute('home_page');
+        }
+
+        if (!empty($user->getAvatar())) {
+            $fileToDelete = $this->getParameter('avatar_directory') . '/' . $user->getAvatar();
+            if (file_exists($fileToDelete)) {
+                // Suppression du fichier avatar
+                unlink($fileToDelete);
+            }
+
+            // Suppresion de l'avatar en BDD
+            $user->setAvatar(null);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                'Confirmation suppression de votre avatar.'
+            );
+    
+            return $this->redirectToRoute('dashboard', [
+                'slug' => $user->getSlug()
+            ]);
+        }
+
+        $this->addFlash(
+            'danger',
+            'Problème dans la suppression de l\'avatar.'
+        );
+
+        return $this->redirectToRoute('home_page');
     }
 }

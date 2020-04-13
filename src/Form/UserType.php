@@ -114,7 +114,7 @@ class UserType extends AbstractType
                         ],
                         'constraints' => [
                             new Length([
-                                'max' => 10,
+                                'max' => 2500,
                                 'maxMessage' => 'Votre bio ne doit pas dépasser {{ limit }} caractères.'
                             ])
                         ]

@@ -47,4 +47,30 @@ class CategoryRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * Permet d'avoir le compte des books par catégorie
+     * pour un utilisateur
+     * 
+     * @param int $id
+     * 
+     * @return bool
+     */
+    public function getBookByCategoryAndUser(int $id)
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT count(book.id) AS nb, category.name AS category_name 
+            FROM category
+            LEFT JOIN book ON category.id = book.category_id AND book.user_id = :id
+            GROUP BY category.name
+            ORDER BY category.order_z ASC;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        $res = $stmt->fetchAll();
+
+        return $res;
+    }
 }

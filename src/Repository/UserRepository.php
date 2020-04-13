@@ -36,6 +36,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    /**
+     * Permet de vérifier la présence d'un slug en base
+     * 
+     * @param string $slug
+     * 
+     * @return bool
+     */
     public function checkSlug(string $slug): bool
     {
         $res = false;
@@ -48,6 +55,39 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $res = $stmt->fetch();
 
         $res = ($res['nb'] > 0 ? true : false);
+
+        return $res;
+    }
+
+    /**
+     * Permet de compter le nombre d'utilisateurs présents en base
+     * 
+     * @return array
+     */
+    public function userCount():array
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT count(id) AS nb FROM app_user
+            UNION ALL
+            SELECT count(id) FROM app_user WHERE active
+            UNION ALL
+            SELECT count(id) FROM app_user WHERE not active";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $res = $stmt->fetchAll();
+
+        if (is_array($res) && count($res) == 3) {
+            $res = [
+                'total' => $res[0]['nb'],
+                'actif' => $res[1]['nb'],
+                'inactif' => $res[2]['nb'],
+            ];
+        } else {
+            $res = false;
+        }
 
         return $res;
     }
