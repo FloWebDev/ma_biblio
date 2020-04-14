@@ -7,8 +7,8 @@ use App\Entity\User;
 use App\Util\Captcha;
 use App\Util\Slugger;
 use App\Form\UserType;
+use App\Repository\BookRepository;
 use App\Repository\UserRepository;
-use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
@@ -36,7 +36,7 @@ class UserController extends AbstractController
      * @Route("/profil/{slug}", name="dashboard", methods={"GET", "POST"})
      * @ParamConverter("user", options={"mapping": {"slug": "slug"}})
      */
-    public function dashboard(User $user, UserRepository $userRepo, CategoryRepository $categoryRepo, Request $request)
+    public function dashboard(User $user, UserRepository $userRepo, BookRepository $bookRepo, Request $request)
     {
         /**
          * Création du formulaire avatar
@@ -44,22 +44,21 @@ class UserController extends AbstractController
          * @link https://symfony.com/doc/current/form/without_class.html
          */
         $avatarForm = $this->createFormBuilder(null)
-        ->add('avatar', FileType::class, [
-            'label' => 'Avatar / photo de profil (PNG, JPEG)',
-            'attr' => [
-            ],
-            'constraints' => [
-                new FileValidator([
-                    'maxSize' => '1024k',
-                    'uploadIniSizeErrorMessage' => "L'avatar ne doit pas dépasser une taille de {{ limit }} {{ suffix }}.",
-                    'mimeTypes' => [
-                        'image/png',
-                        'image/jpeg',
-                    ],
-                    'mimeTypesMessage' => 'L\'avatar doit être au format PNG ou JPEG',
-                ])
-            ]
-        ])->getForm();
+            ->add('avatar', FileType::class, [
+                'label' => 'Avatar / photo de profil (PNG, JPEG)',
+                'attr' => [],
+                'constraints' => [
+                    new FileValidator([
+                        'maxSize' => '1024k',
+                        'uploadIniSizeErrorMessage' => "L'avatar ne doit pas dépasser une taille de {{ limit }} {{ suffix }}.",
+                        'mimeTypes' => [
+                            'image/png',
+                            'image/jpeg',
+                        ],
+                        'mimeTypesMessage' => 'L\'avatar doit être au format PNG ou JPEG',
+                    ])
+                ]
+            ])->getForm();
 
         $avatarForm->handleRequest($request);
 
@@ -113,14 +112,18 @@ class UserController extends AbstractController
             ]);
         }
 
-        $books = $categoryRepo->getBookByCategoryAndUser(intval($user->getId()));
+        $books = $bookRepo->getBookByCategoryAndUser(intval($user->getId()));
+        $bookMoyenne = $bookRepo->getAverageNote(intval($user->getId()));
         $sqliteVersion = \SQLite3::version();
         $userNumber = $userRepo->userCount();
+
+        // dd($bookMoyenne);
 
         return $this->render('user/dashboard.html.twig', [
             'user' => $user,
             'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . '-' . $user->getId(),
             'books' => $books,
+            'average_note' => (!empty($bookMoyenne) ? number_format($bookMoyenne, 2, ',', ' ') : 0),
             'avatar_form' => $avatarForm->createView(),
             'sqlite_version' => $sqliteVersion,
             'userNb' => $userNumber
@@ -299,7 +302,8 @@ class UserController extends AbstractController
     /**
      * @Route("/user/{id}/avatar-delete", name="user_avatar_delete", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function avatarDelete($id, User $user, EntityManagerInterface $em) {
+    public function avatarDelete($id, User $user, EntityManagerInterface $em)
+    {
         $currentUser = $this->getUser();
 
         if ($currentUser->getId() != $user->getId()) {
@@ -326,7 +330,7 @@ class UserController extends AbstractController
                 'success',
                 'Confirmation suppression de votre avatar.'
             );
-    
+
             return $this->redirectToRoute('dashboard', [
                 'slug' => $user->getSlug()
             ]);

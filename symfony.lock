@@ -100,7 +100,7 @@
         "version": "2.0.2"
     },
     "nikic/php-parser": {
-        "version": "v4.3.0"
+        "version": "v4.4.0"
     },
     "ocramius/package-versions": {
         "version": "1.4.2"
@@ -109,7 +109,7 @@
         "version": "2.2.3"
     },
     "php": {
-        "version": "7.4"
+        "version": "7.2"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.0.0"

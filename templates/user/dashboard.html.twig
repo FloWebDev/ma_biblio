@@ -57,16 +57,17 @@
             {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
             Email: {{ user.email }}<br>
             {% endif %}
+            Note moyenne attribuée : {{ average_note }}<br>
             Date d'inscription : {{ user.createdAt|date("d/m/Y") }}<br>
             Date dernière connexion : {{ user.connectedAt|date("d/m/Y à H\\hi") }}<br>
-            {% if is_granted('ROLE_ADMIN') %}
-            <br>
+            RéférenceID : {{ ref }}<br>
+            {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
             {% if sqlite_version %}
             Version SQLite : {{ sqlite_version.versionString }} - {{ sqlite_version.versionNumber }}<br>
             {% endif %}
             Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
             {% endif %}
-            RéférenceID : {{ ref }}
+            
         </p>
         <h6 class="card-title">Bio</h6>
         <p class="card-text" id="user_bio">
