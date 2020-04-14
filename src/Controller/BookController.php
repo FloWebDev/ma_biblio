@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\BookRepository;
+use App\Repository\CategoryRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,16 +20,30 @@ class BookController extends AbstractController
      * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
      * @link https://github.com/KnpLabs/KnpPaginatorBundle
      */
-    public function index($slug, User $user, BookRepository $bookRepo, Request $request, PaginatorInterface $paginator)
+    public function index($slug, User $user, BookRepository $bookRepo, CategoryRepository $categoryRepo, Request $request, PaginatorInterface $paginator)
     {
-        $books = $bookRepo->findBy([
-            'user' => $user->getId()
-        ], [
-            'title' => 'ASC'
+        // Gestion de la liste des livres à afficher en fonction des filtres et ordres choisis
+        $category = $request->query->get('category');
+        $order = $request->query->get('order');
+
+        if (!is_null($category)) {
+            if ($category == 'all') {
+                $category = null;
+            } else {
+                $category = filter_var($category, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+            }
+        }
+
+        $order = (!is_null($order) ? filter_var($order, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : 'ASC');
+
+        $books = $bookRepo->getBookList(intval($user->getId()), $category, $order);
+
+        // Récupération de toutes les catégories
+        $categories = $categoryRepo->findBy([], [
+            'order_z' => 'ASC'
         ]);
 
-        // $books = $bookRepo->findAllByCategory(intval($user->getId()));
-
+        // Pagination des livres
         $books = $paginator->paginate(
             $books,
             $request->query->getInt('page', 1),
@@ -38,7 +53,8 @@ class BookController extends AbstractController
         return $this->render('book/index.html.twig', [
             'user' => $user,
             'slug' => $slug,
-            'books' => $books
+            'books' => $books,
+            'categories' => $categories
         ]);
     }
 

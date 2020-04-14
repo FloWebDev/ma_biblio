@@ -17,7 +17,9 @@
                     {% if books %}
                     {# Pagination #}
                     {# {{ books.getTotalItemCount }} #}
+                    {% include 'book/_filter.html.twig' with {'user': user, 'categories': categories} %}
                     {{ knp_pagination_render(books) }}
+                    
                         {% for book in books %}
                         <div class="card col-12 mb-2">
                             <div class="row">

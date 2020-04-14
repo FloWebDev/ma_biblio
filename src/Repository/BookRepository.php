@@ -71,19 +71,29 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return Book[] Returns an array of Book objects
-    */
-    public function findAllByCategory(int $id)
+     * Permet de vérifier la présence d'un slug en base
+     * 
+     * @param string $slug
+     * 
+     * @return Book[]
+     */
+    public function getBookList(int $id, ?string $categoryRef = null, $order = 'ASC')
     {
-        return $this->createQueryBuilder('book')
-            ->andWhere('book.user = :id')
-            ->setParameter('id', $id)
-            // ->leftJoin('book.category', 'book_cat')
-            // ->orderBy('book_cat.order_z', 'ASC')
-            ->addOrderBy('book.title', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
+        $order = ($order == 'DESC' ? $order : 'ASC');
+
+        $books = $this->createQueryBuilder('book')
+        ->andWhere('book.user = :id')
+        ->setParameter('id', $id)
+        ->leftJoin('book.category', 'book_cat');
+
+        if(!is_null($categoryRef)) {
+            $books->andWhere('book_cat.reference = :reference')
+            ->setParameter('reference', $categoryRef);
+        }
+
+        $books->orderBy('book.title', $order);
+
+        return $books->getQuery()->getResult();
     }
 
     // /**
