@@ -1,0 +1,44 @@
+<div class="portfolio-modal modal fade" id="form_add_book" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Ajout</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+
+                                <form>
+                                    <div class="form-group">
+                                        <label for="search_book">Recherche (livre, auteur)</label>
+                                        <p>
+                                        <select class="form-control" id="search_book" name="state">
+                                            {# <option value="AL">Alabama</option>
+                                            <option value="WY">Wyoming</option> #}
+                                        </select>
+                                        </p>
+                                        {# <input type="text" class="form-control" id="search_book" aria-describedby="searchBookHelp" placeholder="Les Misérables Victor Hugo" name="search_book"> #}
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="search_book_fr" name="search_book_fr" checked>
+                                        <label class="form-check-label" for="search_book_fr">Recherches francophones</label>
+                                    </div>
+                                    {# <button type="submit" class="btn btn-primary">Submit</button> #}
+                                </form>
+                                <button type="button" class="btn btn-primary mt-3" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -2,6 +2,12 @@
 
 {% block title %}Bibliothèque virtuelle {{ user.username|upper }} - {{ website_title }}{% endblock %}
 
+{% block stylesheets %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+    <link rel="stylesheet" href="{{ asset('assets/select2/select2.min.css') }}">
+    {% endif %}
+{% endblock %}
+
 {% block body %}
 <section class="page-section mt-5" id="books">
     <div class="container">
@@ -120,8 +126,23 @@
                     </div>
                     {% endfor %}
                 {% endif %}
+
+                {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+                    <div class="h1" id="add_book" data-toggle="modal" data-target="#form_add_book">
+                        <span class="badge badge-pill badge-info"><i class="fas fa-plus-circle"></i>
+                        <span class="d-none d-lg-inline"> Ajouter un livre</span>
+                        <span class="d-inline d-lg-none"> Ajout</span>
+                        </span>
+                    </div>
+
+                    {# Formulaire ajout nouveau livre #}
+                    {% include('book/_add_book_form.html.twig') %}
+                {% endif %}
 {% endblock %}
 
 {% block javascripts %}
-
+    {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+        <script src="{{ asset('assets/select2/select2.min.js') }}"></script>
+        <script src="{{ asset('assets/js/addBookForm.js') }}"></script>
+    {% endif %}
 {% endblock %}

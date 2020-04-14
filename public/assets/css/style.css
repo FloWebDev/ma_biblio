@@ -33,3 +33,9 @@
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
     border-radius: 7px;
 }
+
+#add_book {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+}

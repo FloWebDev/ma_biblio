@@ -39,4 +39,25 @@ class BookController extends AbstractController
             'books' => $books
         ]);
     }
+
+    /**
+     * @Route("/book-search", name="book_search", methods={"GET", "POST"})
+     * 
+     * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
+     * @link https://github.com/KnpLabs/KnpPaginatorBundle
+     */
+    public function bookSearch()
+    {
+        $response[] = [
+            'id' => 1,
+            'text' => 'texte 1'
+        ];
+
+        $response[] = [
+            'id' => 1,
+            'text' => 'texte 2'
+        ];
+
+        return $this->json($response);
+    }
 }
