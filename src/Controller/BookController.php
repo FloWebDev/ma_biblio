@@ -64,8 +64,18 @@ class BookController extends AbstractController
      * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
      * @link https://github.com/KnpLabs/KnpPaginatorBundle
      */
-    public function bookSearch()
+    public function bookSearch(Request $request)
     {
+        $request->isXmlHttpRequest();
+
+        if (!empty($_POST['search'])) {
+            $search = $_POST['search'];
+            if (strlen($search) > 0) {
+                // TODO PHP CURL
+            }
+        }
+
+        // if ()
         $response[] = [
             'id' => 1,
             'text' => 'texte 1'

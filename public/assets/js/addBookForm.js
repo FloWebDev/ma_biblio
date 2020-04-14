@@ -6,11 +6,12 @@ var addBookForm = {
             width: '100%',
             ajax: {
                 url: '/book-search',
+                method: "POST",
                 data: function (params) {
                     console.log('ajax');
                     var query = {
                         search: params.term,
-                        type: 'public'
+                        fr: 'public'
                     }
 
                     console.log(query);
@@ -22,7 +23,7 @@ var addBookForm = {
                     // Transforms the top-level key of the response object from 'items' to 'results'
                     console.log(data);
                     return {
-                        results: data
+                        results: data ? data : null
                     };
                 }
             }
