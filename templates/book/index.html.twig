@@ -3,12 +3,120 @@
 {% block title %}Bibliothèque virtuelle {{ user.username|upper }} - {{ website_title }}{% endblock %}
 
 {% block body %}
-<section class="page-section mt-5" id="dashboard">
+<section class="page-section mt-5" id="books">
     <div class="container">
         <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Bibliothèque {{ user.username|upper }}</h2>
-        {{ slug }}
+        
+                <div class="row mt-5">
+                    <!-- Star Books -->
+                    {# {{ dump(books) }} #}
+                    {% if books %}
+                        {% for book in books %}
+                        <div class="card col-12 mb-2">
+                            <div class="row">
+                                <div class="card-body col-2 text-center">
+                                {% if book.image %}
+                                    <img class="card-img-top img-fluid" src="{{ book.image }}" alt="{{ book.title }}">
+                                {% else %}
+                                    <img class="card-img-top img-fluid" src="{{ asset('assets/media/default/book.png') }}" alt="{{ book.title }}">
+                                {% endif %}
+                                {% set note = book.note %}
+                                    <div class="h3 mt-3">
+                                        {% if note %}
+                                            {% if note >= 10 and note < 14 %}
+                                            <span class="h1 badge badge-pill badge-warning">{{ note }}/20</span>
+                                            {% elseif note >= 14 and note < 17 %}
+                                            <span class="h1 badge badge-pill badge-info">{{ note }}/20</span>
+                                            {% elseif note >= 17 %}
+                                            <span class="h1 badge badge-pill badge-success">{{ note }}/20</span>
+                                            {% else %}
+                                            <span class="h1 badge badge-pill badge-danger">{{ note }}/20</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="h1 badge badge-pill badge-danger">0/20</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-body col-10">
+                                    <h5 class="card-title">{{ book.title }} {% if book.litteralCategory %} <span class="badge badge-info">{{ book.litteralCategory }}</span>{% endif %}</h5>
+                                    {% if book.subtitle %}
+                                    <h6 class="card-title">{{ book.subtitle }}</h6>
+                                    {% endif %}
+                                    <h6 class="card-title">
+                                    Auteur : {% if book.author %}{{ book.author }}{% else %}N.C.{% endif %} - 
+                                    Date de publication : {% if book.publishedDate %}{{ book.publishedDate }}{% else %}N.C.{% endif %}
+                                    </h6>
+                                    <p class="card-text">
+                                    {% if book.description %}
+                                        {{ book.description|nl2br }}
+                                    {% else %}
+                                        N.C.
+                                    {% endif %}
+                                    </p>
+                                    {% if book.comment %}
+                                    <p class="font-italic comment_book">
+                                        <span class="font-weight-bold">Note de {{ user.username|upper }} :</span><br>
+                                        {{ book.comment|nl2br }}
+                                    </p>
+                                    {% endif %}
+                                    {% if book.isbn13 or book.isbn10 %}
+                                    <p class="font-italic" style="font-size: 80%;">
+                                    ISBN-13 : {{ book.isbn13 }}<br>
+                                    ISBN-10 : {{ book.isbn10 }}<br>
+                                    </p>
+                                    {% endif %}
+                                    <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#star_book_{{ loop.index }}">Modifier</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        Aucun livre pour le moment.<br>
+                        <a href="{{ path('home_page') }}" class="card-link">Ajoutez votre premier livre.</a>
+                    {% endif %}
+                </div>
 </div>
 </section>
+
+
+                {% if books %}
+                    {% for book in books %}
+                    <div class="portfolio-modal modal fade" id="star_book_{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+                        <div class="modal-dialog modal-xl" role="document">
+                            <div class="modal-content">
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                                </button>
+                                <div class="modal-body text-center">
+                                    <div class="container">
+                                        <div class="row justify-content-center">
+                                            <div class="col-lg-8">
+                                                <!-- Portfolio Modal - Title-->
+                                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">{{ book.title }}</h2>
+                                                <!-- Icon Divider-->
+                                                <div class="divider-custom">
+                                                    <div class="divider-custom-line"></div>
+                                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                                    <div class="divider-custom-line"></div>
+                                                </div>
+                                                <!-- Portfolio Modal - Image-->
+                                                {% if book.image %}
+                                                <img class="img-fluid rounded mb-5" src="{{ book.image }}" alt="{{ book.title }}" style="max-width: 300px;">
+                                                {% else %}
+                                                <img class="img-fluid rounded mb-5" src="{{ asset('assets/media/default/book.png') }}" alt="{{ book.title }}" style="max-width: 300px;">
+                                                {% endif %}
+                                                <!-- Portfolio Modal - Text-->
+                                                <p>{{ book.description|raw }}</p>
+                                                <button class="btn btn-primary mt-3" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Fermer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
 {% endblock %}
 
 {% block javascripts %}

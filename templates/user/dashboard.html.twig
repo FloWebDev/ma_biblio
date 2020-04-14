@@ -57,7 +57,7 @@
             {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
             Email: {{ user.email }}<br>
             {% endif %}
-            Note moyenne attribuée : {{ average_note }}<br>
+            Note moyenne attribuée : {{ average_note }}/20<br>
             Date d'inscription : {{ user.createdAt|date("d/m/Y") }}<br>
             Date dernière connexion : {{ user.connectedAt|date("d/m/Y à H\\hi") }}<br>
             RéférenceID : {{ ref }}<br>

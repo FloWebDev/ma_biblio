@@ -100,12 +100,16 @@ class AppFixtures extends Fixture
             $book->setTitle('Titre Livre' . $b);
             $book->setSubtitle('blabla blabla blabla');
             $book->setAuthor('Auteur' . $b . '#' . 'Auteur' . ($b+1));
+            $book->setDescription('lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum');
             $book->setPublishedDate(1970 + $b);
             $book->setIsbn13('1234567891234');
             $book->setIsbn10('1234567890');
             $book->setImage('http://books.google.com/books/content?id=PVaa4TnXveAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
             $book->setLitteralCategory('Catégorie' . $b . '#' . 'Catégorie' . ($b+1));
             $book->setNote(random_int(1, 20));
+            if ($b % 3 == 0) {
+                $book->setComment('Très bon livre ! Je recommande.');
+            }
             $book->setUser($adminUser);
             shuffle($categories);
             $book->setCategory($categories[0]);
@@ -129,12 +133,16 @@ class AppFixtures extends Fixture
             $book->setTitle('Titre Livre' . $b);
             $book->setSubtitle('blabla blabla blabla');
             $book->setAuthor('Auteur' . $b . '#' . 'Auteur' . ($b+1));
+            $book->setDescription('lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum');
             $book->setPublishedDate(1970 + $b);
             $book->setIsbn13('1234567891234');
             $book->setIsbn10('1234567890');
             $book->setImage('http://books.google.com/books/content?id=PVaa4TnXveAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
             $book->setLitteralCategory('Catégorie' . $b . '#' . 'Catégorie' . ($b+1));
             $book->setNote(random_int(1, 20));
+            if ($b % 3 == 0) {
+                $book->setComment('Très bon livre ! Je recommande.');
+            }
             $book->setUser($user);
             shuffle($categories);
             $book->setCategory($categories[0]);
@@ -159,12 +167,16 @@ class AppFixtures extends Fixture
                 $book->setTitle('Titre Livre' . $b);
                 $book->setSubtitle('blabla blabla blabla');
                 $book->setAuthor('Auteur' . $b . '#' . 'Auteur' . ($b+1));
+                $book->setDescription('lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum');
                 $book->setPublishedDate(1970 + $b);
                 $book->setIsbn13('1234567891234');
                 $book->setIsbn10('1234567890');
                 $book->setImage('http://books.google.com/books/content?id=PVaa4TnXveAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api');
                 $book->setLitteralCategory('Catégorie' . $b . '#' . 'Catégorie' . ($b+1));
                 $book->setNote(random_int(1, 20));
+                if ($b % 3 == 0) {
+                    $book->setComment('Très bon livre ! Je recommande.');
+                }
                 $book->setUser($user);
                 shuffle($categories);
                 $book->setCategory($categories[0]);
