@@ -8,14 +8,15 @@
         <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Bibliothèque {{ user.username|upper }}</h2>
         
                 <div class="row mt-5">
-                    <!-- Star Books -->
-                    {# {{ dump(books) }} #}
                     {% if books %}
+                    {# Pagination #}
+                    {# {{ books.getTotalItemCount }} #}
+                    {{ knp_pagination_render(books) }}
                         {% for book in books %}
                         <div class="card col-12 mb-2">
                             <div class="row">
-                                <div class="card-body col-2 text-center">
-                                {% if book.image %}
+                                <div class="card-body col-md-2 text-center">
+                                {% if not book.image %}
                                     <img class="card-img-top img-fluid" src="{{ book.image }}" alt="{{ book.title }}">
                                 {% else %}
                                     <img class="card-img-top img-fluid" src="{{ asset('assets/media/default/book.png') }}" alt="{{ book.title }}">
@@ -37,7 +38,7 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="card-body col-10">
+                                <div class="card-body col-md-10">
                                     <h5 class="card-title">{{ book.title }} {% if book.litteralCategory %} <span class="badge badge-info">{{ book.litteralCategory }}</span>{% endif %}</h5>
                                     {% if book.subtitle %}
                                     <h6 class="card-title">{{ book.subtitle }}</h6>
@@ -70,6 +71,8 @@
                             </div>
                         </div>
                         {% endfor %}
+                    {# Pagination #}
+                    {{ knp_pagination_render(books) }}
                     {% else %}
                         Aucun livre pour le moment.<br>
                         <a href="{{ path('home_page') }}" class="card-link">Ajoutez votre premier livre.</a>
