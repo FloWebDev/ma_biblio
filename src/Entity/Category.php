@@ -29,6 +29,11 @@ class Category
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=32, nullable=true)
+     */
+    private $css;
+
+    /**
      * @ORM\Column(type="smallint", nullable=true)
      */
     private $order_z;
@@ -73,6 +78,18 @@ class Category
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getCss(): ?string
+    {
+        return $this->css;
+    }
+
+    public function setCss(?string $css): self
+    {
+        $this->css = $css;
 
         return $this;
     }

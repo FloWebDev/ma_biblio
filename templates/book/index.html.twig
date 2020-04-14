@@ -22,7 +22,7 @@
                         <div class="card col-12 mb-2">
                             <div class="row">
                                 <div class="card-body col-md-2 text-center">
-                                {% if not book.image %}
+                                {% if book.image %}
                                     <img class="card-img-top img-fluid" src="{{ book.image }}" alt="{{ book.title }}">
                                 {% else %}
                                     <img class="card-img-top img-fluid" src="{{ asset('assets/media/default/book.png') }}" alt="{{ book.title }}">
@@ -45,14 +45,18 @@
                                     </div>
                                 </div>
                                 <div class="card-body col-md-10">
-                                    <h5 class="card-title">{{ book.title }} {% if book.litteralCategory %} <span class="badge badge-info">{{ book.litteralCategory }}</span>{% endif %}</h5>
+                                    <h5 class="card-title">{{ book.title }} {% if book.category.name %} <span class="badge badge-{% if book.category.css %}{{ book.category.css }}{% else %}info{% endif %}">{{ book.category.name }}</span>{% endif %}</h5>
                                     {% if book.subtitle %}
                                     <h6 class="card-title">{{ book.subtitle }}</h6>
                                     {% endif %}
                                     <h6 class="card-title">
-                                    Auteur : {% if book.author %}{{ book.author }}{% else %}N.C.{% endif %} - 
-                                    Date de publication : {% if book.publishedDate %}{{ book.publishedDate }}{% else %}N.C.{% endif %}
+                                    Auteur : {% if book.author %}{{ book.author }}{% else %}N.C.{% endif %}
                                     </h6>
+                                    <p class="font-italic m-0 mb-2" style="font-size: 90%;">
+                                    Date de publication : {% if book.publishedDate %}{{ book.publishedDate }}{% else %}N.C.{% endif %}<br>
+                                    Genre : {% if book.litteralCategory %} {{ book.litteralCategory }}{% else %}N.C.{% endif %}
+                                    </p>
+
                                     <p class="card-text">
                                     {% if book.description %}
                                         {{ book.description|nl2br }}

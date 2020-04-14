@@ -36,6 +36,7 @@
 
 #add_book {
     position: fixed;
+    cursor: pointer;
     bottom: 2rem;
     right: 2rem;
 }

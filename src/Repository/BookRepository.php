@@ -57,7 +57,7 @@ class BookRepository extends ServiceEntityRepository
         $res = false;
         $conn = $this->getEntityManager()->getConnection();
 
-        $sql = "SELECT COUNT(book.id) AS nb, category.name AS category_name 
+        $sql = "SELECT COUNT(book.id) AS nb, category.name AS category_name, category.css AS css
             FROM category
             LEFT JOIN book ON category.id = book.category_id AND book.user_id = :id
             GROUP BY category.name
@@ -68,6 +68,22 @@ class BookRepository extends ServiceEntityRepository
         $res = $stmt->fetchAll();
 
         return $res;
+    }
+
+    /**
+    * @return Book[] Returns an array of Book objects
+    */
+    public function findAllByCategory(int $id)
+    {
+        return $this->createQueryBuilder('book')
+            ->andWhere('book.user = :id')
+            ->setParameter('id', $id)
+            // ->leftJoin('book.category', 'book_cat')
+            // ->orderBy('book_cat.order_z', 'ASC')
+            ->addOrderBy('book.title', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

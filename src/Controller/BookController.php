@@ -27,6 +27,8 @@ class BookController extends AbstractController
             'title' => 'ASC'
         ]);
 
+        // $books = $bookRepo->findAllByCategory(intval($user->getId()));
+
         $books = $paginator->paginate(
             $books,
             $request->query->getInt('page', 1),
