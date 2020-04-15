@@ -54,12 +54,13 @@ class BookController extends AbstractController
             'user' => $user,
             'slug' => $slug,
             'books' => $books,
-            'categories' => $categories
+            'categories' => $categories,
+            'notes' => $this->notes()
         ]);
     }
 
     /**
-     * @Route("/book-search", name="book_search", methods={"GET", "POST"})
+     * @Route("/book-search", name="book_search", methods={"POST"})
      * 
      * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
      * @link https://github.com/KnpLabs/KnpPaginatorBundle
@@ -91,19 +92,15 @@ class BookController extends AbstractController
 
                 // dd($result);
 
-                if (is_array($result) && array_key_exists('totalItems', $result) && $result['totalItems'] > 0) {
-                    foreach ($result['items'] as $index => $book) {
-                        // dd($book['imageLinks']['thumbnail']);
-                        // dump($result['items'][$index]['volumeInfo']['imageLinks']['thumbnail']);
+                if (is_array($result) && array_key_exists('totalItems', $result) 
+                && $result['totalItems'] > 0 && array_key_exists('items', $result)) {
+                    $response = array();
+                    foreach ($result['items'] as $book) {
 
                         if (isset($book['volumeInfo'])) {
-                        
-
                             $id = $book['id'];
                             $info = $book['volumeInfo'];
-                            // dd($info['categories']);
                             $title = (isset($info['title']) ? $info['title'] : null);
-                            // $authorTitle = (isset($info['authors']) ? (' - ' . $info['authors'][0]) : null);
 
                             if (isset($info['industryIdentifiers']) && count($info['industryIdentifiers']) >= 2) {
                                 $isbn13 = ($info['industryIdentifiers'][0]['type'] == 'ISBN_13' ? $info['industryIdentifiers'][0]['identifier'] : null);
@@ -113,10 +110,12 @@ class BookController extends AbstractController
                                 $isbn10 = null;
                             }
 
+                            // Formatage des données pour chaque livre associé à la recherche
                             $response[] = [
                                 'id' => $id,
                                 'text' => ((isset($info['authors']) && is_array($info['authors'])) ? ($title . ' - ' . implode(', ', $info['authors'])) : $info['title']),
-                                'title' => (isset($info['title']) ? $info['title'] : null),
+                                'reference' => $id,
+                                'title' => $title,
                                 'subtitle' => (!empty($info['subtitle']) ? $info['subtitle'] : null),
                                 'author' => ((isset($info['authors']) && is_array($info['authors'])) ? implode(', ', $info['authors']) : null),
                                 'published_date' => (!empty($info['publishedDate']) ? $info['publishedDate'] : null),
@@ -138,5 +137,19 @@ class BookController extends AbstractController
         }
 
         return $this->json($response);
+    }
+
+    /**
+     * Permet d'obtenir un array de toutes les valeurs autorisées
+     * pour la note d'un livre
+     * 
+     * @return array
+     */
+    private function notes() {
+        $notes = array();
+        for($n = 0; $n <= 20; $n++) {
+            $notes[] = $n;
+        }
+        return $notes;
     }
 }

@@ -142,7 +142,7 @@
                     </div>
 
                     {# Formulaire ajout nouveau livre #}
-                    {% include('book/_add_book_form.html.twig') %}
+                    {% include 'book/_add_book_form.html.twig' with {'notes': notes} %}
                 {% endif %}
 {% endblock %}
 

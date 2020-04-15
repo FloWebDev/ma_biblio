@@ -48,3 +48,17 @@
 .select2-results__option.loading-results {
     color: #17a2b8 !important;
 }
+
+.select2-selection__clear {
+    color: red;
+    font-weight: bold;
+}
+
+#book_info_form {
+    display: none;
+}
+
+#book_image_form {
+    max-width: 150px;
+    max-height: 200px;
+}
