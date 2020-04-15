@@ -40,3 +40,11 @@
     bottom: 2rem;
     right: 2rem;
 }
+
+#add_book span.badge {
+    border: 3px solid white;
+}
+
+.select2-results__option.loading-results {
+    color: #17a2b8 !important;
+}

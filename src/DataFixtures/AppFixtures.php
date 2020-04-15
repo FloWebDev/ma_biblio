@@ -36,14 +36,14 @@ class AppFixtures extends Fixture
         $category1 = new Category();
         $category1->setReference('ct' . uniqid());
         $category1->setName('Livres lus');
-        $category1->setCss('success');
+        $category1->setCss('info');
         $category1->setOrderZ(1);
         $manager->persist($category1);
 
         $category2 = new Category();
         $category2->setReference('ct' . uniqid());
         $category2->setName('Lectures');
-        $category2->setCss('info');
+        $category2->setCss('success');
         $category2->setOrderZ(2);
         $manager->persist($category2);
 

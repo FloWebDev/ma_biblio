@@ -86,8 +86,8 @@
                     {# Pagination #}
                     {{ knp_pagination_render(books) }}
                     {% else %}
-                        Aucun livre pour le moment.<br>
-                        <a href="{{ path('home_page') }}" class="card-link">Ajoutez votre premier livre.</a>
+                        <p>Aucun livre pour le moment.<br>
+                        <a href="#" class="card-link" data-toggle="modal" data-target="#form_add_book">Ajoutez votre premier livre.</a></p>
                     {% endif %}
                 </div>
 </div>
