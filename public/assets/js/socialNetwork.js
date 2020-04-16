@@ -31,8 +31,12 @@
         linkedins.forEach(linkedin => {
             linkedin.addEventListener('click', function(e){
                 e.preventDefault();
+                var siteName = this.getAttribute('data-sitename');
                 var url = this.getAttribute('data-url');
-                var shareUrl = "https://www.linkedin.com/shareArticle?url=" + encodeURIComponent(url);
+                var title = document.title;
+                var shareUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" + encodeURIComponent(url) 
+                    + '&title=' + encodeURIComponent(title)
+                    + '$source=' + encodeURIComponent(siteName);
                 window.open(shareUrl, '_blank');
             });
         });

@@ -24,6 +24,10 @@ class BookController extends AbstractController
      */
     public function index($slug, User $user, BookRepository $bookRepo, CategoryRepository $categoryRepo, Request $request, PaginatorInterface $paginator)
     {
+        // Récupération des notes et tri décroissant
+        $notes = $this->notes();
+        rsort($notes);
+
         // Gestion de la liste des livres à afficher en fonction des filtres et ordres choisis
         $category = $request->query->get('category');
         $order = $request->query->get('order');
@@ -36,7 +40,28 @@ class BookController extends AbstractController
             }
         }
 
-        $order = (!is_null($order) ? filter_var($order, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : 'ASC');
+        if ($order == 'DESC') {
+            $order = [
+                'title',
+                'DESC'
+            ];
+        } elseif ($order == 'NOTEDESC') {
+            $order = [
+                'note',
+                'DESC'
+            ];
+        } elseif ($order == 'NOTEASC') {
+            $order = [
+                'note',
+                'ASC'
+            ];
+        } else {
+            // Dans tous les autres cas, affichage par ordre alphabétique des titres
+            $order = [
+                'title',
+                'ASC'
+            ];
+        }
 
         $books = $bookRepo->getBookList(intval($user->getId()), $category, $order);
 
@@ -57,7 +82,7 @@ class BookController extends AbstractController
             'slug' => $slug,
             'books' => $books,
             'categories' => $categories,
-            'notes' => $this->notes()
+            'notes' => $notes
         ]);
     }
 

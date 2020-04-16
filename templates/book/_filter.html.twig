@@ -17,8 +17,12 @@
       {% if app.request.get('order') == 'ASC' %}selected{% endif %}>Titres</option>
       <option value="DESC"
       {% if app.request.get('order') == 'DESC' %}selected{% endif %}>Titres inversés</option>
+      <option value="NOTEDESC"
+      {% if app.request.get('order') == 'NOTEDESC' %}selected{% endif %}>Les mieux notés</option>
+      <option value="NOTEASC"
+      {% if app.request.get('order') == 'NOTEASC' %}selected{% endif %}>Les moins notés</option>
   </select>
 
   <button type="submit" class="btn btn-primary my-1" title="Filtrer"><i class="fas fa-check"></i></button>
-  <a class="btn btn-danger ml-2" href="{{ path('book_list', {slug: user.slug}) }}" role="button" title="Supprimer les filtres"><i class="fas fa-sync"></i></a>
+  <a class="btn btn-warning text-light ml-2" href="{{ path('book_list', {slug: user.slug}) }}" role="button" title="Supprimer les filtres"><i class="fas fa-sync"></i></a>
 </form>

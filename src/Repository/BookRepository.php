@@ -73,14 +73,13 @@ class BookRepository extends ServiceEntityRepository
     /**
      * Permet de vérifier la présence d'un slug en base
      * 
-     * @param string $slug
+     * @param int|null $categoryId
+     * @param array $order
      * 
      * @return Book[]
      */
-    public function getBookList(int $id, ?int $categoryId = null, $order = 'ASC')
+    public function getBookList(int $id, ?int $categoryId = null, $order)
     {
-        $order = ($order == 'DESC' ? $order : 'ASC');
-
         $books = $this->createQueryBuilder('book')
             ->andWhere('book.user = :id')
             ->setParameter('id', $id)
@@ -91,7 +90,14 @@ class BookRepository extends ServiceEntityRepository
                 ->setParameter('cat_id', $categoryId);
         }
 
-        $books->orderBy('book.title', $order);
+        if (is_array($order) && count($order) == 2
+        && in_array($order[0], ['title', 'note']) 
+        && in_array($order[1], ['ASC', 'DESC'])) {
+            $books->orderBy('book.'.$order[0], $order[1]);
+        } else {
+            $books->orderBy('book.title', 'ASC');
+        }
+        
 
         return $books->getQuery()->getResult();
     }

@@ -1,5 +1,10 @@
 var addBookForm = {
+    initImage: null,
     init: function() {
+        // Récupération du "src" d'origine de l'image
+        addBookForm.initImage = document.querySelector('#book_image_form').src;
+
+        // Mise en place du Select2
         $('#search_book').select2({
             placeholder: 'Recherche par titre, auteur',
             allowClear: true,
@@ -42,6 +47,7 @@ var addBookForm = {
 
         $('#search_book').on('select2:select', addBookForm.handleSelect);
         $('#search_book').on('select2:unselect', addBookForm.handleUnselect);
+        $('#search_book').val(null).trigger("change");
         $('#book_info_form').on('submit', addBookForm.handleSubmit);
     },
     handleSelect: function (e) {
@@ -50,6 +56,8 @@ var addBookForm = {
 
         // On affiche le formulaire d'information du livre
         document.querySelector('#book_info_form').style.display = 'block';
+        // et on réinitialise l'image de couverture
+        document.querySelector('#book_image_form').src = addBookForm.initImage;
 
         // Pour chaque champ, on attribue la valeur
         for (const field in data) {

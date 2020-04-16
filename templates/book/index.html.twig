@@ -129,16 +129,16 @@
                                                 {# FORMULAIRE DE MODIFICATION #}
                                                 <form action="{{ path('book_update', {id: book.id}) }}" method="POST">
                                                 <div class="form-group">
-                                                    <label for="note_update">Note</label>
-                                                    <select class="form-control" id="note_update" name="note_update">
+                                                    <label for="note_update_{{ book.id }}">Note</label>
+                                                    <select class="form-control" id="note_update_{{ book.id }}" name="note_update">
                                                     {% for note in notes %}
                                                         <option {% if book.note == note %}selected{% endif %} value="{{ note }}">{{ note }}</option>
                                                     {% endfor %}
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="category_update">Catégorie</label>
-                                                    <select class="form-control" id="category_update" name="category_update">
+                                                    <label for="category_update_{{ book.id }}">Catégorie</label>
+                                                    <select class="form-control" id="category_update_{{ book.id }}" name="category_update">
                                                     {% if categories %}
                                                     {% for category in categories %}
                                                         <option {% if book.category.id == category.id %}selected{% endif %} value="{{ category.id }}">{{ category.name }}</option>
@@ -147,8 +147,8 @@
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="comment_update">Commentaire</label>
-                                                    <textarea class="form-control" id="comment_update" name="comment_update" rows="3">{{ book.comment }}</textarea>
+                                                    <label for="comment_update_{{ book.id }}">Commentaire</label>
+                                                    <textarea class="form-control" id="comment_update_{{ book.id }}" name="comment_update" rows="3">{{ book.comment }}</textarea>
                                                 </div>
                                                 <button type="submit" class="btn btn-info">Modifier</button>
                                                 <button class="btn btn-primary" href="#" data-dismiss="modal">Fermer</button>
