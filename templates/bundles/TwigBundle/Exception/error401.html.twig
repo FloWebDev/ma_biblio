@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <meta name="description" content="Bibliothèque virtuelle - Création d'une bibliothèque-librairie en ligne">
+        <meta name="keywords" content="bibliothèque,bibliotheque,librairie,virtuelle">
+        <meta name="author" content="Florian Mathevon">
+        <title>{% block title %}{{ website_title }} - Erreur {{ status_code }}{% endblock %}</title>
+        <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
+        <link rel="stylesheet" href="{{ asset('assets/css/error.css') }}">
+    </head>
+<body id="page-top">
+	<div class="error-page-wrap">
+		<article class="error-page gradient">
+			<hgroup>
+				<h1>{{ status_code }}</h1>
+				<h2>Accès refusé !</h2>
+			</hgroup>
+			<a href="{{ path('home_page') }}" title="Back to site" class="error-back">Accueil</a>
+		</article>
+	</div>
+</body>
+</html>
