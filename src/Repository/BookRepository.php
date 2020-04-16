@@ -77,7 +77,7 @@ class BookRepository extends ServiceEntityRepository
      * 
      * @return Book[]
      */
-    public function getBookList(int $id, ?string $categoryRef = null, $order = 'ASC')
+    public function getBookList(int $id, ?int $categoryId = null, $order = 'ASC')
     {
         $order = ($order == 'DESC' ? $order : 'ASC');
 
@@ -86,9 +86,9 @@ class BookRepository extends ServiceEntityRepository
         ->setParameter('id', $id)
         ->leftJoin('book.category', 'book_cat');
 
-        if(!is_null($categoryRef)) {
-            $books->andWhere('book_cat.reference = :reference')
-            ->setParameter('reference', $categoryRef);
+        if(!is_null($categoryId)) {
+            $books->andWhere('book_cat.id = :cat_id')
+            ->setParameter('cat_id', $categoryId);
         }
 
         $books->orderBy('book.title', $order);

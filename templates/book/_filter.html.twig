@@ -5,8 +5,8 @@
     <option value="all"
     {% if app.request.get('category') == 'all' %}selected{% endif %}>Toutes</option>
     {% for category in categories %}
-      <option value="{{ category.reference }}"
-      {% if app.request.get('category') == category.reference %}selected{% endif %}>{{ category.name }}</option>
+      <option value="{{ category.id }}"
+      {% if app.request.get('category') == category.id %}selected{% endif %}>{{ category.name }}</option>
     {% endfor %}
   {% endif %}
   </select>
@@ -20,5 +20,5 @@
   </select>
 
   <button type="submit" class="btn btn-primary my-1" title="Filtrer"><i class="fas fa-check"></i></button>
-  <a class="btn btn-danger ml-2" href="{{ path('book', {slug: user.slug}) }}" role="button" title="Supprimer les filtres"><i class="fas fa-sync"></i></a>
+  <a class="btn btn-danger ml-2" href="{{ path('book_list', {slug: user.slug}) }}" role="button" title="Supprimer les filtres"><i class="fas fa-sync"></i></a>
 </form>

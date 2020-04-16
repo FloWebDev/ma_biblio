@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Book;
 use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 class BookController extends AbstractController
 {
     /**
-     * @Route("/book/{slug}", name="book", methods={"GET", "POST"})
+     * @Route("/books/{slug}", name="book_list", methods={"GET", "POST"})
      * @ParamConverter("user", options={"mapping": {"slug": "slug"}})
      * 
      * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
@@ -30,7 +32,7 @@ class BookController extends AbstractController
             if ($category == 'all') {
                 $category = null;
             } else {
-                $category = filter_var($category, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+                $category = intval($category);
             }
         }
 
@@ -134,6 +136,87 @@ class BookController extends AbstractController
                     $response = false;
                 }
             }
+        }
+
+        return $this->json($response);
+    }
+
+    /**
+     * @Route("/book/new", name="book_add", methods={"POST"})
+     * 
+     * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
+     * @link https://github.com/KnpLabs/KnpPaginatorBundle
+     */
+    public function bookAdd(Request $request, EntityManagerInterface $em, CategoryRepository $categoryRepo) {
+        $request->isXmlHttpRequest();
+
+        // Vérification si utilisateur connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        // Récupération de l'utilisateur connecté
+        $currentUser = $this->getUser();
+
+        // dd($request->request);
+
+        if (!empty($request->request->get('reference'))) {
+            $reference = $request->request->get('reference');
+            $title = (!empty($request->request->get('title')) ? $request->request->get('title') : 'N.C.');
+            $subtitle = (!empty($request->request->get('subtitle')) ? $request->request->get('subtitle') : null);
+            $author = (!empty($request->request->get('author')) ? $request->request->get('author') : null);
+            $published_date = (!empty($request->request->get('published_date')) ? $request->request->get('published_date') : null);
+            $description = (!empty($request->request->get('description')) ? $request->request->get('description') : null);
+            $litteral_category = (!empty($request->request->get('litteral_category')) ? $request->request->get('litteral_category') : null);
+            $isbn_13 = (!empty($request->request->get('isbn_13')) ? $request->request->get('isbn_13') : null);
+            $isbn_10 = (!empty($request->request->get('isbn_10')) ? $request->request->get('isbn_10') : null);
+            $image = (!empty($request->request->get('image')) ? $request->request->get('image') : null);
+            $comment = (!empty($request->request->get('comment')) ? $request->request->get('comment') : null);
+            // Traitement particulier pour la note
+            $note = (!empty($request->request->get('note')) ? $request->request->get('note') : null);
+            if (is_null($note)) {
+                $note = null;
+            } else {
+                $note = intval($request->request->get('note'));
+                // On vérifie que la note est incluse dans la liste des notes possibles
+                // Sinon, on sette à "null" sa valeur
+                if (!in_array($note, $this->notes())) {
+                    $note = null;
+                }
+            }
+            // Traitement particulier pour la catégorie
+            $category_id = (!empty($request->request->get('category')) ? intval($request->request->get('category')) : null);
+            if(!is_null($category_id)) {
+                $category = $categoryRepo->find($category_id);
+            } else {
+                $category = null;
+            }
+
+            $newBook = new Book();
+            $newBook->setReference($reference);
+            $newBook->setTitle($title);
+            $newBook->setSubtitle($subtitle);
+            $newBook->setAuthor($author);
+            $newBook->setPublishedDate($published_date);
+            $newBook->setDescription($description);
+            $newBook->setLitteralCategory($litteral_category);
+            $newBook->setIsbn13($isbn_13);
+            $newBook->setIsbn10($isbn_10);
+            $newBook->setImage($image);
+            $newBook->setUser($currentUser);
+            $newBook->setCategory($category);
+            $newBook->setNote($note);
+            $newBook->setComment($comment);
+            
+            $em->persist($newBook);
+            $em->flush();
+
+            $response = [
+                'success' => true,
+                'message' => 'Enregistrement réussi'
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'Echec de l\'enregistrement'
+            ];
         }
 
         return $this->json($response);

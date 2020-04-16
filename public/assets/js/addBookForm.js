@@ -10,7 +10,7 @@ var addBookForm = {
                 }
             },
             ajax: {
-                url: '/book-search',
+                url: urlAjaxBookApi,
                 method: "POST",
                 // The number of milliseconds to wait for the user to stop typing before
                 // issuing the ajax request.
@@ -77,6 +77,58 @@ var addBookForm = {
         // On stoppe la soumission du formulaire
         e.preventDefault();
         console.log('submit');
+
+        // console.log(document.querySelector('[name="author"]'));
+        // console.log(document.querySelector('[name="author"]').value);
+
+        $.ajax({
+            url: urlAddBook,
+            method: "POST",
+            data: {
+                reference: document.querySelector('[name="reference"]').value,
+                title: document.querySelector('[name="title"]').value,
+                subtitle: document.querySelector('[name="subtitle"]').value,
+                author: document.querySelector('input[name="author"]').value,
+                published_date: document.querySelector('[name="published_date"]').value,
+                description: document.querySelector('textarea[name="description"]').value,
+                litteral_category: document.querySelector('[name="litteral_category"]').value,
+                isbn_13: document.querySelector('[name="isbn_13"]').value,
+                isbn_10: document.querySelector('[name="isbn_10"]').value,
+                image: document.querySelector('[name="image"]').value,
+                note: document.querySelector('[name="note"]').value,
+                category: document.querySelector('[name="category_book"]').value,
+                comment: document.querySelector('[name="comment"]').value,
+            },
+            dataType: 'json'
+        })
+        .done(function(data) {
+            console.log('success');
+            console.log(data);
+            if (data) {
+                document.querySelector('#book_info_form').style.display = 'none';
+                if (data.success) {
+                    document.querySelector('#add_book_alert').classList.remove('alert-danger');
+                    document.querySelector('#add_book_alert').classList.add('alert-success');
+                    document.querySelector('#add_book_alert').textContent = data.message;
+                    document.querySelector('#add_book_alert').style.display = 'block';
+                    $('#add_book_alert').fadeOut(4000);
+                } else {
+                    document.querySelector('#add_book_alert').classList.remove('alert-success');
+                    document.querySelector('#add_book_alert').classList.add('alert-danger');
+                    document.querySelector('#add_book_alert').textContent = data.message;
+                    document.querySelector('#add_book_alert').style.display = 'block';
+                    $('#add_book_alert').fadeOut(4000);
+                }
+            }
+
+        })
+        .fail(function(error) {
+            console.log('Erreur Serveur');
+            console.log(error);
+        })
+        .always(function() {
+            console.log('complete');
+        });
     }
 };
 

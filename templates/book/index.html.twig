@@ -142,12 +142,16 @@
                     </div>
 
                     {# Formulaire ajout nouveau livre #}
-                    {% include 'book/_add_book_form.html.twig' with {'notes': notes} %}
+                    {% include 'book/_add_book_form.html.twig' with {'user': user, 'notes': notes, 'categories': categories} %}
                 {% endif %}
 {% endblock %}
 
 {% block javascripts %}
     {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+        <script>
+            var urlAjaxBookApi = "{{ path('book_search')|e('js') }}";
+            var urlAddBook = "{{ path('book_add')|e('js') }}";
+        </script>
         <script src="{{ asset('assets/select2/select2.min.js') }}"></script>
         <script src="{{ asset('assets/js/addBookForm.js') }}"></script>
     {% endif %}

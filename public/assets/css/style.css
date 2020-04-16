@@ -52,6 +52,7 @@
 .select2-selection__clear {
     color: red;
     font-weight: bold;
+    font-size: 120%;
 }
 
 #book_info_form {
@@ -61,4 +62,8 @@
 #book_image_form {
     max-width: 150px;
     max-height: 200px;
+}
+
+#add_book_alert {
+    display: none;
 }
