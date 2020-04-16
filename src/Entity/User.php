@@ -181,7 +181,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
 
     public function setUsername(?string $username): self
     {
-        $this->username = $username;
+        $this->username = mb_strtolower($username);
 
         return $this;
     }

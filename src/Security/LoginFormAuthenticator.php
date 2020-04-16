@@ -45,10 +45,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             && $request->isMethod('POST');
     }
 
+    /**
+     * @link https://www.php.net/manual/fr/function.mb-strtolower.php
+     */
     public function getCredentials(Request $request)
     {
         $credentials = [
-            'username' => $request->request->get('username'),
+            'username' => mb_strtolower($request->request->get('username')),
             'password' => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];

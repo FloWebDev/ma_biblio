@@ -24,6 +24,22 @@ class BookController extends AbstractController
      */
     public function index($slug, User $user, BookRepository $bookRepo, CategoryRepository $categoryRepo, Request $request, PaginatorInterface $paginator)
     {
+        if (!$user->getPublic()) {
+            // Vérification si utilisateur connecté
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+            $currentUser = $this->getUser();
+
+            if ($user->getId() != $currentUser->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN') {
+                $this->addFlash(
+                    'danger',
+                    'Le profil de cet utilisateur est privé.'
+                );
+
+                return $this->redirectToRoute('home_page');
+            }
+        }
+
         // Récupération des notes et tri décroissant
         $notes = $this->notes();
         rsort($notes);

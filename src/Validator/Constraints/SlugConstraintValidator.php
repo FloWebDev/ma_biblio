@@ -44,19 +44,29 @@ class SlugConstraintValidator extends ConstraintValidator
         }
 
         $slug = $this->slugger->sluggify($value);
-
-
         $user = $this->security->getUser();
 
-        if($user && $user->getSlug() == $slug) {
-            // Si le slug correspond à l'utilisateur connecté = OK
-            $check = false;
+        // On convertit le login saisi en minuscules 
+        // pour vérifier qu'il n'existe pas déjà en base
+        if ($user && $user->getUsername() == mb_strtolower($value)) {
+            // Si le login correspond à l'utilisateur connecté = OK
+            $checkMinLogin = false;
         } else {
-            // Sinon, on vérifie la constraint d'unicité concernant le slug en BDD
-            $check = $this->userRepository->checkSlug($slug);
+            // Sinon on vérifie que le login saisi n'est pas déjà présent en base
+            $checkMinLogin = $this->userRepository->findBy([
+                'username' => mb_strtolower($value)
+            ]);
         }
 
-        if ($check) {
+        if ($user && $user->getSlug() == $slug) {
+            // Si le slug correspond à l'utilisateur connecté = OK
+            $checkSlug = false;
+        } else {
+            // Sinon, on vérifie la constraint d'unicité concernant le slug en BDD
+            $checkSlug = $this->userRepository->checkSlug($slug);
+        }
+
+        if ($checkMinLogin || $checkSlug) {
             // the argument must be a string or an object implementing __toString()
             $this->context->buildViolation($constraint->message)
                 // ->setParameter('{{ string }}', $value)

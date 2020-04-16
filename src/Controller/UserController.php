@@ -38,6 +38,21 @@ class UserController extends AbstractController
      */
     public function dashboard(User $user, UserRepository $userRepo, BookRepository $bookRepo, Request $request)
     {
+        if (!$user->getPublic()) {
+            // Vérification si utilisateur connecté
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+            $currentUser = $this->getUser();
+
+            if ($user->getId() != $currentUser->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN') {
+                $this->addFlash(
+                    'danger',
+                    'Le profil de cet utilisateur est privé.'
+                );
+
+                return $this->redirectToRoute('home_page');
+            }
+        }
         /**
          * Création du formulaire avatar
          * 

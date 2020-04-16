@@ -14,7 +14,7 @@
         <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Bibliothèque {{ user.username|upper }}</h2>
         
                 <div class="row mt-5">
-                    {% if books %}
+                    {% if books|length > 0 %}
                     {# Pagination #}
                     {# {{ books.getTotalItemCount }} #}
                     {% include 'book/_filter.html.twig' with {'user': user, 'categories': categories} %}

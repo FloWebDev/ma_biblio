@@ -26,7 +26,7 @@
         {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
         <div class="text-center mt-1 mb-3">
             {% if user.avatar %}
-            <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link">Supprimer avatar</a><br>
+            <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link btn_delete">Supprimer avatar</a><br>
             {% endif %}
             <a href="{{ path('user_update', {id: user.id}) }}" class="card-link">Modifier profil</a>
             {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
@@ -64,12 +64,15 @@
             Note moyenne attribuée : <span class="badge badge-pill badge-dark">{{ average_note }} / 20</span><br>
             Date d'inscription : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y à H\\hi") }}<br>
             Date dernière connexion : {{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}<br>
-            RéférenceID : {{ ref }}<br>
-            {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
-            {% if sqlite_version %}
-            Version SQLite : {{ sqlite_version.versionString }} - {{ sqlite_version.versionNumber }}<br>
+            Réf : <i>{{ ref }}</i><br>
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            Profil : {% if user.public %}<span class="badge badge-success">Public</span>{% else %}<span class="badge badge-warning">Privé</span>{% endif %}<br>
             {% endif %}
-            Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
+            {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
+                {% if sqlite_version %}
+                Version SQLite : {{ sqlite_version.versionString }} - {{ sqlite_version.versionNumber }}<br>
+                {% endif %}
+                Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
             {% endif %}
             
         </p>
