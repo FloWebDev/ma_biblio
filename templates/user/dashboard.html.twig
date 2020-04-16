@@ -62,8 +62,9 @@
             Email: {{ user.email }}<br>
             {% endif %}
             Note moyenne attribuée : <span class="badge badge-pill badge-dark">{{ average_note }} / 20</span><br>
-            Date d'inscription : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y à H\\hi") }}<br>
-            Date dernière connexion : {{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}<br>
+            Nombre de livres : <b>{{ user.books|length }}</b><br>
+            Date d'inscription : {{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}<br>
+            Date dernière connexion : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y à H\\hi") }}<br>
             Réf : <i>{{ ref }}</i><br>
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             Profil : {% if user.public %}<span class="badge badge-success">Public</span>{% else %}<span class="badge badge-warning">Privé</span>{% endif %}<br>
@@ -75,6 +76,9 @@
                 Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
             {% endif %}
             
+        </p>
+        <p class="text-left">
+            <a href="{{ path('user_list') }}" class="card-link h6"><i class="far fa-list-alt"></i> Annuaire des membres</a>
         </p>
         <h6 class="card-title">Bio</h6>
         <p class="card-text" id="user_bio">

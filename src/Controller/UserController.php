@@ -23,16 +23,6 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user", name="user")
-     */
-    public function index()
-    {
-        return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
-        ]);
-    }
-
-    /**
      * @Route("/profil/{slug}", name="dashboard", methods={"GET", "POST"})
      * @ParamConverter("user", options={"mapping": {"slug": "slug"}})
      */
@@ -138,10 +128,24 @@ class UserController extends AbstractController
             'user' => $user,
             'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . '-' . $user->getId(),
             'books' => $books,
-            'average_note' => (!empty($bookMoyenne) ? number_format($bookMoyenne, 2, ',', ' ') : 0),
+            'average_note' => (!empty($bookMoyenne) ? round($bookMoyenne) : 0),
             'avatar_form' => $avatarForm->createView(),
             'sqlite_version' => $sqliteVersion,
             'userNb' => $userNumber
+        ]);
+    }
+
+    /**
+     * @Route("/users", name="user_list", methods={"GET"})
+     */
+    public function getUsers(UserRepository $userRepo)
+    {
+        $users = $userRepo->findBy(['public' => true], [
+            'slug' => 'ASC'
+        ]);
+
+        return $this->render('user/users.html.twig', [
+            'users' => $users
         ]);
     }
 
