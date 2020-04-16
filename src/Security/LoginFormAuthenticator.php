@@ -92,19 +92,30 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        // On récupère l'utilisateur
+        $currentUser = $token->getUser();
+
+        // Si compte désactivé, on empêche la connexion avec une redirection sur la page de déconnexion
+        if (!$currentUser->getActive()) {
+            return new RedirectResponse($this->urlGenerator->generate('logout'));
+        } else {
+            // Sinon, on sette la dernière date de connexion
+            $newDateTime = new \DateTime();
+            $currentUser->setConnectedAt($newDateTime);
+            $this->entityManager->flush();
+        }
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
 
-        // On sette la dernière date de connexion
-        $currentUser = $token->getUser();
-        $newDateTime = new \DateTime();
-        $currentUser->setConnectedAt($newDateTime);
-        $this->entityManager->flush();
+
+
+
 
         return new RedirectResponse($this->urlGenerator->generate('dashboard', ['slug' => $currentUser->getSlug()]));
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        throw new \Exception('TODO: provide a valid redirect inside ' . __FILE__);
     }
 
     protected function getLoginUrl()

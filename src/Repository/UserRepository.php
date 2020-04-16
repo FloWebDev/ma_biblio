@@ -64,7 +64,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * 
      * @return array
      */
-    public function userCount():array
+    public function userCount(): array
     {
         $res = false;
         $conn = $this->getEntityManager()->getConnection();
@@ -87,6 +87,36 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ];
         } else {
             $res = false;
+        }
+
+        return $res;
+    }
+
+    /**
+     * Permet de supprimer un utilisateur
+     * et tous ses livres associés
+     * 
+     * @return array
+     */
+    public function allDelete(int $id): bool
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "DELETE FROM book WHERE user_id = :id;";
+
+        $stmt = $conn->prepare($sql);
+        $res = $stmt->execute([
+            'id' => $id,
+        ]);
+
+        if ($res) {
+            $sql = "DELETE FROM app_user WHERE id = :id;";
+
+            $stmt = $conn->prepare($sql);
+            $res = $stmt->execute([
+                'id' => $id,
+            ]);
         }
 
         return $res;

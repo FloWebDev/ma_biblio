@@ -191,7 +191,7 @@ class UserController extends AbstractController
 
         $currentUser = $this->getUser();
 
-        if ($currentUser->getId() != $user->getId()) {
+        if ($currentUser->getId() != $user->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN') {
             $this->addFlash(
                 'danger',
                 'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
@@ -295,7 +295,8 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/update.html.twig', [
-            'form'            => $form->createView()
+            'user' => $user,
+            'form' => $form->createView()
         ]);
     }
 
@@ -306,7 +307,7 @@ class UserController extends AbstractController
     {
         $currentUser = $this->getUser();
 
-        if ($currentUser->getId() != $user->getId()) {
+        if ($currentUser->getId() != $user->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN') {
             $this->addFlash(
                 'danger',
                 'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
@@ -342,5 +343,44 @@ class UserController extends AbstractController
         );
 
         return $this->redirectToRoute('home_page');
+    }
+
+    /**
+     * @Route("/user/{id}/delete", name="user_delete", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function delete($id, User $user, UserRepository $userRepository)
+    {
+        // Vérification si utilisateur connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $currentUser = $this->getUser();
+
+        if (
+            $user->getRole()->getCode() == 'ROLE_ADMIN' ||
+            ($currentUser->getId() != $user->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN')
+        ) {
+            $this->addFlash(
+                'danger',
+                'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
+            );
+
+            return $this->redirectToRoute('home_page');
+        }
+
+        $result = $userRepository->allDelete(intval($user->getId()));
+
+        if ($result) {
+            $this->addFlash(
+                'success',
+                'Suppression données et comptes utilisateurs.'
+            );
+        } else {
+            $this->addFlash(
+                'danger',
+                'Problème suppression utilisateur.'
+            );
+        }
+
+        return $this->redirectToRoute('admin_users');
     }
 }

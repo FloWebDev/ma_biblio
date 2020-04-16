@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion utilisateurs - {{ website_title }}{% endblock %}
+
+{% block body %}
+<section class="page-section mt-5" id="dashboard">
+    <div class="container">
+        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Gestion des utilisateurs</h2>
+
+        {% if users %}
+            {{ knp_pagination_render(users) }}
+            <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">Login</th>
+                <th scope="col">Email</th>
+                <th scope="col">Rôle</th>
+                <th scope="col">Dernière connexion</th>
+                <th scope="col">Date d'inscription</th>
+                <th scope="col">Actif</th>
+                <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                <th scope="row"><a href="{{ path('dashboard', {slug: user.slug}) }}" class="card-link">[{{ user.id }}] - {{ user.username }}</a></th>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role.name|capitalize }}</td>
+                <td>{{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y à H\\hi") }}</td>
+                <td>{{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}</td>
+                <td>
+                    {% if user.active %}
+                        <input type="checkbox" checked class="form-check-input mx-auto" readonly>
+                    {% else %}
+                        <input type="checkbox" class="form-check-input mx-auto" readonly>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('user_update', {id: user.id}) }}" class="card-link"><i class="fas fa-edit"></i> Modifier</a><br>
+                    <a href="{{ path('user_delete', {id: user.id}) }}" class="card-link btn_delete"><i class="fas fa-trash-alt"></i> Supprimer</a>
+                </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            {{ knp_pagination_render(users) }}
+        {% else %}
+        <p class="mt-3">Aucun utilisateur.</p>
+        {% endif %}
+
+</div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

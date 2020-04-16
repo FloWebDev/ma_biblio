@@ -5,7 +5,7 @@
 {% block body %}
 <section class="page-section mt-5" id="update">
     <div class="container">
-        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Mise à jour profil</h2>
+        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Mise à jour {{ user.username }}</h2>
 
 {% include 'user/_form.html.twig' with { 'form': form } %}
 

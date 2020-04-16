@@ -29,6 +29,10 @@
             <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link">Supprimer avatar</a><br>
             {% endif %}
             <a href="{{ path('user_update', {id: user.id}) }}" class="card-link">Modifier profil</a>
+            {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
+            <br>
+            <a href="{{ path('admin_users') }}" class="card-link">Gestion utilisateurs</a>
+            {% endif %}
         </div>
         {% endif %}
         {% if books %}
@@ -58,8 +62,8 @@
             Email: {{ user.email }}<br>
             {% endif %}
             Note moyenne attribuée : <span class="badge badge-pill badge-dark">{{ average_note }} / 20</span><br>
-            Date d'inscription : {{ user.createdAt|date("d/m/Y") }}<br>
-            Date dernière connexion : {{ user.connectedAt|date("d/m/Y à H\\hi") }}<br>
+            Date d'inscription : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y à H\\hi") }}<br>
+            Date dernière connexion : {{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}<br>
             RéférenceID : {{ ref }}<br>
             {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
             {% if sqlite_version %}

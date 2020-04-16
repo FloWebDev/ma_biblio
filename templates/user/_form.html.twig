@@ -1,12 +1,18 @@
 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     {# {{ form_widget(form) }} #}
+    {% if not (app.user and app.user.role.code == 'ROLE_ADMIN' and app.user.id != user.id) %}
     {{ form_row(form.username) }}
+    {% endif %}
     {{ form_row(form.email) }}
     {{ form_row(form.password) }}
     {% if app.user %}
     {{ form_row(form.avatar) }}
     {{ form_row(form.bio) }}
     {{ form_row(form.public) }}
+    {% if (app.user and app.user.role.code == 'ROLE_ADMIN' and app.user.id != user.id) %}
+    {{ form_row(form.role) }}
+    {{ form_row(form.active) }}
+    {% endif %}
     {% endif %}
     {% if captcha is defined %}
     <p><img src="{{ 'data:image/jpeg;base64,' ~ captcha }}" class="img-fluid" alt="captcha" title="captcha"></p>
