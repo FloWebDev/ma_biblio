@@ -1,12 +1,15 @@
 var addBookForm = {
     init: function() {
         $('#search_book').select2({
-            placeholder: 'Les Misérables Victor Hugo',
+            placeholder: 'Recherche par titre, auteur',
             allowClear: true,
             width: '100%',
             language: {
                 searching: function () {
                     return "Recherche en cours... Un peu de patience ;-)";
+                },
+                noResults: function () {
+                    return "Aucun résultat";
                 }
             },
             ajax: {
@@ -76,11 +79,7 @@ var addBookForm = {
     handleSubmit: function(e) {
         // On stoppe la soumission du formulaire
         e.preventDefault();
-        console.log('submit');
-
-        // console.log(document.querySelector('[name="author"]'));
-        // console.log(document.querySelector('[name="author"]').value);
-
+        // console.log('submit');
         $.ajax({
             url: urlAddBook,
             method: "POST",
@@ -102,10 +101,10 @@ var addBookForm = {
             dataType: 'json'
         })
         .done(function(data) {
-            console.log('success');
-            console.log(data);
+            // console.log('success');
+            // console.log(data);
             if (data) {
-                document.querySelector('#book_info_form').style.display = 'none';
+                addBookForm.formHiddenAction();
                 if (data.success) {
                     document.querySelector('#add_book_alert').classList.remove('alert-danger');
                     document.querySelector('#add_book_alert').classList.add('alert-success');
@@ -120,15 +119,20 @@ var addBookForm = {
                     $('#add_book_alert').fadeOut(4000);
                 }
             }
-
         })
         .fail(function(error) {
             console.log('Erreur Serveur');
             console.log(error);
         })
         .always(function() {
-            console.log('complete');
+            // console.log('complete');
         });
+    },
+    formHiddenAction: function() {
+        document.querySelector('[name="note"]').value = '';
+        document.querySelector('[name="category_book"]').selectedIndex = 0;
+        document.querySelector('[name="comment"]').value = '';
+        document.querySelector('#book_info_form').style.display = 'none';
     }
 };
 

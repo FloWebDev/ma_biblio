@@ -82,18 +82,48 @@ class BookRepository extends ServiceEntityRepository
         $order = ($order == 'DESC' ? $order : 'ASC');
 
         $books = $this->createQueryBuilder('book')
-        ->andWhere('book.user = :id')
-        ->setParameter('id', $id)
-        ->leftJoin('book.category', 'book_cat');
+            ->andWhere('book.user = :id')
+            ->setParameter('id', $id)
+            ->leftJoin('book.category', 'book_cat');
 
-        if(!is_null($categoryId)) {
+        if (!is_null($categoryId)) {
             $books->andWhere('book_cat.id = :cat_id')
-            ->setParameter('cat_id', $categoryId);
+                ->setParameter('cat_id', $categoryId);
         }
 
         $books->orderBy('book.title', $order);
 
         return $books->getQuery()->getResult();
+    }
+
+    /**
+     * Permet de vérifier qu'un livre
+     * n'est pas déjà présent pour un utilisateur
+     * 
+     * @param int $userId
+     * @param string $bookRef
+     * 
+     * @return bool
+     */
+    public function checkConstraint(int $userId, string $bookRef): bool
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT count(id) AS nb FROM book
+            WHERE user_id = :user_id
+            AND reference = :reference;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            'user_id' => $userId,
+            'reference' => $bookRef
+        ]);
+        $res = $stmt->fetch();
+
+        $res = ($res['nb'] > 0 ? true : false);
+
+        return $res;
     }
 
     // /**

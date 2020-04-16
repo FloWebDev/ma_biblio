@@ -102,15 +102,6 @@
     "knplabs/knp-paginator-bundle": {
         "version": "v5.1.1"
     },
-    "laminas/laminas-code": {
-        "version": "3.4.1"
-    },
-    "laminas/laminas-eventmanager": {
-        "version": "3.2.1"
-    },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.0.3"
-    },
     "monolog/monolog": {
         "version": "2.0.2"
     },
@@ -118,13 +109,13 @@
         "version": "v4.4.0"
     },
     "ocramius/package-versions": {
-        "version": "1.8.0"
+        "version": "1.4.2"
     },
     "ocramius/proxy-manager": {
-        "version": "2.8.0"
+        "version": "2.2.3"
     },
     "php": {
-        "version": "7.4"
+        "version": "7.2"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.0.0"
@@ -541,10 +532,13 @@
     "twig/twig": {
         "version": "v3.0.3"
     },
-    "webimpress/safe-writer": {
-        "version": "2.0.1"
-    },
     "webmozart/assert": {
         "version": "1.7.0"
+    },
+    "zendframework/zend-code": {
+        "version": "3.4.1"
+    },
+    "zendframework/zend-eventmanager": {
+        "version": "3.2.1"
     }
 }

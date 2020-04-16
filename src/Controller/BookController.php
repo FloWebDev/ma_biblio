@@ -147,7 +147,7 @@ class BookController extends AbstractController
      * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
      * @link https://github.com/KnpLabs/KnpPaginatorBundle
      */
-    public function bookAdd(Request $request, EntityManagerInterface $em, CategoryRepository $categoryRepo) {
+    public function bookAdd(Request $request, EntityManagerInterface $em, BookRepository $bookRepository, CategoryRepository $categoryRepo) {
         $request->isXmlHttpRequest();
 
         // Vérification si utilisateur connecté
@@ -159,6 +159,16 @@ class BookController extends AbstractController
 
         if (!empty($request->request->get('reference'))) {
             $reference = $request->request->get('reference');
+
+            if ($bookRepository->checkConstraint(intval($currentUser->getId()), $reference)) {
+                $response = [
+                    'success' => false,
+                    'message' => 'Livre déjà enregistré dans la bibliothèque'
+                ];
+
+                return $this->json($response);
+            }
+
             $title = (!empty($request->request->get('title')) ? $request->request->get('title') : 'N.C.');
             $subtitle = (!empty($request->request->get('subtitle')) ? $request->request->get('subtitle') : null);
             $author = (!empty($request->request->get('author')) ? $request->request->get('author') : null);
