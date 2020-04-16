@@ -78,7 +78,10 @@
                                     ISBN-10 : {{ book.isbn10 }}<br>
                                     </p>
                                     {% endif %}
-                                    <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#star_book_{{ loop.index }}">Modifier</a>
+                                    {% if app.user and app.user.id == book.user.id %}
+                                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#user_book_{{ loop.index }}">Modifier</a>
+                                        <a href="{{ path('book_delete', {id: book.id}) }}" class="btn btn-danger btn_delete ml-1">Supprimer</a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -96,7 +99,7 @@
 
                 {% if books %}
                     {% for book in books %}
-                    <div class="portfolio-modal modal fade" id="star_book_{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+                    <div class="portfolio-modal modal fade" id="user_book_{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
                         <div class="modal-dialog modal-xl" role="document">
                             <div class="modal-content">
                                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -120,9 +123,37 @@
                                                 {% else %}
                                                 <img class="img-fluid rounded mb-5" src="{{ asset('assets/media/default/book.png') }}" alt="{{ book.title }}" style="max-width: 300px;">
                                                 {% endif %}
-                                                <!-- Portfolio Modal - Text-->
-                                                <p>{{ book.description|raw }}</p>
-                                                <button class="btn btn-primary mt-3" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Fermer</button>
+                                                <!-- Book Modal - Text-->
+                                                {# <p>{{ book.description|raw }}</p> #}
+
+                                                {# FORMULAIRE DE MODIFICATION #}
+                                                <form action="{{ path('book_update', {id: book.id}) }}" method="POST">
+                                                <div class="form-group">
+                                                    <label for="note_update">Note</label>
+                                                    <select class="form-control" id="note_update" name="note_update">
+                                                    {% for note in notes %}
+                                                        <option {% if book.note == note %}selected{% endif %} value="{{ note }}">{{ note }}</option>
+                                                    {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="category_update">Catégorie</label>
+                                                    <select class="form-control" id="category_update" name="category_update">
+                                                    {% if categories %}
+                                                    {% for category in categories %}
+                                                        <option {% if book.category.id == category.id %}selected{% endif %} value="{{ category.id }}">{{ category.name }}</option>
+                                                    {% endfor %}
+                                                    {% endif %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="comment_update">Commentaire</label>
+                                                    <textarea class="form-control" id="comment_update" name="comment_update" rows="3">{{ book.comment }}</textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-info">Modifier</button>
+                                                <button class="btn btn-primary" href="#" data-dismiss="modal">Fermer</button>
+                                                </form>
+                                                {# FIN FORMULAIRE DE MODIFICATION #}
                                             </div>
                                         </div>
                                     </div>

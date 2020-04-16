@@ -184,7 +184,7 @@ class UserController extends AbstractController
     /**
      * @Route("/user/{id}/update", name="user_update", methods={"GET", "POST"}, requirements={"id"="\d+"})
      */
-    public function edit($id, User $user, Request $request, UserPasswordEncoderInterface $encoder, Slugger $slugger)
+    public function update($id, User $user, Request $request, UserPasswordEncoderInterface $encoder, Slugger $slugger)
     {
         // Vérification si utilisateur connecté
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -194,10 +194,10 @@ class UserController extends AbstractController
         if ($currentUser->getId() != $user->getId()) {
             $this->addFlash(
                 'danger',
-                'Vous ne pouvez pas modifier les informations d\'un tiers.'
+                'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
             );
 
-            return $this->redirectToRoute('login');
+            return $this->redirectToRoute('home_page');
         }
 
         // Récupération du mot de passe actuellement stocké en BDD
@@ -309,7 +309,7 @@ class UserController extends AbstractController
         if ($currentUser->getId() != $user->getId()) {
             $this->addFlash(
                 'danger',
-                'Vous ne pouvez pas supprimer l\'avater d\'un autre utilisateur.'
+                'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
             );
 
             return $this->redirectToRoute('home_page');

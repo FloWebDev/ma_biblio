@@ -71,6 +71,9 @@ class BookController extends AbstractController
     {
         $request->isXmlHttpRequest();
 
+        // Vérification si utilisateur connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $response = false;
 
         if (!empty($_POST['search'])) {
@@ -94,8 +97,10 @@ class BookController extends AbstractController
 
                 // dd($result);
 
-                if (is_array($result) && array_key_exists('totalItems', $result) 
-                && $result['totalItems'] > 0 && array_key_exists('items', $result)) {
+                if (
+                    is_array($result) && array_key_exists('totalItems', $result)
+                    && $result['totalItems'] > 0 && array_key_exists('items', $result)
+                ) {
                     $response = array();
                     foreach ($result['items'] as $book) {
 
@@ -147,7 +152,8 @@ class BookController extends AbstractController
      * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
      * @link https://github.com/KnpLabs/KnpPaginatorBundle
      */
-    public function bookAdd(Request $request, EntityManagerInterface $em, BookRepository $bookRepository, CategoryRepository $categoryRepo) {
+    public function bookAdd(Request $request, EntityManagerInterface $em, BookRepository $bookRepository, CategoryRepository $categoryRepo)
+    {
         $request->isXmlHttpRequest();
 
         // Vérification si utilisateur connecté
@@ -193,7 +199,7 @@ class BookController extends AbstractController
             }
             // Traitement particulier pour la catégorie
             $category_id = (!empty($request->request->get('category')) ? intval($request->request->get('category')) : null);
-            if(!is_null($category_id)) {
+            if (!is_null($category_id)) {
                 $category = $categoryRepo->find($category_id);
             } else {
                 $category = null;
@@ -214,7 +220,7 @@ class BookController extends AbstractController
             $newBook->setCategory($category);
             $newBook->setNote($note);
             $newBook->setComment($comment);
-            
+
             $em->persist($newBook);
             $em->flush();
 
@@ -233,14 +239,116 @@ class BookController extends AbstractController
     }
 
     /**
+     * @Route("/book/{id}/update", name="book_update", methods={"POST"}, requirements={"id"="\d+"})
+     */
+    public function update($id, Book $book, Request $request, CategoryRepository $categoryRepo)
+    {
+        // Vérification si utilisateur connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        // Récupération de l'utilisateur connecté
+        $currentUser = $this->getUser();
+
+        if ($book->getUser()->getId() != $currentUser->getId()) {
+            $this->addFlash(
+                'danger',
+                'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
+            );
+
+            return $this->redirectToRoute('home_page');
+        }
+
+        if ($request->request) {
+            // Traitement pour la note
+            $note = (!empty($request->request->get('note_update')) ? $request->request->get('note_update') : null);
+            if (is_null($note)) {
+                $note = null;
+            } else {
+                $note = intval($request->request->get('note_update'));
+                // On vérifie que la note est incluse dans la liste des notes possibles
+                // Sinon, on sette à "null" sa valeur
+                if (!in_array($note, $this->notes())) {
+                    $note = null;
+                }
+            }
+
+            // Traitement pour la catégorie
+            $category_id = (!empty($request->request->get('category_update')) ? intval($request->request->get('category_update')) : null);
+            if (!is_null($category_id)) {
+                $category = $categoryRepo->find($category_id);
+            } else {
+                $category = null;
+            }
+
+            // Traitement pour le commentaire
+            $comment = (!empty($request->request->get('comment_update')) ? $request->request->get('comment_update') : null);
+
+            // Update du Book
+            $book->setNote($note);
+            $book->setCategory($category);
+            $book->setComment($comment);
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash(
+                'success',
+                'Modifications effectuées avec succès.'
+            );
+
+            return $this->redirectToRoute('book_list', [
+                'slug' => $currentUser->getSlug()
+            ]);
+        }
+
+        $this->addFlash(
+            'danger',
+            'Erreur lors de la modification.'
+        );
+
+        return $this->redirectToRoute('home_page');
+    }
+
+    /**
+     * @Route("/book/{id}/delete", name="book_delete", methods={"GET"}, requirements={"id"="\d+"})
+     */
+    public function delete($id, Book $book, EntityManagerInterface $em)
+    {
+        // Vérification si utilisateur connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        // Récupération de l'utilisateur connecté
+        $currentUser = $this->getUser();
+
+        if ($book->getUser()->getId() != $currentUser->getId()) {
+            $this->addFlash(
+                'danger',
+                'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
+            );
+
+            return $this->redirectToRoute('home_page');
+        }
+
+        // Suppression du livre
+        $em->remove($book);
+        $em->flush();
+
+        $this->addFlash(
+            'success',
+            'Livre supprimé de la bibliothèque.'
+        );
+
+        return $this->redirectToRoute('book_list', [
+            'slug' => $currentUser->getSlug()
+        ]);
+    }
+
+    /**
      * Permet d'obtenir un array de toutes les valeurs autorisées
      * pour la note d'un livre
      * 
      * @return array
      */
-    private function notes() {
+    private function notes()
+    {
         $notes = array();
-        for($n = 0; $n <= 20; $n++) {
+        for ($n = 0; $n <= 20; $n++) {
             $notes[] = $n;
         }
         return $notes;

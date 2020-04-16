@@ -117,7 +117,7 @@ class DefaultController extends AbstractController
                 'Contact (divers)' => 'contact',
                 'Demande de partenariat' => 'partenariat',
                 'Demande de suppression (ou désactivation) de compte' => 'suppression',
-                'Réclamation ou suggestion' => 'reclamation'
+                'Incident technique ou suggestion' => 'incident'
             ],
             'expanded' => false,
             'multiple' => false,

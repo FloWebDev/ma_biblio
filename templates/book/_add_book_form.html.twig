@@ -56,7 +56,6 @@
                                                 <label for="note" class="col-lg-3 col-form-label" data-toggle="tooltip" data-placement="right" title="La note sera visible dans votre bibliothèque">Note</label>
                                                 <div class="col-lg-9">
                                                     <select class="form-control" id="note" name="note">
-                                                        <option selected value="">--</option>
                                                         {% for note in notes %}
                                                         <option value="{{ note }}">{{ note }}</option>
                                                         {% endfor %}

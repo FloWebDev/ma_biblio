@@ -75,6 +75,8 @@ var addBookForm = {
         });
         // On cache le formulaire d'information
         document.querySelector('#book_info_form').style.display = 'none';
+
+        addBookForm.formHiddenAction();
     },
     handleSubmit: function(e) {
         // On stoppe la soumission du formulaire
@@ -129,7 +131,7 @@ var addBookForm = {
         });
     },
     formHiddenAction: function() {
-        document.querySelector('[name="note"]').value = '';
+        document.querySelector('[name="note"]').selectedIndex = 0;
         document.querySelector('[name="category_book"]').selectedIndex = 0;
         document.querySelector('[name="comment"]').value = '';
         document.querySelector('#book_info_form').style.display = 'none';
