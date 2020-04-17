@@ -119,15 +119,20 @@ class UserController extends AbstractController
 
         $books = $bookRepo->getBookByCategoryAndUser(intval($user->getId()));
         $bookMoyenne = $bookRepo->getAverageNote(intval($user->getId()));
+        $bestBooks = $bookRepo->findBy([
+            'user' => $user->getId()
+        ], [
+            'note' => 'DESC',
+            'created_at' => 'DESC'
+        ], 5);
         $sqliteVersion = \SQLite3::version();
         $userNumber = $userRepo->userCount();
-
-        // dd($bookMoyenne);
 
         return $this->render('user/dashboard.html.twig', [
             'user' => $user,
             'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . '-' . $user->getId(),
             'books' => $books,
+            'bestBooks' => $bestBooks,
             'average_note' => (!empty($bookMoyenne) ? round($bookMoyenne) : 0),
             'avatar_form' => $avatarForm->createView(),
             'sqlite_version' => $sqliteVersion,

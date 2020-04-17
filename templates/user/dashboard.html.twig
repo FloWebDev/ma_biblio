@@ -80,6 +80,7 @@
         <p class="text-left">
             <a href="{{ path('user_list') }}" class="card-link h6"><i class="far fa-list-alt"></i> Annuaire des membres</a>
         </p>
+
         <h6 class="card-title">Bio</h6>
         <p class="card-text" id="user_bio">
             {% if user.bio %}
@@ -88,6 +89,29 @@
             {{ user.username|upper }} n'a pas encore écrit sa bio.
             {% endif %}
         </p>
+
+        {% if bestBooks|length > 0 %}
+            <h6 class="card-title">Livres les mieux notés</h6>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th scope="col">Rang</th>
+                    <th scope="col">Livres</th>
+                    <th scope="col">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bestBook in bestBooks %}
+                    <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ bestBook.title }}{{ bestBook.author is empty ? "" : " - " ~ bestBook.author }}</td>
+                    <td class="text-center">{{ bestBook.note }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        {# Fin #}
         <i class="fas fa-book-open"></i> <i class="fas fa-dog"></i> <i class="fas fa-cat"></i> <i class="fas fa-glasses"></i>
         </div>
     </div>
