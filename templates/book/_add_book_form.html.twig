@@ -41,11 +41,12 @@
                                 <button type="button" class="btn btn-primary my-3" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Fermer</button>
                                 <a type="button" class="btn btn-warning text-light my-3" href="{{ path('book_list', {slug: user.slug}) }}"><i class="fas fa-sync"></i> Fermer et actualiser</a>
 
-
-                                <div class="alert alert-success col-md-6 mx-auto" role="alert" id="add_book_alert">
-                                    
+                                {# Gestion des messages d'alerte #}
+                                <div id="container_add_book_alert_message">
+                                    <div class="alert alert-success col-md-6 mx-auto" role="alert" id="add_book_alert">
+                                        {# Contenu du message d'alerte #}
+                                    </div>
                                 </div>
-
 
                                 <form class="mt-3" action="" method="POST" id="book_info_form">
                                     <div class="form-group row">

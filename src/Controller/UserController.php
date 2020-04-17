@@ -10,6 +10,7 @@ use App\Form\UserType;
 use App\Repository\BookRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
@@ -143,7 +144,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users", name="user_list", methods={"GET"})
      */
-    public function getUsers(UserRepository $userRepo, Request $request)
+    public function getUsers(UserRepository $userRepo, Request $request, PaginatorInterface $paginator)
     {
         $search = (!empty($request->query->get('s')) ? $request->query->get('s') : null);
         if (is_null($search)) {
@@ -164,6 +165,12 @@ class UserController extends AbstractController
                 );
             }
         }
+
+        $users = $paginator->paginate(
+            $users,
+            $request->query->getInt('page', 1),
+            15
+        );
 
         return $this->render('user/users.html.twig', [
             'users' => $users

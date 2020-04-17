@@ -37,6 +37,29 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Permet d'obtenir les informations d'un utilisateur sans passer par sa class,
+     * notamment utile pour vérifier le pseudo/slug AVANT enregistrement d'un nouveau
+     * 
+     * @param int $id - ID du user
+     * 
+     * @return array|false
+     */
+    public function findCurrentUser(?int $id)
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT * FROM app_user WHERE id = :id;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        $res = $stmt->fetch();
+
+        return $res;
+    }
+
+
+    /**
      * Permet de vérifier la présence d'un slug en base
      * 
      * @param string $slug

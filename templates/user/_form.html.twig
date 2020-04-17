@@ -1,8 +1,8 @@
 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     {# {{ form_widget(form) }} #}
-    {% if not (app.user and app.user.role.code == 'ROLE_ADMIN' and app.user.id != user.id) %}
+    {# {% if not (app.user and app.user.role.code == 'ROLE_ADMIN' and app.user.id != user.id) %} #}
     {{ form_row(form.username) }}
-    {% endif %}
+    {# {% endif %} #}
     {{ form_row(form.email) }}
     {{ form_row(form.password) }}
     {% if app.user %}

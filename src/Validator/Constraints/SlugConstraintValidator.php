@@ -25,6 +25,20 @@ class SlugConstraintValidator extends ConstraintValidator
 
     public function validate($value, Constraint $constraint)
     {
+        $currentUsername = null;
+        $currentSlug = null;
+        // Récupération de l'utlisateur concerné par le formulaire (pouvant être différent de l'utilisateur connecté)
+        $formUser = $this->context->getRoot()->getData(); // Permet de récupérer l'entité concernée par le formulaire
+
+        if ($formUser->getId()) {
+            // Permet d'obtenir les informations de l'utilisateur AVANT modification des informations de l'utilisateur
+            // (via son ID)
+            $currentUser = $this->userRepository->findCurrentUser($formUser->getId());
+            $currentUsername = (!empty($currentUser['username']) ? $currentUser['username'] : null);
+            $currentSlug = (!empty($currentUser['slug']) ? $currentUser['slug'] : null);
+        }
+
+
         if (!$constraint instanceof SlugConstraint) {
             throw new UnexpectedTypeException($constraint, SlugConstraint::class);
         }
@@ -44,12 +58,13 @@ class SlugConstraintValidator extends ConstraintValidator
         }
 
         $slug = $this->slugger->sluggify($value);
-        $user = $this->security->getUser();
+        // Pour récupérer l'utilisateur actuellement connecté (plus nécessaire dans NOTRE CAS)
+        // $user = $this->security->getUser();
 
         // On convertit le login saisi en minuscules 
         // pour vérifier qu'il n'existe pas déjà en base
-        if ($user && $user->getUsername() == mb_strtolower($value)) {
-            // Si le login correspond à l'utilisateur connecté = OK
+        if ($currentUsername && $currentUsername == mb_strtolower($value)) {
+            // Si le login correspond à l'utilisateur du formulaire = OK
             $checkMinLogin = false;
         } else {
             // Sinon on vérifie que le login saisi n'est pas déjà présent en base
@@ -58,8 +73,8 @@ class SlugConstraintValidator extends ConstraintValidator
             ]);
         }
 
-        if ($user && $user->getSlug() == $slug) {
-            // Si le slug correspond à l'utilisateur connecté = OK
+        if ($currentSlug && $currentSlug == $slug) {
+            // Si le slug correspond à l'utilisateur du formulaire = OK
             $checkSlug = false;
         } else {
             // Sinon, on vérifie la constraint d'unicité concernant le slug en BDD

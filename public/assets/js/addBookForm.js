@@ -52,7 +52,8 @@ var addBookForm = {
 
         $('#search_book').on('select2:select', addBookForm.handleSelect);
         $('#search_book').on('select2:unselect', addBookForm.handleUnselect);
-        $('#search_book').val(null).trigger("change");
+        $('#search_book').on('select2:open', addBookForm.handleOpen);
+        // $('#search_book').val(null).trigger("change");
         $('#book_info_form').on('submit', addBookForm.handleSubmit);
     },
     handleSelect: function (e) {
@@ -90,6 +91,21 @@ var addBookForm = {
         document.querySelector('#book_info_form').style.display = 'none';
 
         addBookForm.formHiddenAction();
+    },
+    handleOpen: function() {
+        console.log('OPEN');
+        /**
+        * @link https://stackoverflow.com/questions/16310588/how-to-clean-completely-select2-control
+        * 
+        * To clean completely a select2 (>= v4) component:
+        * $('#sel').val(null).empty().select2('destroy')
+        * val(null) -> remove select form data
+        * empty -> remove select options
+        * select2(destroy) -> remove select2 plugin
+        *  */
+        if ($('#search_book').val() != '') {
+            $('#search_book').val(null).empty();
+        }
     },
     handleSubmit: function(e) {
         // On stoppe la soumission du formulaire

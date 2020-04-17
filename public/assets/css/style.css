@@ -64,6 +64,10 @@
     max-height: 200px;
 }
 
+#container_add_book_alert_message {
+    height: 55px;
+}
+
 #add_book_alert {
     display: none;
 }
