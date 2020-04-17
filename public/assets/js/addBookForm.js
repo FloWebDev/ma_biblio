@@ -23,6 +23,11 @@ var addBookForm = {
                 // The number of milliseconds to wait for the user to stop typing before
                 // issuing the ajax request.
                 delay: 750,
+                async: true,
+                cache: false,
+                headers: {
+                    "cache-control": "no-cache"
+                  },
                 data: function (params) {
                     var query = {
                         search: params.term,
@@ -108,7 +113,12 @@ var addBookForm = {
                 category: document.querySelector('[name="category_book"]').value,
                 comment: document.querySelector('[name="comment"]').value,
             },
-            dataType: 'json'
+            dataType: 'json',
+            async: true,
+            cache: false,
+            headers: {
+                "cache-control": "no-cache"
+              },
         })
         .done(function(data) {
             // console.log('success');
@@ -118,7 +128,7 @@ var addBookForm = {
                 if (data.success) {
                     document.querySelector('#add_book_alert').classList.remove('alert-danger');
                     document.querySelector('#add_book_alert').classList.add('alert-success');
-                    document.querySelector('#add_book_alert').textContent = data.message;
+                    document.querySelector('#add_book_alert').textContent = 'Livre ajouté';
                     document.querySelector('#add_book_alert').style.display = 'block';
                     $('#add_book_alert').fadeOut(4000);
                 } else {
