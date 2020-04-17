@@ -22,12 +22,12 @@
     {% endif %} #}
 
     <div class="form-group">
-    <label for="inputUsername">Identifiant</label>
+    <label for="inputUsername">Identifiant (*)</label>
         <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" required autofocus>
     </div>
     
     <div class="form-group">
-    <label for="inputPassword">Mot de passe</label>
+    <label for="inputPassword">Mot de passe (*)</label>
         <div id="wrapper">
             <input type="password" name="password" id="inputPassword" class="form-control" required>
             <i class="fas fa-eye" style="cursor: pointer;"></i>
@@ -37,6 +37,10 @@
     <input type="hidden" name="_csrf_token"
            value="{{ csrf_token('authenticate') }}"
     >
+    <small id="forgotPasswordHelp" class="form-text text-muted mb-2">
+    <i class="fas fa-exclamation-circle"></i> Mot de passe oublié ? Contactez directement l'administrateur du site.<br>
+    La génération automatique d'un nouveau mot de passe en cas d'oubli est une fonctionnalité qui sera développée très prochainement.
+    </small>
 
     {#
         Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.

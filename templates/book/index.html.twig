@@ -68,7 +68,7 @@
                                     </p>
                                     {% if book.comment %}
                                     <p class="font-italic comment_book">
-                                        <span class="font-weight-bold">Note de {{ user.username|upper }} :</span><br>
+                                        <span class="font-weight-bold">Note de {{ user.username|capitalize }} :</span><br>
                                         {{ book.comment|nl2br }}
                                     </p>
                                     {% endif %}

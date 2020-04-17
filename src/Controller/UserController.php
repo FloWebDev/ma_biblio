@@ -124,7 +124,7 @@ class UserController extends AbstractController
         ], [
             'note' => 'DESC',
             'created_at' => 'DESC'
-        ], 5);
+        ], 7);
         $sqliteVersion = \SQLite3::version();
         $userNumber = $userRepo->userCount();
 
@@ -143,11 +143,27 @@ class UserController extends AbstractController
     /**
      * @Route("/users", name="user_list", methods={"GET"})
      */
-    public function getUsers(UserRepository $userRepo)
+    public function getUsers(UserRepository $userRepo, Request $request)
     {
-        $users = $userRepo->findBy(['public' => true], [
-            'slug' => 'ASC'
-        ]);
+        $search = (!empty($request->query->get('s')) ? $request->query->get('s') : null);
+        if (is_null($search)) {
+            $users = $userRepo->findBy(['public' => true], [
+                'slug' => 'ASC'
+            ]);
+        } else {
+            $users = $userRepo->findUsersBySearch($search);
+            if (is_array($users) && count($users) > 0) {
+                $this->addFlash(
+                    'success',
+                    count($users) . ' résultats trouvés.'
+                );
+            } else {
+                $this->addFlash(
+                    'warning',
+                    'Aucun résultat trouvé'
+                );
+            }
+        }
 
         return $this->render('user/users.html.twig', [
             'users' => $users

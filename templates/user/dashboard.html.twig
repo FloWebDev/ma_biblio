@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Profil {{ user.username|upper }} - {{ website_title }}{% endblock %}
+{% block title %}Profil {{ user.username|capitalize }} - {{ website_title }}{% endblock %}
 
 {% block body %}
 <section class="page-section mt-5" id="dashboard">
@@ -23,7 +23,7 @@
         <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar {{ user.username }}" title="Uploader un nouvel avatar" id="avatar_profil" 
         {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}style="cursor: pointer;"{% endif %}>
         {% endif %}
-        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+        {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
         <div class="text-center mt-1 mb-3">
             {% if user.avatar %}
             <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link btn_delete">Supprimer avatar</a><br>
@@ -86,7 +86,7 @@
             {% if user.bio %}
             {{ user.bio|nl2br }}
             {% else %}
-            {{ user.username|upper }} n'a pas encore écrit sa bio.
+            {{ user.username|capitalize }} n'a pas encore écrit sa bio.
             {% endif %}
         </p>
 
@@ -104,7 +104,7 @@
                     {% for bestBook in bestBooks %}
                     <tr>
                     <th scope="row">{{ loop.index }}</th>
-                    <td>{{ bestBook.title }}{{ bestBook.author is empty ? "" : " - " ~ bestBook.author }}</td>
+                    <td>{{ bestBook.title }}{{ bestBook.author is empty ? "" : " - " ~ bestBook.author }} {% if loop.index <= 3 %}<i class="fas fa-trophy text-warning"></i>{% endif %}</td>
                     <td class="text-center">{{ bestBook.note }}</td>
                     </tr>
                     {% endfor %}

@@ -7,11 +7,18 @@
     <div class="container">
         <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Annuaire des membres</h2>
 
+<div class="alert alert-warning alert-dismissible fade show mt-3 text-center" role="alert">
+  Seuls les utilisateurs ayant un profil <strong>public</strong> sont affichés.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
 {% if users|length > 0 %}
 <ul class="list-group mt-3">
     {% for user in users %}
-        <a href="{{ path('dashboard', {slug: user.slug}) }}"><li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ user.username|upper }} {% if user.role.code == 'ROLE_ADMIN' %}<i class="far fa-star"></i>{% endif %}
+        <a href="{{ path('dashboard', {slug: user.slug}) }}"><li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+        {{ user.username|capitalize }} {% if user.role.code == 'ROLE_ADMIN' %}<i class="far fa-star"></i>{% endif %}
         <span class="badge badge-primary badge-pill" data-toggle="tooltip" data-placement="bottom" title="Nombre de livres dans sa bibliothèque">{{ user.books|length }}</span>
         </li></a>
     {% endfor %}
