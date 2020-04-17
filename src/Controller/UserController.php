@@ -154,6 +154,11 @@ class UserController extends AbstractController
      */
     public function signUp(Request $request, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Slugger $slugger, Captcha $captcha)
     {
+        // On bloque l'accès à cette page si utilisateur connecté
+        if ($this->getUser()) {
+            return $this->redirectToRoute('home_page');
+        }
+
         $newUser = new User();
         $form    = $this->createForm(UserType::class, $newUser);
 
