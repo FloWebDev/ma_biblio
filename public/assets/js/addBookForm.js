@@ -55,6 +55,8 @@ var addBookForm = {
         $('#search_book').on('select2:open', addBookForm.handleOpen);
         // $('#search_book').val(null).trigger("change");
         $('#book_info_form').on('submit', addBookForm.handleSubmit);
+
+        $('#form_add_book').on('hidden.bs.modal', addBookForm.handleHiddenModal);
     },
     handleSelect: function (e) {
         // On récupère les données du livre sélectionné
@@ -93,7 +95,6 @@ var addBookForm = {
         addBookForm.formHiddenAction();
     },
     handleOpen: function() {
-        console.log('OPEN');
         /**
         * @link https://stackoverflow.com/questions/16310588/how-to-clean-completely-select2-control
         * 
@@ -146,13 +147,13 @@ var addBookForm = {
                     document.querySelector('#add_book_alert').classList.add('alert-success');
                     document.querySelector('#add_book_alert').textContent = 'Livre ajouté';
                     document.querySelector('#add_book_alert').style.display = 'block';
-                    $('#add_book_alert').fadeOut(4000);
+                    // $('#add_book_alert').fadeOut(4000);
                 } else {
                     document.querySelector('#add_book_alert').classList.remove('alert-success');
                     document.querySelector('#add_book_alert').classList.add('alert-danger');
                     document.querySelector('#add_book_alert').textContent = data.message;
                     document.querySelector('#add_book_alert').style.display = 'block';
-                    $('#add_book_alert').fadeOut(4000);
+                    // $('#add_book_alert').fadeOut(4000);
                 }
             }
         })
@@ -169,10 +170,15 @@ var addBookForm = {
         document.querySelector('[name="category_book"]').selectedIndex = 0;
         document.querySelector('[name="comment"]').value = '';
         document.querySelector('#book_info_form').style.display = 'none';
+    },
+    handleHiddenModal: function() {
+        if (document.querySelector('#add_first_book')) {
+            // On recharge la page uniquement si aucun livre n'était précédemment enregistré
+            window.location.reload();
+        }
     }
 };
 
-// document.addEventListener('DOMContentLoaded', addBookForm.init);
 document.querySelectorAll('[data-target="#form_add_book"]').forEach(btn => {
     btn.addEventListener('click', addBookForm.init);
 });

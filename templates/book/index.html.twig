@@ -92,7 +92,7 @@
                     {% else %}
                         <p>Aucun livre pour le moment.
                         {% if app.user and app.user.id == user.id %}
-                        <br><a href="#" class="card-link" data-toggle="modal" data-target="#form_add_book">Ajoutez votre premier livre.</a>
+                        <br><a href="#" id="add_first_book" class="card-link" data-toggle="modal" data-target="#form_add_book">Ajoutez votre premier livre.</a>
                         {% endif %}
                         </p>
                     {% endif %}

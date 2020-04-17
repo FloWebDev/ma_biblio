@@ -29,11 +29,12 @@ class UserController extends AbstractController
      */
     public function dashboard(User $user, UserRepository $userRepo, BookRepository $bookRepo, Request $request)
     {
+        // Récupération des informations de l'utilisateur ("null" si user non connecté)
+        $currentUser = $this->getUser();
+
         if (!$user->getPublic()) {
             // Vérification si utilisateur connecté
             $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-            $currentUser = $this->getUser();
 
             if ($user->getId() != $currentUser->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN') {
                 $this->addFlash(
@@ -126,18 +127,31 @@ class UserController extends AbstractController
             'note' => 'DESC',
             'created_at' => 'DESC'
         ], 7);
-        $sqliteVersion = \SQLite3::version();
-        $userNumber = $userRepo->userCount();
+
+        // Informations pour compte Administrateur seulement
+        $sqliteVersion = '--';
+        $userNumber = null;
+        $countBook = null;
+        if ($currentUser && $currentUser->getRole()->getCode() == 'ROLE_ADMIN' 
+        && $currentUser->getId() == $user->getId()) {
+            // On exécute les méthodes uniquement si utilisateur connecté est admin
+            // et présent sur sa propre page de profil (dashboard)
+            $sqliteVersion = \SQLite3::version();
+            $userNumber = $userRepo->userCount();
+            $countBook = $bookRepo->getBookCount();
+        }
+
 
         return $this->render('user/dashboard.html.twig', [
             'user' => $user,
-            'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . '-' . $user->getId(),
+            'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . 'H1717' . $user->getId(),
             'books' => $books,
             'bestBooks' => $bestBooks,
             'average_note' => (!empty($bookMoyenne) ? round($bookMoyenne) : 0),
             'avatar_form' => $avatarForm->createView(),
             'sqlite_version' => $sqliteVersion,
-            'userNb' => $userNumber
+            'userNb' => $userNumber,
+            'countBook' => $countBook
         ]);
     }
 
@@ -169,7 +183,7 @@ class UserController extends AbstractController
         $users = $paginator->paginate(
             $users,
             $request->query->getInt('page', 1),
-            15
+            12
         );
 
         return $this->render('user/users.html.twig', [

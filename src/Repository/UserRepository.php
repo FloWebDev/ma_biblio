@@ -119,6 +119,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * Permet de supprimer un utilisateur
      * et tous ses livres associés
      * 
+     * @param int $id - ID de l'utilisateur à supprimer
+     * 
      * @return array
      */
     public function allDelete(int $id): bool

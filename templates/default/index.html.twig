@@ -44,9 +44,11 @@
                         </div>
                 </div>
                 <!-- About Section Button-->
+                {% if not app.user %}
                 <div class="text-center mt-4">
-                    <a class="btn btn-xl btn-outline-light" href="{{ path('sign_up') }}"><i class="fas fa-sign-in-alt"></i> Inscription</a>
+                    <a class="btn btn-xl bg-secondary btn-outline-light" href="{{ path('sign_up') }}"><i class="fas fa-sign-in-alt"></i> Inscription</a>
                 </div>
+                {% endif %}
             </div>
         </section>
 

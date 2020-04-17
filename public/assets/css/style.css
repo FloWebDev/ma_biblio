@@ -4,6 +4,10 @@
     box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.75);
 }
 
+.page-section {
+    padding-bottom: 3rem !important;
+}
+
 #avatar_profil {
     display: block;
     margin: 0 auto;
@@ -65,9 +69,16 @@
 }
 
 #container_add_book_alert_message {
-    height: 55px;
+    height: 31px;
 }
 
 #add_book_alert {
     display: none;
+}
+
+.avatar_profil {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.75);
 }

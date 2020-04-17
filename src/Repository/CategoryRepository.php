@@ -19,6 +19,43 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
+    /**
+     * Permet de supprimer une catégorie APRES
+     * avoir associé tous ses livres à la catégorie "master"
+     * 
+     * @param int $id - ID de la catégorié à supprimer
+     * 
+     * @return array
+     */
+    public function categoryDelete(int $id): bool
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        // On met à jour tous les livres associés à la catégorie à supprimer
+        // pour qu'ils soient rattachés à la catégorie "master" (de référence)
+        $sql = "UPDATE book
+            SET category_id = (SELECT id FROM category WHERE reference = 'master')
+            WHERE category_id = :id";
+
+        $stmt = $conn->prepare($sql);
+        $res = $stmt->execute([
+            'id' => $id,
+        ]);
+
+        if ($res) {
+            // Puis on supprime la catégorie demandée
+            $sql = "DELETE FROM category WHERE id = :id;";
+
+            $stmt = $conn->prepare($sql);
+            $res = $stmt->execute([
+                'id' => $id,
+            ]);
+        }
+
+        return $res;
+    }
+
     // /**
     //  * @return Category[] Returns an array of Category objects
     //  */

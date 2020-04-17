@@ -20,6 +20,25 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
+     * Permet d'avoir le nombre total de livres enregistrés
+     * 
+     * @return int
+     */
+    public function getBookCount(): ?int
+    {
+        $res = false;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT COUNT(id) AS nb FROM book";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([]);
+        $res = $stmt->fetch();
+
+        return $res['nb'];
+    }
+
+    /**
      * Permet d'avoir le compte des books par catégorie
      * pour un utilisateur
      * 
@@ -61,7 +80,7 @@ class BookRepository extends ServiceEntityRepository
             FROM category
             LEFT JOIN book ON category.id = book.category_id AND book.user_id = :id
             GROUP BY category.name
-            ORDER BY category.order_z ASC;";
+            ORDER BY category.order_z ASC, category.name ASC;";
 
         $stmt = $conn->prepare($sql);
         $stmt->execute(['id' => $id]);

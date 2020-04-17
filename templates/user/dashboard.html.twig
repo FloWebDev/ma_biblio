@@ -24,7 +24,7 @@
         {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}style="cursor: pointer;"{% endif %}>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
-        <div class="text-center mt-1 mb-3">
+        <div class="text-center mt-1 my-3">
             {% if user.avatar %}
             <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link btn_delete">Supprimer avatar</a><br>
             {% endif %}
@@ -32,6 +32,8 @@
             {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
             <br>
             <a href="{{ path('admin_users') }}" class="card-link">Gestion utilisateurs</a>
+            <br>
+            <a href="{{ path('category_index') }}" class="card-link">Gestion catégories</a>
             {% endif %}
         </div>
         {% endif %}
@@ -57,7 +59,7 @@
         <div class="card-body col-lg-12">
         <h5 class="card-title">Présentation</h5>
         <p class="card-text">
-            Pseudo : {{ user.username }}<br>
+            Pseudo : {{ user.username|capitalize }}<br>
             {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
             Email: {{ user.email }}<br>
             {% endif %}
@@ -65,7 +67,6 @@
             Nombre de livres : <b>{{ user.books|length }}</b><br>
             Date d'inscription : {{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}<br>
             Date dernière connexion : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y à H\\hi") }}<br>
-            Réf : <i>{{ ref }}</i><br>
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             Profil : {% if user.public %}<span class="badge badge-success">Public</span>{% else %}<span class="badge badge-warning">Privé</span>{% endif %}<br>
             {% endif %}
@@ -74,6 +75,7 @@
                 Version SQLite : {{ sqlite_version.versionString }} - {{ sqlite_version.versionNumber }}<br>
                 {% endif %}
                 Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
+                Nombre livres (total) : {{ countBook }}<br>
             {% endif %}
             
         </p>
@@ -112,7 +114,7 @@
             </table>
         {% endif %}
         {# Fin #}
-        <i class="fas fa-book-open"></i> <i class="fas fa-dog"></i> <i class="fas fa-cat"></i> <i class="fas fa-glasses"></i>
+        <i class="fas fa-book-open"></i> <i class="fas fa-dog"></i> <i class="fas fa-cat"></i> <i class="fas fa-glasses"></i> - <i>{{ ref }}</i>
         </div>
     </div>
 </div>
