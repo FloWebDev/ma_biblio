@@ -19,7 +19,7 @@ class AdminController extends AbstractController
     public function getUsers(UserRepository $userRepository, Request $request, PaginatorInterface $paginator)
     {
         $users = $userRepository->findBy([], [
-            'connected_at' => 'DESC'
+            'slug' => 'ASC'
         ]);
 
         $users = $paginator->paginate(
