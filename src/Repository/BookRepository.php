@@ -151,6 +151,25 @@ class BookRepository extends ServiceEntityRepository
         return $res;
     }
 
+    /**
+     * Permet de vérifier si un file est encore présent sur un book
+     *
+     * @param $string $file
+     * @return bool
+     */
+    public function checkFile(string $file): bool {
+        $res = true;
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT count(id) AS c FROM book WHERE file = :file;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['file' => $file]);
+        $res = $stmt->fetch();
+
+        return $res['c'] > 0 ? true : false;
+    }
+
     // /**
     //  * @return Book[] Returns an array of Book objects
     //  */

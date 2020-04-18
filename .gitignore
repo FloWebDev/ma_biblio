@@ -21,3 +21,6 @@
 
 ###< Ne pas commiter les avatars ###
 /public/assets/media/avatar/*.*
+
+###< Ne pas commiter les images de livres ###
+/public/assets/media/books/book/*.*

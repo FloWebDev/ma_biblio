@@ -4,3 +4,4 @@ twig:
     globals:
         website_title: '%env(WEBSITE_TITLE)%'
         avatar_repo: '/assets/media/avatar'
+        book_repo: '/assets/media/books/book'

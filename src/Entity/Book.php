@@ -63,6 +63,11 @@ class Book
     private $image;
 
     /**
+     * @ORM\Column(type="string", length=32, nullable=true)
+     */
+    private $file;
+
+    /**
      * @ORM\Column(type="string", length=256, nullable=true)
      */
     private $litteral_category;
@@ -211,6 +216,18 @@ class Book
     public function setImage(?string $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getFile(): ?string
+    {
+        return $this->file;
+    }
+
+    public function setFile(?string $file): self
+    {
+        $this->file = $file;
 
         return $this;
     }

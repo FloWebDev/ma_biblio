@@ -132,8 +132,10 @@ class UserController extends AbstractController
         $sqliteVersion = '--';
         $userNumber = null;
         $countBook = null;
-        if ($currentUser && $currentUser->getRole()->getCode() == 'ROLE_ADMIN' 
-        && $currentUser->getId() == $user->getId()) {
+        if (
+            $currentUser && $currentUser->getRole()->getCode() == 'ROLE_ADMIN'
+            && $currentUser->getId() == $user->getId()
+        ) {
             // On exécute les méthodes uniquement si utilisateur connecté est admin
             // et présent sur sa propre page de profil (dashboard)
             $sqliteVersion = \SQLite3::version();
@@ -386,7 +388,7 @@ class UserController extends AbstractController
             $fileToDelete = $this->getParameter('avatar_directory') . '/' . $user->getAvatar();
             if (file_exists($fileToDelete)) {
                 // Suppression du fichier avatar
-                unlink($fileToDelete);
+                @unlink($fileToDelete);
             }
 
             // Suppresion de l'avatar en BDD
@@ -414,7 +416,7 @@ class UserController extends AbstractController
     /**
      * @Route("/user/{id}/delete", name="user_delete", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function delete($id, User $user, UserRepository $userRepository)
+    public function delete($id, User $user, UserRepository $userRepository, BookRepository $bookRepo)
     {
         // Vérification si utilisateur connecté
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -433,12 +435,37 @@ class UserController extends AbstractController
             return $this->redirectToRoute('home_page');
         }
 
+        $books = $user->getBooks();
+        $booksToDelete = array();
+
+        if (!$books->isEmpty()) {
+            foreach ($books as $book) {
+                $booksToDelete[] = $book->getFile();
+            }
+            unset($book);
+        }
+
         $result = $userRepository->allDelete(intval($user->getId()));
+
+        if (count($booksToDelete) > 0) {
+            foreach ($booksToDelete as $currentFile) {
+                $checkFile = $bookRepo->checkFile($currentFile);
+
+                // Si plus aucun livre n'a le fichier image associé,
+                // on supprime physiquement le fichier concerné
+                if (!$checkFile) {
+                    $fileToDelete = $this->getParameter('book_directory') . '/' . $currentFile;
+                    // dd($fileToDelete);
+                    @unlink($fileToDelete);
+                }
+            }
+            unset($currentFile);
+        }
 
         if ($result) {
             $this->addFlash(
                 'success',
-                'Suppression données et comptes utilisateurs.'
+                'Suppression données et compte utilisateur.'
             );
         } else {
             $this->addFlash(

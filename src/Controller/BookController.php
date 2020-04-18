@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Util\Image;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Repository\BookRepository;
@@ -194,7 +195,7 @@ class BookController extends AbstractController
      * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
      * @link https://github.com/KnpLabs/KnpPaginatorBundle
      */
-    public function bookAdd(Request $request, EntityManagerInterface $em, BookRepository $bookRepository, CategoryRepository $categoryRepo)
+    public function bookAdd(Request $request, EntityManagerInterface $em, BookRepository $bookRepository, CategoryRepository $categoryRepo, Image $imgService)
     {
         $request->isXmlHttpRequest();
 
@@ -225,8 +226,14 @@ class BookController extends AbstractController
             $litteral_category = (!empty($request->request->get('litteral_category')) ? $request->request->get('litteral_category') : null);
             $isbn_13 = (!empty($request->request->get('isbn_13')) ? $request->request->get('isbn_13') : null);
             $isbn_10 = (!empty($request->request->get('isbn_10')) ? $request->request->get('isbn_10') : null);
-            $image = (!empty($request->request->get('image')) ? $request->request->get('image') : null);
             $comment = (!empty($request->request->get('comment')) ? $request->request->get('comment') : null);
+            // Traitement particulier pour l'image (utilisation du service Image)
+            $image = (!empty($request->request->get('image')) ? $request->request->get('image') : null);
+            if (is_null($image)) {
+                $file = null;
+            } else {
+                $file = $imgService->createFileImage($image, $reference);
+            }
             // Traitement particulier pour la note
             $note = (!empty($request->request->get('note')) ? $request->request->get('note') : null);
             if (is_null($note)) {
@@ -258,6 +265,7 @@ class BookController extends AbstractController
             $newBook->setIsbn13($isbn_13);
             $newBook->setIsbn10($isbn_10);
             $newBook->setImage($image);
+            $newBook->setFile($file);
             $newBook->setUser($currentUser);
             $newBook->setCategory($category);
             $newBook->setNote($note);
@@ -351,7 +359,7 @@ class BookController extends AbstractController
     /**
      * @Route("/book/{id}/delete", name="book_delete", methods={"GET"}, requirements={"id"="\d+"})
      */
-    public function delete($id, Book $book, EntityManagerInterface $em)
+    public function delete($id, Book $book, EntityManagerInterface $em, BookRepository $bookRepo)
     {
         // Vérification si utilisateur connecté
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -367,9 +375,26 @@ class BookController extends AbstractController
             return $this->redirectToRoute('home_page');
         }
 
+        $currentFile = $book->getFile();
+        $checkFile = $bookRepo->checkFile($currentFile);
+
         // Suppression du livre
         $em->remove($book);
         $em->flush();
+
+        // Après suppression du book, on vérifie s'il faut supprimer l'image associée
+        // Dans le cas où plus aucun book n'a l'image correspondante
+        if ($currentFile) {
+            $checkFile = $bookRepo->checkFile($currentFile);
+
+            // Si plus aucun livre n'a le fichier image associé,
+            // on supprime physiquement le fichier concerné
+            if (!$checkFile) {
+                $fileToDelete = $this->getParameter('book_directory') . '/' . $currentFile;
+                // dd($fileToDelete);
+                @unlink($fileToDelete);
+            }
+        }
 
         $this->addFlash(
             'success',

@@ -7,6 +7,7 @@ parameters:
     website_title: '%env(WEBSITE_TITLE)%'
     webmaster_email: '%env(WEBMASTER_EMAIL)%'
     avatar_directory: '%kernel.project_dir%/public/assets/media/avatar'
+    book_directory: '%kernel.project_dir%/public/assets/media/books/book'
 
 services:
     # default configuration for services in *this* file
