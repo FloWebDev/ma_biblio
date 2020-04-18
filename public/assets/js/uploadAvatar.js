@@ -1,6 +1,6 @@
 (function() {
     // Ecouteur au clic sur l'avatar
-    document.querySelector('#avatar_profil').addEventListener('click', function() {
+    document.querySelector('#avatar_profil_update_link').addEventListener('click', function() {
         // Action clic sur input file du formulaire
         document.querySelector('#form_avatar').click();
         // Ecouteur sur le changement de valeur de l'input

@@ -83,7 +83,7 @@ class UserController extends AbstractController
                 if (!empty($currentAvatar) && $avatar != $currentAvatar) {
                     $fileToDelete = $this->getParameter('avatar_directory') . '/' . $currentAvatar;
                     if (file_exists($fileToDelete)) {
-                        unlink($fileToDelete);
+                        @unlink($fileToDelete);
                     }
                 }
 
@@ -373,6 +373,10 @@ class UserController extends AbstractController
      */
     public function avatarDelete($id, User $user, EntityManagerInterface $em)
     {
+        // Vérification si utilisateur connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Récupération des informations de l'utilisateur connecté
         $currentUser = $this->getUser();
 
         if ($currentUser->getId() != $user->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN') {

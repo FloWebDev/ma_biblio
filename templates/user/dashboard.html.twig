@@ -17,24 +17,17 @@
         {{ form_row(avatar_form.avatar) }}
     {{ form_end(avatar_form) }}
         {% if user.avatar %}
-        <img class="card-img-top" src="{{ asset(avatar_repo ~ '/' ~ user.avatar) }}" alt="avatar {{ user.username }}" title="Uploader un nouvel avatar" id="avatar_profil" 
-        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}style="cursor: pointer;"{% endif %}>
+            <img class="card-img-top" src="{{ asset(avatar_repo ~ '/' ~ user.avatar) }}" alt="avatar-{{ user.username }}" title="Avatar de {{ user.username|capitalize }}" id="avatar_profil">
         {% else %}
-        <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar {{ user.username }}" title="Uploader un nouvel avatar" id="avatar_profil" 
-        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}style="cursor: pointer;"{% endif %}>
+            <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar-{{ user.username }}" title="Avatar de {{ user.username|capitalize }}" id="avatar_profil">
         {% endif %}
         {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
         <div class="text-center mt-1 my-3">
+            <span class="card-link text-primary" id="avatar_profil_update_link">Modifier avatar</span><br>
             {% if user.avatar %}
-            <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link btn_delete">Supprimer avatar</a><br>
+                <a href="{{ path('user_avatar_delete', {id: user.id}) }}" class="card-link btn_delete">Supprimer avatar</a><br>
             {% endif %}
-            <a href="{{ path('user_update', {id: user.id}) }}" class="card-link">Modifier profil</a>
-            {% if is_granted('ROLE_ADMIN') and user.role.code == 'ROLE_ADMIN' %}
-            <br>
-            <a href="{{ path('admin_users') }}" class="card-link">Gestion utilisateurs</a>
-            <br>
-            <a href="{{ path('category_index') }}" class="card-link">Gestion catégories</a>
-            {% endif %}
+                <a href="{{ path('user_update', {id: user.id}) }}" class="card-link">Modifier profil</a>
         </div>
         {% endif %}
         {% if books %}
@@ -50,7 +43,7 @@
                 </li>
             {% endfor %}
             </ul>
-            <p class="text-center h5 mt-4 text-info" style="color: #1abc9c !important;"><i class="fas fa-external-link-square-alt"></i> Partagez</p>
+            <p class="text-center h5 mt-4 text-primary"><i class="fas fa-external-link-square-alt"></i> Partagez</p>
             <div class="text-center mt-3">
                 <i class="btn btn-outline-light bg-secondary btn-social mx-1 fab fa-fw fa-facebook-square share_facebook social_network" data-sitename="{{ website_title }}" data-url="{{ app.request.uri }}"></i>
                 <i class="btn btn-outline-light bg-info btn-social mx-1 fab fa-fw fa-twitter-square share_twitter social_network" data-sitename="{{ website_title }}" data-url="{{ app.request.uri }}"></i>
@@ -79,11 +72,17 @@
             {% if is_granted('ROLE_ADMIN') and app.user.id == user.id %}
                 <div class="alert alert-dark px-2 py-1" role="alert">
                     <strong>Administration</strong><br>
+                    <p class="p-0 mt-1 mb-2">
+                    <a href="{{ path('admin_users') }}" class="card-link">Gestion utilisateurs</a><br>
+                    <a href="{{ path('category_index') }}" class="card-link">Gestion catégories</a>
+                    </p>
+                    <p class="p-0 mb-2">
                     {% if sqlite_version %}
                     Version SQLite : {{ sqlite_version.versionString }} - {{ sqlite_version.versionNumber }}<br>
                     {% endif %}
                     Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
-                    Nombre livres (total) : {{ countBook }}<br>
+                    Nombre livres (total) : {{ countBook }}
+                    </p>
                 </div>
             {% endif %}
             
@@ -134,7 +133,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
     <script src="{{ asset('assets/js/uploadAvatar.js') }}"></script>
     {% endif %}
 {% endblock %}
