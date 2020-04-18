@@ -11,10 +11,13 @@ var addBookForm = {
             width: '100%',
             language: {
                 searching: function () {
-                    return "Recherche en cours... Un peu de patience ;-)";
+                    return 'Recherche en cours... Un peu de patience ;-)';
                 },
                 noResults: function () {
-                    return "Aucun résultat";
+                    return 'Aucun résultat';
+                },
+                removeAllItems: function() {
+                    return 'Supprimer la sélection';
                 }
             },
             ajax: {

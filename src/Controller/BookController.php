@@ -127,6 +127,7 @@ class BookController extends AbstractController
                 if ($fr == 'true') {
                     $url .= '&langRestrict=fr';
                 };
+                // dump($url);
 
                 // Requête JSON
                 $ch = curl_init();

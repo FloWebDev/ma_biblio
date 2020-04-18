@@ -27,7 +27,7 @@
                                     </div>
                                 </div>
 
-                                <form>
+                                <div>
                                     <div class="form-group">
                                         <label for="search_book">Recherche (livre, auteur)</label>
                                         <p>
@@ -44,8 +44,8 @@
                                         <label class="form-check-label" for="search_book_fr">Recherches francophones</label>
                                     </div>
                                     {# <button type="submit" class="btn btn-primary">Submit</button> #}
-                                </form>
-                                <button type="button" class="btn btn-primary my-3 add_book_modal_close" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Fermer</button>
+                                </div>
+                                <a type="button" class="btn btn-primary my-3 add_book_modal_close" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Fermer</a>
                                 <a type="button" class="btn btn-warning text-light my-3" href="{{ path('book_list', {slug: user.slug}) }}"><i class="fas fa-sync"></i> Fermer et actualiser</a>
 
 
@@ -56,7 +56,7 @@
                                             <img src="{{ asset('assets/media/default/book.png') }}" class="img-fluid mx-auto" alt="book_image" id="book_image_form">
                                         </div>
                                         <div class="col-md-8">
-                                            <button type="submit" class="btn btn-info mb-3"><i class="fas fa-plus-circle"></i> Ajouter</button>
+                                            <button type="submit" class="btn btn-info my-3 mt-md-0"><i class="fas fa-plus-circle"></i> Ajouter</button>
                                             <div class="form-group row">
                                                 <label for="note" class="col-lg-3 col-form-label" data-toggle="tooltip" data-placement="right" title="La note sera visible dans votre bibliothèque">Note</label>
                                                 <div class="col-lg-9">
