@@ -240,7 +240,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
 
     public function setEmail(?string $email): self
     {
-        $this->email = $email;
+        $this->email = mb_strtolower($email);
 
         return $this;
     }
