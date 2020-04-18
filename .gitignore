@@ -24,3 +24,5 @@
 
 ###< Ne pas commiter les images de livres ###
 /public/assets/media/books/book/*.*
+
+!.gitignore
