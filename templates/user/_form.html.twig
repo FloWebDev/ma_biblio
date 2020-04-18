@@ -8,6 +8,9 @@
     {% if app.user %}
     {{ form_row(form.avatar) }}
     {{ form_row(form.bio) }}
+    <small id="bbcodeHelp" class="form-text text-muted mb-3">
+        BBCode autorisé : <u>[b]gras[/b]</u> - <i>[i]italique[/i]</i> - <u>[u]souligné[/u]</u> - <span style="color: red;">[color=red]rouge[/color=red]</span>
+    </small>
     {{ form_row(form.public) }}
     {% if (app.user and app.user.role.code == 'ROLE_ADMIN' and app.user.id != user.id) %}
     {{ form_row(form.role) }}

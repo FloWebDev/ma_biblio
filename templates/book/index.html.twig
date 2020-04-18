@@ -70,9 +70,9 @@
                                     {% endif %}
                                     </p>
                                     {% if book.comment %}
-                                    <p class="font-italic comment_book">
+                                    <p class="comment_book">
                                         <span class="font-weight-bold">Note de {{ user.username|capitalize }} :</span><br>
-                                        {{ book.comment|nl2br }}
+                                        {{ book.comment|bbcode|raw }}
                                     </p>
                                     {% endif %}
                                     {% if book.isbn13 or book.isbn10 %}
@@ -157,6 +157,9 @@
                                                 <div class="form-group">
                                                     <label for="comment_update_{{ book.id }}">Commentaire</label>
                                                     <textarea class="form-control" id="comment_update_{{ book.id }}" name="comment_update" rows="3">{{ book.comment }}</textarea>
+                                                    <small id="bbcodeHelp" class="form-text text-muted mb-3">
+                                                        BBCode autorisé : <u>[b]gras[/b]</u> - <i>[i]italique[/i]</i> - <u>[u]souligné[/u]</u> - <span style="color: red;">[color=red]rouge[/color=red]</span>
+                                                    </small>
                                                 </div>
                                                 <button type="submit" class="btn btn-info">Modifier</button>
                                                 <button class="btn btn-primary" href="#" data-dismiss="modal">Fermer</button>

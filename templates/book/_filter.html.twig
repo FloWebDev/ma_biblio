@@ -25,4 +25,5 @@
 
   <button type="submit" class="btn btn-primary my-1" title="Filtrer"><i class="fas fa-check"></i></button>
   <a class="btn btn-warning text-light ml-2" href="{{ path('book_list', {slug: user.slug}) }}" role="button" title="Supprimer les filtres"><i class="fas fa-sync"></i></a>
+  <a class="btn btn-secondary text-light ml-2" href="{{ path('dashboard', {slug: user.slug}) }}" role="button" title="Profil {{ user.username|capitalize }}"><i class="fas fa-user-circle"></i></a>
 </form>

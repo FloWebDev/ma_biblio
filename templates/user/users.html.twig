@@ -25,10 +25,12 @@
             <img class="card-img-top img-fluid mx-auto avatar_profil" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar-{{ user.username|lower }}" style="width: 150px;">
             {% endif %}
             <h5 class="card-title text-center mt-2">{{ user.username|capitalize }} {% if user.role.code == 'ROLE_ADMIN' %}<i class="fas fa-star text-warning"></i>{% endif %}</h5>
-            <div class="card-body">
+            <div class="card-body mb-1 p-2">
               Nombre de livres : <span class="badge badge-secondary">{{ user.books|length }}</span><br>
               Inscription : {{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}<br>
-              Connexion : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y") }}<br>
+              Connexion : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y") }}
+            </div>
+            <div class="card-body pt-0 pb-3">
               <a href="{{ path('dashboard', {slug: user.slug}) }}" class="card-link">Profil</a>
               <a href="{{ path('book_list', {slug: user.slug}) }}" class="card-link">Bibliothèque</a>
             </div>
