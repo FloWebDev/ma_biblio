@@ -112,9 +112,10 @@ var addBookForm = {
         }
     },
     handleSubmit: function(e) {
+        // console.log('submit');
         // On stoppe la soumission du formulaire
         e.preventDefault();
-        // console.log('submit');
+
         $.ajax({
             url: urlAddBook,
             method: "POST",
@@ -150,13 +151,13 @@ var addBookForm = {
                     document.querySelector('#add_book_alert').classList.add('alert-success');
                     document.querySelector('#add_book_alert').textContent = 'Livre ajouté';
                     document.querySelector('#add_book_alert').style.display = 'block';
-                    // $('#add_book_alert').fadeOut(4000);
+                    $('#add_book_alert').fadeOut(4000);
                 } else {
                     document.querySelector('#add_book_alert').classList.remove('alert-success');
                     document.querySelector('#add_book_alert').classList.add('alert-danger');
                     document.querySelector('#add_book_alert').textContent = data.message;
                     document.querySelector('#add_book_alert').style.display = 'block';
-                    // $('#add_book_alert').fadeOut(4000);
+                    $('#add_book_alert').fadeOut(4000);
                 }
             }
         })
@@ -175,13 +176,18 @@ var addBookForm = {
         document.querySelector('#book_info_form').style.display = 'none';
     },
     handleHiddenModal: function() {
-        if (document.querySelector('#add_first_book')) {
+        // if (document.querySelector('#add_first_book')) {
             // On recharge la page uniquement si aucun livre n'était précédemment enregistré
-            window.location.reload();
-        }
+            // window.location.reload();
+        // }
+        window.location.reload();
     }
 };
 
-document.querySelectorAll('[data-target="#form_add_book"]').forEach(btn => {
-    btn.addEventListener('click', addBookForm.init);
-});
+document.addEventListener('DOMContentLoaded', addBookForm.init);
+
+// Important de le faire sur le DOMContentLoaded, sinon risque de multiplication 
+// des écouteurs dans init si on clique plusieurs fois sur le bouton sans aucun rechargement de page
+// document.querySelectorAll('[data-target="#form_add_book"]').forEach(btn => {
+//     btn.addEventListener('click', addBookForm.init);
+// });
