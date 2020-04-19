@@ -69,17 +69,15 @@
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             Profil : {% if user.public %}<span class="badge badge-success">Public</span>{% else %}<span class="badge badge-warning">Privé</span>{% endif %}
             {% endif %}
+            {# Tableau de bord visible uniquement pour administrateur sur sa page profil #}
             {% if is_granted('ROLE_ADMIN') and app.user.id == user.id %}
                 <div class="alert alert-dark px-2 py-1" role="alert">
                     <strong>Administration</strong><br>
                     <p class="p-0 mt-1 mb-2">
-                    <a href="{{ path('admin_users') }}" class="card-link">Gestion utilisateurs</a><br>
-                    <a href="{{ path('category_index') }}" class="card-link">Gestion catégories</a>
+                    <a href="{{ path('admin_users') }}" class="card-link text-secondary font-weight-bold">Gestion utilisateurs</a><br>
+                    <a href="{{ path('category_index') }}" class="card-link text-secondary font-weight-bold">Gestion catégories</a>
                     </p>
                     <p class="p-0 mb-2">
-                    {% if sqlite_version %}
-                    Version SQLite : {{ sqlite_version.versionString }} - {{ sqlite_version.versionNumber }}<br>
-                    {% endif %}
                     Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
                     Nombre livres (total) : {{ countBook }}
                     </p>

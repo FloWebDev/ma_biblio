@@ -79,7 +79,7 @@ class BookRepository extends ServiceEntityRepository
         $sql = "SELECT COUNT(book.id) AS nb, category.name AS category_name, category.css AS css
             FROM category
             LEFT JOIN book ON category.id = book.category_id AND book.user_id = :id
-            GROUP BY category.name
+            GROUP BY category.name, category.css, category.order_z
             ORDER BY category.order_z ASC, category.name ASC;";
 
         $stmt = $conn->prepare($sql);
@@ -157,17 +157,22 @@ class BookRepository extends ServiceEntityRepository
      * @param $string $file
      * @return bool
      */
-    public function checkFile(string $file): bool {
+    public function checkFile(string $file = null): bool {
         $res = true;
-        $conn = $this->getEntityManager()->getConnection();
 
-        $sql = "SELECT count(id) AS c FROM book WHERE file = :file;";
+        if (!is_null($file)) {
+            $conn = $this->getEntityManager()->getConnection();
 
-        $stmt = $conn->prepare($sql);
-        $stmt->execute(['file' => $file]);
-        $res = $stmt->fetch();
+            $sql = "SELECT count(id) AS c FROM book WHERE file = :file;";
+    
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(['file' => $file]);
+            $res = $stmt->fetch();
 
-        return $res['c'] > 0 ? true : false;
+            $res = $res['c'] > 0 ? true : false;
+        }
+
+        return $res;
     }
 
     // /**

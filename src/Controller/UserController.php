@@ -136,9 +136,8 @@ class UserController extends AbstractController
             $currentUser && $currentUser->getRole()->getCode() == 'ROLE_ADMIN'
             && $currentUser->getId() == $user->getId()
         ) {
-            // On exécute les méthodes uniquement si utilisateur connecté est admin
+            // On exécute les méthodes uniquement si l'utilisateur connecté est admin
             // et présent sur sa propre page de profil (dashboard)
-            $sqliteVersion = \SQLite3::version();
             $userNumber = $userRepo->userCount();
             $countBook = $bookRepo->getBookCount();
         }
