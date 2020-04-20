@@ -34,7 +34,7 @@ class AppExtension extends AbstractExtension
             '~\[i\](.*?)\[/i\]~s',
             '~\[u\](.*?)\[/u\]~s',
             // '~\[pre\](.*?)\[/pre\]~s',
-            '~\[color=red\](.*?)\[/color=red\]~s'
+            '~\[red\](.*?)\[/red\]~s'
         ];
 
         $replace = array(
