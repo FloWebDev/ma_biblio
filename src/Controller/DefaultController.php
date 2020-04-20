@@ -83,11 +83,11 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/cgu", name="terms_of_service", methods={"GET"})
+     * @Route("/faq", name="faq", methods={"GET"})
      */
-    public function cgu()
+    public function faq()
     {
-        return $this->render('default/terms-of-service.html.twig', [
+        return $this->render('default/faq.html.twig', [
         ]);
     }
 

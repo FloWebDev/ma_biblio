@@ -18,6 +18,9 @@ var addBookForm = {
                 },
                 removeAllItems: function() {
                     return 'Supprimer la sélection';
+                },
+                errorLoading: function() {
+                    return 'Les résultats ne peuvent pas être chargés';
                 }
             },
             ajax: {
@@ -57,7 +60,9 @@ var addBookForm = {
         $('#search_book').on('select2:unselect', addBookForm.handleUnselect);
         $('#search_book').on('select2:open', addBookForm.handleOpen);
         // $('#search_book').val(null).trigger("change");
+        $('#manual_add_book_action').on('click', addBookForm.handleClickManualAddBook)
         $('#book_info_form').on('submit', addBookForm.handleSubmit);
+        $('#manual_add_book_form').on('submit', addBookForm.handleSubmit);
 
         $('#form_add_book').on('hidden.bs.modal', addBookForm.handleHiddenModal);
     },
@@ -65,7 +70,13 @@ var addBookForm = {
         // On récupère les données du livre sélectionné
         let data = e.params.data;
 
-        // On affiche le formulaire d'information du livre
+        // On réinitaliser les données des deux formulaires avant
+        // d'afficher les nouvelles données
+        addBookForm.formHiddenAction();
+
+        // On affiche le formulaire d'information du livre et on cache
+        // l'éventuel formulaire d'ajout manuel
+        document.querySelector('#manual_add_book_form').style.display = 'none';
         document.querySelector('#book_info_form').style.display = 'block';
         // et on réinitialise l'image de couverture
         document.querySelector('#book_image_form').src = addBookForm.initImage;
@@ -116,10 +127,11 @@ var addBookForm = {
         // On stoppe la soumission du formulaire
         e.preventDefault();
 
-        $.ajax({
-            url: urlAddBook,
-            method: "POST",
-            data: {
+        // Récupération des données du formulaire dans un objet JS
+        let data = {};
+
+        if (e.target.id == 'book_info_form') {
+            data = {
                 reference: document.querySelector('[name="reference"]').value,
                 title: document.querySelector('[name="title"]').value,
                 subtitle: document.querySelector('[name="subtitle"]').value,
@@ -133,7 +145,31 @@ var addBookForm = {
                 note: document.querySelector('[name="note"]').value,
                 category: document.querySelector('[name="category_book"]').value,
                 comment: document.querySelector('[name="comment"]').value,
-            },
+            };
+        } else if (e.target.id == 'manual_add_book_form') {
+            data = {
+                reference: null,
+                title: document.querySelector('[name="manual_form_title"]').value,
+                subtitle: null,
+                author: document.querySelector('input[name="manual_form_author"]').value,
+                published_date: document.querySelector('[name="manual_form_published_date"]').value,
+                description: document.querySelector('textarea[name="manual_form_description"]').value,
+                litteral_category: document.querySelector('[name="manual_form_litteral_category"]').value,
+                isbn_13: null,
+                isbn_10: null,
+                image: null,
+                note: document.querySelector('[name="manual_form_note"]').value,
+                category: document.querySelector('[name="manual_form_category_book"]').value,
+                comment: document.querySelector('[name="manual_form_comment"]').value,
+            };
+        } else {
+            return;
+        }
+
+        $.ajax({
+            url: urlAddBook,
+            method: "POST",
+            data: data,
             dataType: 'json',
             async: true,
             cache: false,
@@ -170,10 +206,28 @@ var addBookForm = {
         });
     },
     formHiddenAction: function() {
+        // Formulaire ajout autocomplété
         document.querySelector('[name="note"]').selectedIndex = 0;
         document.querySelector('[name="category_book"]').selectedIndex = 0;
         document.querySelector('[name="comment"]').value = '';
         document.querySelector('#book_info_form').style.display = 'none';
+
+        // Formulaire ajout manuel
+        document.querySelector('[name="manual_form_note"]').selectedIndex = 0;
+        document.querySelector('[name="manual_form_category_book"]').selectedIndex = 0;
+        document.querySelector('[name="manual_form_comment"]').value = '';
+        document.querySelector('[name="manual_form_title"]').value = '';
+        document.querySelector('[name="manual_form_author"]').value = '';
+        document.querySelector('[name="manual_form_published_date"]').value = '';
+        document.querySelector('[name="manual_form_description"]').value = '';
+        document.querySelector('[name="manual_form_litteral_category"]').value = '';
+        document.querySelector('#manual_add_book_form').style.display = 'none';
+    },
+    handleClickManualAddBook: function() {
+        // On affiche le formulaire d'ajout manuel on cache
+        // l'éventuel formulaire d'ajout autocomplété
+        document.querySelector('#book_info_form').style.display = 'none';
+        document.querySelector('#manual_add_book_form').style.display = 'block';
     },
     handleHiddenModal: function() {
         // if (document.querySelector('#add_first_book')) {

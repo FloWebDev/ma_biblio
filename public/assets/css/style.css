@@ -76,7 +76,8 @@
     font-size: 120%;
 }
 
-#book_info_form {
+#book_info_form,
+#manual_add_book_form {
     display: none;
 }
 

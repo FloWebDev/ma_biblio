@@ -207,6 +207,7 @@ class BookController extends AbstractController
         // dd($request->request);
 
         if (!empty($request->request->get('reference'))) {
+            // Formulaire autocomplété
             $reference = $request->request->get('reference');
 
             if ($bookRepository->checkConstraint(intval($currentUser->getId()), $reference)) {
@@ -279,10 +280,70 @@ class BookController extends AbstractController
                 'message' => 'Enregistrement réussi'
             ];
         } else {
-            $response = [
-                'success' => false,
-                'message' => 'Echec de l\'enregistrement'
-            ];
+            // Formulaire d'ajout manuel
+            if (!empty(trim($request->request->get('title'))) && strlen(trim($request->request->get('title'))) <= 250) {
+                $reference = 'custom-' . uniqid();
+                $title = trim($request->request->get('title'));
+                $subtitle = null;
+                $author = ((!empty($request->request->get('author')) && strlen(trim($request->request->get('author'))) <= 120) ? $request->request->get('author') : null);
+                $published_date = ((!empty($request->request->get('published_date')) && strlen(trim($request->request->get('published_date'))) <= 30) ? $request->request->get('published_date') : null);
+                $description = ((!empty($request->request->get('description')) && strlen(trim($request->request->get('description'))) <= 3000) ? $request->request->get('description') : null);
+                $litteral_category = ((!empty($request->request->get('litteral_category')) && strlen(trim($request->request->get('litteral_category'))) <= 120) ? $request->request->get('litteral_category') : null);
+                $isbn_13 = null;
+                $isbn_10 = null;
+                $comment = (!empty($request->request->get('comment')) ? $request->request->get('comment') : null);
+                $image = null;
+                $file = null;
+                // Traitement particulier pour la note
+                $note = (!empty($request->request->get('note')) ? $request->request->get('note') : null);
+                if (is_null($note)) {
+                    $note = null;
+                } else {
+                    $note = intval($request->request->get('note'));
+                    // On vérifie que la note est incluse dans la liste des notes possibles
+                    // Sinon, on sette à "null" sa valeur
+                    if (!in_array($note, $this->notes())) {
+                        $note = null;
+                    }
+                }
+                // Traitement particulier pour la catégorie
+                $category_id = (!empty($request->request->get('category')) ? intval($request->request->get('category')) : null);
+                if (!is_null($category_id)) {
+                    $category = $categoryRepo->find($category_id);
+                } else {
+                    $category = null;
+                }
+
+                $newBook = new Book();
+                $newBook->setReference($reference);
+                $newBook->setTitle($title);
+                $newBook->setSubtitle($subtitle);
+                $newBook->setAuthor($author);
+                $newBook->setPublishedDate($published_date);
+                $newBook->setDescription($description);
+                $newBook->setLitteralCategory($litteral_category);
+                $newBook->setIsbn13($isbn_13);
+                $newBook->setIsbn10($isbn_10);
+                $newBook->setImage($image);
+                $newBook->setFile($file);
+                $newBook->setUser($currentUser);
+                $newBook->setCategory($category);
+                $newBook->setNote($note);
+                $newBook->setComment($comment);
+
+                $em->persist($newBook);
+                $em->flush();
+
+                $response = [
+                    'success' => true,
+                    'message' => 'Enregistrement réussi'
+                ];
+            } else {
+                $response = [
+                    'success' => false,
+                    'message' => 'Titre manquant ou longueur non acceptée'
+                ];
+            }
         }
 
         return $this->json($response);
