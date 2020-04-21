@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification article{% endblock %}
+
+{% block body %}
+<section class="page-section mt-5" id="dashboard">
+    <div class="container">
+            <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Modification article</h2>
+
+        {{ include('post/_form.html.twig', {'button_label': 'Update'}) }}
+
+        <a href="{{ path('post_index') }}">Retour à la liste</a>
+    </div>
+</section>
+
+{% endblock %}

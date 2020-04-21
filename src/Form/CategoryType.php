@@ -22,13 +22,13 @@ class CategoryType extends AbstractType
                 'label' => 'Intitulé (*)',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Intitulé obligatoire'
+                        'message' => 'Intitulé obligatoire.'
                     ]),
                     new Length([
                         'min' => 3,
                         'max' => 50,
-                        'minMessage' => 'Intitulé trop court. Minimum {{ limit }} caractères',
-                        'maxMessage' => 'Intitulé trop long. Maximum {{ limit }} caractères',
+                        'minMessage' => 'Intitulé trop court. Minimum {{ limit }} caractères.',
+                        'maxMessage' => 'Intitulé trop long. Maximum {{ limit }} caractères.',
                     ])
                 ]
             ])
@@ -38,8 +38,8 @@ class CategoryType extends AbstractType
                     new Length([
                         'min' => 2,
                         'max' => 25,
-                        'minMessage' => 'Class trop courte. Minimum {{ limit }} caractères',
-                        'maxMessage' => 'Class trop longue. Maximum {{ limit }} caractères',
+                        'minMessage' => 'Class trop courte. Minimum {{ limit }} caractères.',
+                        'maxMessage' => 'Class trop longue. Maximum {{ limit }} caractères.',
                     ])
                 ]
             ])
@@ -47,13 +47,13 @@ class CategoryType extends AbstractType
                 'label' => 'Ordre d\'affichage (min 1, max 50) (*)',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Ordre obligatoire'
+                        'message' => 'Ordre obligatoire.'
                     ]),
                     new Range([
                         'min' => 1,
                         'max' => 50,
-                        'minMessage' => "L'ordre doit au moins être de {{ limit }}",
-                        'maxMessage' => "L'ordre ne doit pas être supérieur à {{ limit }}"
+                        'minMessage' => "L'ordre doit au moins être de {{ limit }}.",
+                        'maxMessage' => "L'ordre ne doit pas être supérieur à {{ limit }}."
                     ])
                 ]
             ]);

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des articles{% endblock %}
+
+{% block body %}
+<section class="page-section mt-5" id="dashboard">
+    <div class="container">
+        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Liste des articles</h2>
+
+        <div class="row mt-3">
+            {{ knp_pagination_render(posts) }}
+        </div>
+
+    <p class="ml-3"><a href="{{ path('post_new') }}">Rédiger un article</a></p>
+
+    <table class="table m-3">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Topic</th>
+                <th>Titre</th>
+                <th>Ordre</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for post in posts %}
+            <tr>
+                <td>{{ post.id }}</td>
+                <td>{% if post.topic %}{{ post.topic }}{% else %}N.C.{% endif %}</td>
+                <td>{% if post.title %}{{ post.title }}{% else %}N.C.{% endif %}</td>
+                <td>{{ post.orderZ }}</td>
+                <td>
+                    <a href="{{ path('post_edit', {'id': post.id}) }}" class="card-link"><i class="fas fa-edit"></i> Editer</a><br>
+                    <a href="{{ path('post_delete', {'id': post.id}) }}" class="card-link btn_delete"><i class="fas fa-trash-alt"></i> Supprimer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="ml-3"><a href="{{ path('post_new') }}">Rédiger un article</a></p>
+
+    <div class="row">
+        {{ knp_pagination_render(posts) }}
+    </div>
+
+    </div>
+</section>
+{% endblock %}

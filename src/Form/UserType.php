@@ -48,7 +48,8 @@ class UserType extends AbstractType
                     'invalid_message' => 'La confirmation du mot de passe est incorrecte',
                     'required' => true,
                     'first_options'  => [
-                        'label' => 'Mot de passe (entre 8 et 18 caractères, chiffres et lettres uniquement (*)',
+                        'label' => 'Mot de passe (*)',
+                        'help' => 'Entre 8 et 18 caractères, chiffres et lettres uniquement.',
                         'attr' => [
                             'placeholder' => 'Création du mot de passe'
                         ]
@@ -94,7 +95,8 @@ class UserType extends AbstractType
                     'invalid_message' => 'La confirmation du mot de passe est incorrecte',
                     'required' => true,
                     'first_options'  => [
-                        'label' => 'Modification du mot de passe (entre 8 et 18 caractères, chiffres et lettres uniquement (*)',
+                        'label' => 'Modification du mot de passe (*)',
+                        'help' => 'Entre 8 et 18 caractères, chiffres et lettres uniquement.',
                         'attr' => [
                             'placeholder' => 'Nouveau mot de passe'
                         ]
@@ -187,7 +189,8 @@ class UserType extends AbstractType
                 ]
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Adresse email (*)',
+                'label' => 'Email (*)',
+                'help' => 'Votre adresse email ne sera jamais revendue, utilisée à des fins commerciales ou rendue publique sur le site.',
                 'attr' => [
                     'placeholder' => 'exemple@gmail.com'
                 ],

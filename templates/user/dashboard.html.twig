@@ -61,7 +61,7 @@
             Pseudo : {{ user.username|capitalize }}<br>
             {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
             Email: {{ user.email }} <i class="fas fa-exclamation" data-toggle="tooltip" data-placement="right" title="Votre adresse email n'est visible que par vous. Aucun tiers n'y a accès."></i><br>
-            <small id="emailDashboardHelp" class="form-text text-muted">Votre adresse email n'est pas visible par les tiers.</small>
+            <small id="emailDashboardHelp" class="form-text text-muted">Votre email n'est pas visible par les membres.</small>
             {% endif %}
             Note moyenne attribuée : <span class="badge badge-pill badge-dark">{{ average_note }} / 20</span><br>
             Nombre de livres : <b>{{ user.books|length }}</b><br>
@@ -76,10 +76,11 @@
                     <strong>Administration</strong><br>
                     <p class="p-0 mt-1 mb-2">
                     <a href="{{ path('admin_users') }}" class="card-link text-secondary font-weight-bold">Gestion utilisateurs</a><br>
-                    <a href="{{ path('category_index') }}" class="card-link text-secondary font-weight-bold">Gestion catégories</a>
+                    <a href="{{ path('category_index') }}" class="card-link text-secondary font-weight-bold">Gestion catégories</a><br>
+                    <a href="{{ path('post_index') }}" class="card-link text-secondary font-weight-bold">Gestion articles</a>
                     </p>
                     <p class="p-0 mb-2">
-                    Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }})<br>
+                    Nombre utilisateurs : T ({{ userNb.total }}) - A ({{ userNb.actif }}) - I ({{ userNb.inactif }}) - Pu ({{ userNb.public }}) - Pr ({{ userNb.prive }})<br>
                     Nombre livres (total) : {{ countBook }}
                     </p>
                 </div>

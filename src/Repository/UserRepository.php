@@ -96,20 +96,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             UNION ALL
             SELECT count(id) FROM app_user WHERE active
             UNION ALL
-            SELECT count(id) FROM app_user WHERE not active";
+            SELECT count(id) FROM app_user WHERE not active
+            UNION ALL
+            SELECT count(id) FROM app_user WHERE public
+            UNION ALL
+            SELECT count(id) FROM app_user WHERE not public";
 
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $res = $stmt->fetchAll();
 
-        if (is_array($res) && count($res) == 3) {
+        if (is_array($res) && count($res) == 5) {
             $res = [
-                'total' => $res[0]['nb'],
-                'actif' => $res[1]['nb'],
+                'total'   => $res[0]['nb'],
+                'actif'   => $res[1]['nb'],
                 'inactif' => $res[2]['nb'],
+                'public'  => $res[3]['nb'],
+                'prive'   => $res[4]['nb']
             ];
         } else {
-            $res = false;
+            $res = array();
         }
 
         return $res;

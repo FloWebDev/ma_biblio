@@ -129,7 +129,6 @@ class UserController extends AbstractController
         ], 7);
 
         // Informations pour compte Administrateur seulement
-        $sqliteVersion = '--';
         $userNumber = null;
         $countBook = null;
         if (
@@ -150,7 +149,6 @@ class UserController extends AbstractController
             'bestBooks' => $bestBooks,
             'average_note' => (!empty($bookMoyenne) ? round($bookMoyenne) : 0),
             'avatar_form' => $avatarForm->createView(),
-            'sqlite_version' => $sqliteVersion,
             'userNb' => $userNumber,
             'countBook' => $countBook
         ]);
