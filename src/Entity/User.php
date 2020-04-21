@@ -105,6 +105,9 @@ class User implements UserInterface, \Serializable, EquatableInterface
 
     public function __construct()
     {
+        // may not be needed, see section on salt below
+        // $this->salt = md5(uniqid('', true));
+
         // Valeurs par défaut
         $this->created_at = new \DateTime();
         $this->public = true;
@@ -117,6 +120,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
         return $this->username;
     }
 
+    /** @see \Serializable::serialize() */
     public function serialize()
     {
         return serialize(array(
@@ -128,9 +132,10 @@ class User implements UserInterface, \Serializable, EquatableInterface
         ));
     }
 
+    /** @see \Serializable::unserialize() */
     public function unserialize($serialized)
     {
-        list (
+        list(
             $this->id,
             $this->username,
             $this->password,
@@ -148,19 +153,17 @@ class User implements UserInterface, \Serializable, EquatableInterface
      *
      * @return bool
      */
-    public function isEqualTo(UserInterface $user): bool
+    public function isEqualTo(UserInterface $user)
     {
-        $res = true;
-
         if (!$user instanceof self) {
-            $res = false;
+            return false;
         }
 
-        if ($this->getId() !== $user->getId()) {
-            $res = false;
+        if ($this->id !== $user->getId()) {
+            return false;
         }
 
-        return $res;
+        return true;
     }
 
     public function getId(): ?int
