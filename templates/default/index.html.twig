@@ -33,15 +33,15 @@
                 <!-- About Section Content-->
                 <div class="row">
                     <div class="col-lg-4 ml-auto">
-                        <p class="lead">Créez gratuitement votre bibliothèque virtuelle en y ajoutant tous vos livres.</p>
-                        <p class="lead">Aucune application à télécharger. Appication 100% responsive (s'adapte à toutes les tailles d'écran).</p>
-                        <p class="lead">Créez vos listes de lectures (lus, en cours, whish-list, abandonnés) et donner une note à chacun de vos livres.</p>
+                        {% for post in posts1 %}
+                            <p class="lead">{{ post.body|bbcode|raw }}</p>
+                        {% endfor %}
                     </div>
                     <div class="col-lg-4 mr-auto">
-                        <p class="lead">Créez votre profil de lecteur et votre bibliothèque, et partagez-les sur les réseaux sociaux.</p>
-                        <p class="lead">Accéder au profil des autres lecteurs pour consulter leurs bibliothèques, et vous donner ainsi de nouvelles envies.</p>
-                        <p class="lead">Vous restez libre de rendre privés ou publics votre profil et votre bibliothèque à tout moment.</p>
-                        </div>
+                        {% for post in posts2 %}
+                            <p class="lead">{{ post.body|bbcode|raw }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
                 <!-- About Section Button-->
                 {% if not app.user %}

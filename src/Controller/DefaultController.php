@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\PostRepository;
 use App\Util\Book;
 use App\Util\Captcha;
 use Symfony\Component\Mime\Address;
@@ -26,7 +27,7 @@ class DefaultController extends AbstractController
      * 
      * @Route("/", name="home_page", methods={"GET", "POST"})
      */
-    public function homePage(Request $request, MailerInterface $mailer, Captcha $captcha)
+    public function homePage(Request $request, PostRepository $postRepository, MailerInterface $mailer, Captcha $captcha)
     {
         $contactForm = $this->createContactForm();
         $contactForm->handleRequest($request);
@@ -65,29 +66,62 @@ class DefaultController extends AbstractController
             $starBook[] = $preStarBook[$i];
         }
 
+        // Récupération des articles associés à la page d'accueil
+        $posts1 = $postRepository->findBy([
+            'topic' => 'index1'
+        ], [
+            'order_z' => 'ASC',
+            'title' => 'ASC'
+        ]);
+        $posts2 = $postRepository->findBy([
+            'topic' => 'index2'
+        ], [
+            'order_z' => 'ASC',
+            'title' => 'ASC'
+        ]);
+
         return $this->render('default/index.html.twig', [
             'star_book'      => $starBook,
             'captcha' => $captcha->createCaptcha(),
-            'contact_form' => $contactForm->createView()
+            'contact_form' => $contactForm->createView(),
+            'posts1' => $posts1,
+            'posts2' => $posts2
         ]);
     }
 
     /**
      * @Route("/mentions-legales", name="legal_notice", methods={"GET"})
      */
-    public function legalNotice()
+    public function legalNotice(PostRepository $postRepository)
     {
-        return $this->render('default/legal-notice.html.twig', [
+        // Récupération des articles associés aux mentions légales
+        $posts = $postRepository->findBy([
+            'topic' => 'mentions_legales'
+        ], [
+            'order_z' => 'ASC',
+            'title' => 'ASC'
+        ]);
 
+        return $this->render('default/legal-notice.html.twig', [
+            'posts' => $posts
         ]);
     }
 
     /**
      * @Route("/faq", name="faq", methods={"GET"})
      */
-    public function faq()
+    public function faq(PostRepository $postRepository)
     {
+        // Récupération des articles associés aux FAQ
+        $posts = $postRepository->findBy([
+            'topic' => 'faq'
+        ], [
+            'order_z' => 'ASC',
+            'title' => 'ASC'
+        ]);
+
         return $this->render('default/faq.html.twig', [
+            'posts' => $posts
         ]);
     }
 

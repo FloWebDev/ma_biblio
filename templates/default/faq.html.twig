@@ -8,8 +8,14 @@
         <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">FAQ</h2>
 
         <div class="mt-5">
-            <h3 class="col-12 mx-0 p-0 text-uppercase">Comment peut-on... ?</h3>
-            <p class="col-12 mx-0 p-0">En faisant comme ça...</p>
+            {% for post in posts %}
+                {% if post.title %}
+                    <h3 class="col-12 mx-0 p-0 text-uppercase">{{ post.title|bbcode|raw }}</h3>
+                {% endif %}
+                {% if post.body %}
+                    <p class="col-12 mx-0 p-0">{{ post.body|bbcode|raw }}</p>
+                {% endif %}
+            {% endfor %}
         </div>
 
     </div>
