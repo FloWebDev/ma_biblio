@@ -46,17 +46,17 @@
                                     {# <button type="submit" class="btn btn-primary">Submit</button> #}
                                 </div>
                                 <a type="button" class="btn btn-primary my-3 add_book_modal_close" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Fermer</a>
-                                <div type="button" class="btn btn-warning text-light my-3" id="manual_add_book_action"><i class="fas fa-plus-circle"></i> Ajout manuel</div>
+                                <div type="button" class="btn btn-secondary text-light my-3" id="manual_add_book_action" data-toggle="tooltip" data-placement="bottom" title="Aucun résultat trouvé ? Ajoutez manuellement votre livre."><i class="fas fa-align-left"></i> Ajout manuel</div>
 
 
-                                {# Formulaire auto-complété #}
+                                {# FORMULAIRE AUTO-COMPLETE #}
                                 <form class="mt-1" action="" method="POST" id="book_info_form">
                                     <div class="form-group row">
                                         <div class="col-md-4">
                                             <img src="{{ asset('assets/media/default/book.png') }}" class="img-fluid mx-auto" alt="book_image" id="book_image_form">
                                         </div>
                                         <div class="col-md-8">
-                                            <button type="submit" class="btn btn-info my-3 mt-md-0"><i class="fas fa-plus-circle"></i> Ajouter</button>
+                                            <button type="submit" class="btn btn-info my-3 mt-md-0"><i class="fas fa-plus-circle"></i> Valider</button>
                                             <div class="form-group row">
                                                 <label for="note" class="col-lg-3 col-form-label" data-toggle="tooltip" data-placement="right" title="La note sera visible dans votre bibliothèque">Note</label>
                                                 <div class="col-lg-9">
@@ -130,18 +130,18 @@
                                     <input type="hidden" id="isbn_10" name="isbn_10">
                                     <input type="hidden" id="image" name="image">
 
-                                    <button type="submit" class="btn btn-info mb-3"><i class="fas fa-plus-circle"></i> Ajouter</button>
+                                    <button type="submit" class="btn btn-info mb-3"><i class="fas fa-plus-circle"></i> Valider</button>
                                 </form>
-                                {# Fin formulaire auto-complété #}
+                                {# FIN fFORMULAIRE AUTO-COMPLETE #}
 
-                                {# Formulaire ajout manuel #}
+                                {# FORMULAIRE AJOUT MANUEL #}
                                 <form class="mt-1" action="" method="POST" id="manual_add_book_form">
                                     <div class="form-group row">
                                         <div class="col-md-4">
                                             <img src="{{ asset('assets/media/default/book.png') }}" class="img-fluid mx-auto" alt="book_image" id="manual_add_book_image_form">
                                         </div>
                                         <div class="col-md-8">
-                                            <button type="submit" class="btn btn-info my-3 mt-md-0"><i class="fas fa-plus-circle"></i> Ajouter</button>
+                                            <button type="submit" class="btn btn-info my-3 mt-md-0"><i class="fas fa-plus-circle"></i> Valider</button>
                                             <div class="form-group row">
                                                 <label for="manual_form_note" class="col-lg-3 col-form-label" data-toggle="tooltip" data-placement="right" title="La note sera visible dans votre bibliothèque">Note</label>
                                                 <div class="col-lg-9">
@@ -204,9 +204,9 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-info mb-3"><i class="fas fa-plus-circle"></i> Ajouter</button>
+                                    <button type="submit" class="btn btn-info mb-3"><i class="fas fa-plus-circle"></i> Valider</button>
                                 </form>
-                                {# Fin formulaire ajout manuel #}
+                                {# FIN FORMULAIRE AJOUT MANUEL #}
 
 
                             </div>

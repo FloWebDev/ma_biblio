@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Bibliothèque virtuelle {{ user.username|upper }} - {{ website_title }}{% endblock %}
+{% block title %}Bibliothèque virtuelle {{ user.username|capitalize }} - {{ website_title }}{% endblock %}
 
 {% block stylesheets %}
     {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}

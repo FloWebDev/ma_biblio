@@ -41,6 +41,10 @@
     display: none;
 }
 
+#emailDashboardHelp {
+    color: red !important;
+}
+
 #user_bio {
     border: 1px solid #0b6674;
     padding: 0.5rem;

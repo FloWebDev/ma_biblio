@@ -3,7 +3,9 @@
     {# {% if not (app.user and app.user.role.code == 'ROLE_ADMIN' and app.user.id != user.id) %} #}
     {{ form_row(form.username) }}
     {# {% endif %} #}
-    {{ form_row(form.email) }}
+    {{ form_label(form.email) }}
+    <small id="emailHelp" class="form-text text-muted m-0">Votre adresse email ne sera jamais revendue, utilisée à des fins commerciales ou rendue publique sur le site.</small>
+    {{ form_widget(form.email) }}
     {{ form_row(form.password) }}
     {% if app.user %}
     {{ form_row(form.avatar) }}
