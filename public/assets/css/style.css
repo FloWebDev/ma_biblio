@@ -64,6 +64,7 @@
     cursor: pointer;
     bottom: 2rem;
     right: 2rem;
+    z-index: 7;
 }
 
 #add_book span.badge {

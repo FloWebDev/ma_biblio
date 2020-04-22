@@ -72,6 +72,16 @@ class BookController extends AbstractController
                 'note',
                 'ASC'
             ];
+        } elseif ($order == 'CREATEDESC') {
+            $order = [
+                'created_at',
+                'DESC'
+            ];
+        } elseif ($order == 'CREATEASC') {
+            $order = [
+                'created_at',
+                'ASC'
+            ];
         } else {
             // Dans tous les autres cas, affichage par ordre alphabétique des titres
             $order = [
@@ -404,9 +414,16 @@ class BookController extends AbstractController
                 'Modifications effectuées avec succès.'
             );
 
-            return $this->redirectToRoute('book_list', [
-                'slug' => $currentUser->getSlug()
-            ]);
+            // Si possible, on essaie de rediriger l'utilisateur vers la page précédente afin de conserver ses paramètres de filtres
+            $host = (!empty($request->server->get('HTTP_HOST')) ?  $request->server->get('HTTP_HOST') : null);
+            $referer = (!empty($request->server->get('HTTP_REFERER')) ? $request->server->get('HTTP_REFERER') : null);
+            if (!is_null($host) && !is_null($referer) && strpos($referer, $host)) {
+                return $this->redirect($referer);
+            } else {
+                return $this->redirectToRoute('book_list', [
+                    'slug' => $currentUser->getSlug()
+                ]);
+            }
         }
 
         $this->addFlash(

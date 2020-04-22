@@ -110,7 +110,7 @@ class BookRepository extends ServiceEntityRepository
         }
 
         if (is_array($order) && count($order) == 2
-        && in_array($order[0], ['title', 'note']) 
+        && in_array($order[0], ['title', 'note', 'created_at']) 
         && in_array($order[1], ['ASC', 'DESC'])) {
             $books->orderBy('book.'.$order[0], $order[1]);
         } else {

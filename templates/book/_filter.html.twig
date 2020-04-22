@@ -21,6 +21,10 @@
       {% if app.request.get('order') == 'NOTEDESC' %}selected{% endif %}>Les mieux notés</option>
       <option value="NOTEASC"
       {% if app.request.get('order') == 'NOTEASC' %}selected{% endif %}>Les moins notés</option>
+      <option value="CREATEDESC"
+      {% if app.request.get('order') == 'CREATEDESC' %}selected{% endif %}>Derniers ajouts</option>
+      <option value="CREATEASC"
+      {% if app.request.get('order') == 'CREATEASC' %}selected{% endif %}>Premiers ajouts</option>
   </select>
 
   <button type="submit" class="btn btn-primary my-1" title="Filtrer"><i class="fas fa-check"></i></button>
