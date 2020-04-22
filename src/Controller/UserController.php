@@ -34,7 +34,7 @@ class UserController extends AbstractController
 
         if (!$user->getPublic()) {
             // Vérification si utilisateur connecté
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
             if ($user->getId() != $currentUser->getId() && $currentUser->getRole()->getCode() != 'ROLE_ADMIN') {
                 $this->addFlash(
@@ -252,7 +252,7 @@ class UserController extends AbstractController
     public function update($id, User $user, Request $request, UserPasswordEncoderInterface $encoder, Slugger $slugger)
     {
         // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         $currentUser = $this->getUser();
 
@@ -371,7 +371,7 @@ class UserController extends AbstractController
     public function avatarDelete($id, User $user, EntityManagerInterface $em)
     {
         // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         // Récupération des informations de l'utilisateur connecté
         $currentUser = $this->getUser();
@@ -420,7 +420,7 @@ class UserController extends AbstractController
     public function delete($id, User $user, UserRepository $userRepository, BookRepository $bookRepo)
     {
         // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         $currentUser = $this->getUser();
 

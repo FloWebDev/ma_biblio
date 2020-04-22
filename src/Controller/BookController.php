@@ -27,7 +27,7 @@ class BookController extends AbstractController
     {
         if (!$user->getPublic()) {
             // Vérification si utilisateur connecté
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
             $currentUser = $this->getUser();
 
@@ -124,7 +124,7 @@ class BookController extends AbstractController
         $request->isXmlHttpRequest();
 
         // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         $response = false;
 
@@ -210,7 +210,7 @@ class BookController extends AbstractController
         $request->isXmlHttpRequest();
 
         // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
         // Récupération de l'utilisateur connecté
         $currentUser = $this->getUser();
 
@@ -365,7 +365,7 @@ class BookController extends AbstractController
     public function update($id, Book $book, Request $request, CategoryRepository $categoryRepo)
     {
         // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
         // Récupération de l'utilisateur connecté
         $currentUser = $this->getUser();
 
@@ -440,7 +440,7 @@ class BookController extends AbstractController
     public function delete($id, Book $book, EntityManagerInterface $em, BookRepository $bookRepo)
     {
         // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
         // Récupération de l'utilisateur connecté
         $currentUser = $this->getUser();
 

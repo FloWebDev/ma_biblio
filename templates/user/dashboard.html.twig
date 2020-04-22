@@ -21,7 +21,7 @@
         {% else %}
             <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar-{{ user.username }}" title="Avatar de {{ user.username|capitalize }}" id="avatar_profil">
         {% endif %}
-        {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+        {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
         <div class="text-center mt-1 my-3">
             <span class="card-link text-primary" id="avatar_profil_update_link">Modifier avatar</span><br>
             {% if user.avatar %}
@@ -59,7 +59,7 @@
         <h5 class="card-title">Présentation</h5>
         <p class="card-text">
             Pseudo : {{ user.username|capitalize }}<br>
-            {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+            {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
             Email: {{ user.email }} <i class="fas fa-exclamation" data-toggle="tooltip" data-placement="right" title="Votre adresse email n'est visible que par vous. Aucun tiers n'y a accès."></i><br>
             <small id="emailDashboardHelp" class="form-text text-muted">Votre email n'est pas visible par les membres.</small>
             {% endif %}
@@ -67,7 +67,7 @@
             Nombre de livres : <b>{{ user.books|length }}</b><br>
             Date d'inscription : {{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}<br>
             Date dernière connexion : {{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y") }}<br>
-            {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+            {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
             Profil : {% if user.public %}<span class="badge badge-success">Public</span>{% else %}<span class="badge badge-warning">Privé</span>{% endif %}
             {% endif %}
             {# Tableau de bord visible uniquement pour administrateur sur sa page profil #}
@@ -133,7 +133,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
     <script src="{{ asset('assets/js/uploadAvatar.js') }}"></script>
     {% endif %}
 {% endblock %}

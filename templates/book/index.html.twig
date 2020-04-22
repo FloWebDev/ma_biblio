@@ -3,7 +3,7 @@
 {% block title %}Bibliothèque virtuelle {{ user.username|capitalize }} - {{ website_title }}{% endblock %}
 
 {% block stylesheets %}
-    {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
     <link rel="stylesheet" href="{{ asset('assets/select2/select2.min.css') }}">
     {% endif %}
 {% endblock %}
@@ -175,7 +175,7 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
                     <div class="h1" id="add_book" data-toggle="modal" data-target="#form_add_book">
                         <span class="badge badge-pill badge-info"><i class="fas fa-plus-circle"></i>
                         <span class="d-none d-lg-inline"> Ajouter un livre</span>
@@ -189,7 +189,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == user.id %}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
         <script>
             var urlAjaxBookApi = "{{ path('book_search')|e('js') }}";
             var urlAddBook = "{{ path('book_add')|e('js') }}";
