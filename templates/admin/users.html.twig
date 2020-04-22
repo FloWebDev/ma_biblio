@@ -20,6 +20,7 @@
                 <th scope="col">Rôle</th>
                 <th scope="col">Dernière connexion</th>
                 <th scope="col">Date d'inscription</th>
+                <th scope="col">Public</th>
                 <th scope="col">Actif</th>
                 <th scope="col">Actions</th>
                 </tr>
@@ -32,6 +33,13 @@
                 <td>{{ user.role.name|capitalize }}</td>
                 <td>{{ user.connectedAt is empty ? "" : user.connectedAt|date("d/m/Y à H\\hi") }}</td>
                 <td>{{ user.createdAt is empty ? "" : user.createdAt|date("d/m/Y") }}</td>
+                <td>
+                    {% if user.public %}
+                        <input type="checkbox" checked class="mx-auto" disabled>
+                    {% else %}
+                        <input type="checkbox" class="mx-auto" disabled>
+                    {% endif %}
+                </td>
                 <td>
                     {% if user.active %}
                         <input type="checkbox" checked class="mx-auto" disabled>
