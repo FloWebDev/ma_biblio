@@ -3,9 +3,9 @@
 {% block title %}Mise à jour profil - {{ website_title }}{% endblock %}
 
 {% block body %}
-<section class="page-section mt-5" id="update">
+<section class="page-section mt-5" id="user_update">
     <div class="container">
-        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Mise à jour {{ user.username }}</h2>
+        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0 ml-3">Mise à jour {{ user.username }}</h2>
 
 {% include 'user/_form.html.twig' with { 'form': form } %}
 

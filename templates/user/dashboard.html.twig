@@ -4,12 +4,12 @@
 
 {% block body %}
 <section class="page-section mt-5" id="dashboard">
-    <div class="container">
-        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Profil {{ user.username|upper }}</h2>
+    <div class="container p-0">
+        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0 ml-3">Profil {{ user.username|upper }}</h2>
 
 {% if user %}
-<div class="row col-12">
-    <div class="card mt-3 col-12 col-lg-3">
+<div class="row col-12 m-0 p-0">
+    <div class="card mt-3 col-12 col-lg-3 p-0 p-lg-1">
         {{ form_start(avatar_form, {'attr': {'novalidate': 'novalidate', 'id': 'avatar_form'}}) }}
         <div class="form-error">
             {{ form_errors(avatar_form.avatar) }}
@@ -54,7 +54,7 @@
     </div>
 
 
-    <div class="card mt-3 col-12 col-lg-9">
+    <div class="card mt-3 col-12 col-lg-9 p-0 p-lg-1">
         <div class="card-body col-lg-12">
         <h5 class="card-title">Présentation</h5>
         <p class="card-text">
@@ -122,7 +122,7 @@
             </table>
         {% endif %}
         {# Fin #}
-        <i class="fas fa-book-open"></i> <i class="fas fa-dog"></i> <i class="fas fa-cat"></i> <i class="fas fa-glasses"></i> - <i>{{ ref }}</i>
+        <i class="fas fa-book-open"></i> <i class="fas fa-dog"></i> <i class="fas fa-cat"></i> <i class="fas fa-glasses"></i>
         </div>
     </div>
 </div>

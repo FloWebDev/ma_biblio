@@ -144,7 +144,7 @@ class UserController extends AbstractController
 
         return $this->render('user/dashboard.html.twig', [
             'user' => $user,
-            'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . 'H1717' . $user->getId(),
+            // 'ref' => md5($user->getCreatedAt()->format('Y-m-d H:i:s')) . 'H1717' . $user->getId(),
             'books' => $books,
             'bestBooks' => $bestBooks,
             'average_note' => (!empty($bookMoyenne) ? round($bookMoyenne) : 0),

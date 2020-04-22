@@ -3,9 +3,9 @@
 {% block title %}Annuaire des membres - {{ website_title }}{% endblock %}
 
 {% block body %}
-<section class="page-section mt-5" id="update">
-    <div class="container">
-        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0">Annuaire des membres</h2>
+<section class="page-section mt-5" id="users">
+    <div class="container p-0">
+        <h2 class="page-section-heading text-left text-uppercase text-secondary mb-0 ml-3">Annuaire des membres</h2>
 
 {% if users|length > 0 %}
     <div class="row mt-3">
@@ -16,9 +16,9 @@
     <i class="fas fa-exclamation-circle"></i> Seuls les membres ayant un profil <strong>public</strong> sont affichés.
     </small>
 
-    <div class="row col-12">
+    <div class="row col-12 m-0 p-0">
           {% for user in users %}
-          <div class="card col-12 col-md-6 col-lg-4 col-xl-3 pt-2 my-1">
+          <div class="card col-12 col-md-6 col-lg-4 col-xl-3 px-2 pt-2 my-1">
             {% if user.avatar %}
             <img class="card-img-top img-fluid mx-auto avatar_profil" src="{{ asset(avatar_repo ~ '/' ~ user.avatar) }}" alt="avatar-{{ user.username|lower }}" style="width: 150px;">
             {% else %}
