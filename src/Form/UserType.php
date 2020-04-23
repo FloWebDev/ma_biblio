@@ -73,7 +73,7 @@ class UserType extends AbstractType
                     ]
                 ])
                     ->add('captcha', IntegerType::class, [
-                        'label' => 'Renseignez les 4 chiiffres présents dans l\'image (*)',
+                        'label' => 'Renseignez les 4 chiffres présents dans l\'image (*)',
                         'mapped' => false,
                         'constraints' => [
                             new NotBlank([

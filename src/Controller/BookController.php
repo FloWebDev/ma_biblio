@@ -133,7 +133,7 @@ class BookController extends AbstractController
             $fr = $_POST['fr'];
 
             if (strlen($search) > 0) {
-                $url = 'https://www.googleapis.com/books/v1/volumes?q=' . urlencode($search) . '&maxResults=10';
+                $url = 'https://www.googleapis.com/books/v1/volumes?q=' . urlencode($search) . '&country=FR&maxResults=10';
 
                 if ($fr == 'true') {
                     $url .= '&langRestrict=fr';
