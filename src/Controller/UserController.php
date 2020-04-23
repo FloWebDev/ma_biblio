@@ -233,7 +233,7 @@ class UserController extends AbstractController
 
             $this->addFlash(
                 'success',
-                'Compte créé avec succès.Vous pouvez vous connecter dès maintenant.'
+                'Compte créé avec succès. Vous pouvez vous connecter dès maintenant.'
             );
 
             return $this->redirectToRoute('login');
