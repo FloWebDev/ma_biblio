@@ -61,6 +61,7 @@
                                                 <label for="note" class="col-lg-3 col-form-label" data-toggle="tooltip" data-placement="right" title="La note sera visible dans votre bibliothèque">Note</label>
                                                 <div class="col-lg-9">
                                                     <select class="form-control" id="note" name="note">
+                                                        <option value="">Pas de note</option>
                                                         {% for note in notes %}
                                                         <option value="{{ note }}">{{ note }}</option>
                                                         {% endfor %}
@@ -146,6 +147,7 @@
                                                 <label for="manual_form_note" class="col-lg-3 col-form-label" data-toggle="tooltip" data-placement="right" title="La note sera visible dans votre bibliothèque">Note</label>
                                                 <div class="col-lg-9">
                                                     <select class="form-control" id="manual_form_note" name="manual_form_note">
+                                                        <option value="">Pas de note</option>
                                                         {% for note in notes %}
                                                         <option value="{{ note }}">{{ note }}</option>
                                                         {% endfor %}

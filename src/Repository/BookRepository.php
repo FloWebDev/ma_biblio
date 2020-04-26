@@ -53,7 +53,9 @@ class BookRepository extends ServiceEntityRepository
 
         $sql = "SELECT AVG(book.note) AS moy
             FROM book
+            LEFT JOIN category ON book.category_id = category.id
             WHERE book.user_id = :id
+            AND category.reference = 'master'
             AND note IS NOT NULL;";
 
         $stmt = $conn->prepare($sql);
@@ -61,6 +63,28 @@ class BookRepository extends ServiceEntityRepository
         $res = $stmt->fetch();
 
         return $res['moy'];
+    }
+
+    /**
+     * Permet d'obtenir le top des livres les mieux notes pour un utilisateur
+     * 
+     * @return Book[]
+     */
+    public function getTopBooks($userId)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.user = :user_id')
+            ->andWhere('c.reference = :reference')
+            ->andWhere('b.note IS NOT NULL')
+            ->leftJoin('b.category', 'c')
+            ->setParameter('user_id', $userId)
+            ->setParameter('reference', 'master')
+            ->orderBy('b.note', 'DESC')
+            ->addOrderBy('b.created_at', 'DESC')
+            ->setMaxResults(7)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     /**

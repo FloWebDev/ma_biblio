@@ -33,7 +33,7 @@
                                 {% endif %}
                                 {% set note = book.note %}
                                     <div class="h3 mt-3">
-                                        {% if note %}
+                                        {% if note or note is same as (0) %}
                                             {% if note >= 10 and note < 14 %}
                                             <span class="h1 badge badge-pill badge-warning">{{ note }}/20</span>
                                             {% elseif note >= 14 and note < 17 %}
@@ -44,7 +44,7 @@
                                             <span class="h1 badge badge-pill badge-danger">{{ note }}/20</span>
                                             {% endif %}
                                         {% else %}
-                                            <span class="h1 badge badge-pill badge-danger">0/20</span>
+                                            <span class="h1 badge badge-pill badge-secondary">N.C.</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -139,8 +139,9 @@
                                                 <div class="form-group">
                                                     <label for="note_update_{{ book.id }}">Note</label>
                                                     <select class="form-control" id="note_update_{{ book.id }}" name="note_update">
+                                                        <option {% if book.note is same as (null) %}selected{% endif %} value="">Pas de note</option>
                                                     {% for note in notes %}
-                                                        <option {% if book.note == note %}selected{% endif %} value="{{ note }}">{{ note }}</option>
+                                                        <option {% if book.note is same as (note) %}selected{% endif %} value="{{ note }}">{{ note }}</option>
                                                     {% endfor %}
                                                     </select>
                                                 </div>

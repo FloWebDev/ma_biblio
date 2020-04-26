@@ -246,17 +246,13 @@ class BookController extends AbstractController
                 $file = $imgService->createFileImage($image, $reference);
             }
             // Traitement particulier pour la note
-            $note = (!empty($request->request->get('note')) ? $request->request->get('note') : null);
-            if (is_null($note)) {
+            $note = (!empty($request->request->get('note') || $request->request->get('note') === '0') ? intval($request->request->get('note')) : null);
+            // On vérifie que la note est incluse dans la liste des notes possibles
+            // Sinon, on sette à "null" sa valeur
+            if (!in_array($note, $this->notes())) {
                 $note = null;
-            } else {
-                $note = intval($request->request->get('note'));
-                // On vérifie que la note est incluse dans la liste des notes possibles
-                // Sinon, on sette à "null" sa valeur
-                if (!in_array($note, $this->notes())) {
-                    $note = null;
-                }
             }
+
             // Traitement particulier pour la catégorie
             $category_id = (!empty($request->request->get('category')) ? intval($request->request->get('category')) : null);
             if (!is_null($category_id)) {
@@ -305,17 +301,13 @@ class BookController extends AbstractController
                 $image = null;
                 $file = null;
                 // Traitement particulier pour la note
-                $note = (!empty($request->request->get('note')) ? $request->request->get('note') : null);
-                if (is_null($note)) {
+                $note = (!empty($request->request->get('note') || $request->request->get('note') === '0') ? intval($request->request->get('note')) : null);
+                // On vérifie que la note est incluse dans la liste des notes possibles
+                // Sinon, on sette à "null" sa valeur
+                if (!in_array($note, $this->notes())) {
                     $note = null;
-                } else {
-                    $note = intval($request->request->get('note'));
-                    // On vérifie que la note est incluse dans la liste des notes possibles
-                    // Sinon, on sette à "null" sa valeur
-                    if (!in_array($note, $this->notes())) {
-                        $note = null;
-                    }
                 }
+
                 // Traitement particulier pour la catégorie
                 $category_id = (!empty($request->request->get('category')) ? intval($request->request->get('category')) : null);
                 if (!is_null($category_id)) {
@@ -380,16 +372,11 @@ class BookController extends AbstractController
 
         if ($request->request) {
             // Traitement pour la note
-            $note = (!empty($request->request->get('note_update')) ? $request->request->get('note_update') : null);
-            if (is_null($note)) {
+            $note = (!empty($request->request->get('note_update') || $request->request->get('note_update') === '0') ? intval($request->request->get('note_update')) : null);
+            // On vérifie que la note est incluse dans la liste des notes possibles
+            // Sinon, on sette à "null" sa valeur
+            if (!in_array($note, $this->notes())) {
                 $note = null;
-            } else {
-                $note = intval($request->request->get('note_update'));
-                // On vérifie que la note est incluse dans la liste des notes possibles
-                // Sinon, on sette à "null" sa valeur
-                if (!in_array($note, $this->notes())) {
-                    $note = null;
-                }
             }
 
             // Traitement pour la catégorie

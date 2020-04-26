@@ -121,12 +121,13 @@ class UserController extends AbstractController
 
         $books = $bookRepo->getBookByCategoryAndUser(intval($user->getId()));
         $bookMoyenne = $bookRepo->getAverageNote(intval($user->getId()));
-        $bestBooks = $bookRepo->findBy([
-            'user' => $user->getId()
-        ], [
-            'note' => 'DESC',
-            'created_at' => 'DESC'
-        ], 7);
+        $bestBooks = $bookRepo->getTopBooks($user->getId());
+        // $bestBooks = $bookRepo->findBy([
+        //     'user' => $user->getId()
+        // ], [
+        //     'note' => 'DESC',
+        //     'created_at' => 'DESC'
+        // ], 7);
 
         // Informations pour compte Administrateur seulement
         $userNumber = null;

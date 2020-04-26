@@ -30,7 +30,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
      * @Assert\Regex(
      *     pattern="/^[a-zA-Zà-źÀ-Ź0-9]+$/",
      *     match=true,
-     *     message="L'identifiant doit être composé de lettres et chiffres uniquement"
+     *     message="L'identifiant doit être composé de lettres et chiffres uniquement (et sans espace)."
      * )
      */
     private $username;
@@ -39,9 +39,9 @@ class User implements UserInterface, \Serializable, EquatableInterface
      * @var string The hashed password
      * @ORM\Column(type="string", length=64)
      * @Assert\Regex(
-     *     pattern="/^[a-zA-Zà-źÀ-Ź0-9]+$/",
+     *     pattern="/^[a-zA-Zà-źÀ-Ź0-9!?*@#_\-.$]+$/",
      *     match=true,
-     *     message="Le mot de passe doit être composé de lettres et chiffres uniquement"
+     *     message="Le mot de passe doit être composé de lettres, chiffres et/ou des caractères spéciaux autorisés."
      * )
      */
     private $password;

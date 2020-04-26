@@ -49,7 +49,7 @@ class UserType extends AbstractType
                     'required' => true,
                     'first_options'  => [
                         'label' => 'Mot de passe (*)',
-                        'help' => 'Entre 8 et 18 caractères, chiffres et lettres uniquement.',
+                        'help' => 'Entre 8 et 18 caractères avec chiffres, lettres et caractères suivants autorisés !?*@#_-.$',
                         'attr' => [
                             'placeholder' => 'Création du mot de passe'
                         ]
@@ -96,7 +96,7 @@ class UserType extends AbstractType
                     'required' => true,
                     'first_options'  => [
                         'label' => 'Modification du mot de passe (*)',
-                        'help' => 'Entre 8 et 18 caractères, chiffres et lettres uniquement.',
+                        'help' => 'Entre 8 et 18 caractères avec chiffres, lettres et caractères suivants autorisés !?*@#_-.$',
                         'attr' => [
                             'placeholder' => 'Nouveau mot de passe'
                         ]

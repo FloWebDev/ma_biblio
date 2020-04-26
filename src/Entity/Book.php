@@ -251,7 +251,7 @@ class Book
 
     public function setNote(?int $note): self
     {
-        $this->note = (!is_null($note) ? $note : 0);
+        $this->note = $note;
 
         return $this;
     }
