@@ -1,0 +1,15 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'mt-1'}}) }}
+    <div class="form-group row">
+        <div class="col-12">
+            <div class="form-group">
+                    {{ form_row(form.note) }}
+                    {{ form_row(form.category) }}
+                    {{ form_row(form.comment) }}
+                    <button type="submit" class="btn btn-info mb-3"><i class="fas fa-plus-circle"></i> Valider</button>
+            </div>
+                
+        </div>
+        
+    </div>
+
+{{ form_end(form) }}

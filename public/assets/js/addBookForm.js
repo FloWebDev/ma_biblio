@@ -1,9 +1,33 @@
 var addBookForm = {
-    initImage: null,
     init: function() {
-        // Récupération du "src" d'origine de l'image
-        addBookForm.initImage = document.querySelector('#book_image_form').src;
+        // Gestion de Select2
+        addBookForm.initSelect2();
+        $('#search_book').on('select2:select', addBookForm.handleSelect);
+        $('#search_book').on('select2:unselect', addBookForm.handleUnselect);
+        $('#search_book').on('select2:open', addBookForm.handleOpen);
+        // $('#search_book').val(null).trigger("change");
 
+        // Bouton d'action pour ouvrir le formulaire d'ajout manuel
+        $('#manual_add_book_action').on('click', addBookForm.handleClickManualAddBook);
+        
+        // Boutons d'action pour les formulaires d'update
+        document.querySelectorAll('.update_book_btn').forEach(btn => {
+            btn.addEventListener('click', addBookForm.handleClickBookUpdate);
+        });
+
+        // Boutons d'action pour la suppression d'un livre
+        document.querySelectorAll('.book_delete_action').forEach(btn => {
+            btn.addEventListener('click', addBookForm.handleClickDelete);
+        });
+
+        // Action lorsque la modal est fermée
+        $('#form_add_book').on('hidden.bs.modal', addBookForm.handleHiddenModal);
+
+        // Utilisation du Mutation Observer
+        addBookForm.observe();
+
+    },
+    initSelect2: function() {
         // Mise en place du Select2
         $('#search_book').select2({
             placeholder: 'Recherche par titre, auteur',
@@ -29,6 +53,7 @@ var addBookForm = {
                 // The number of milliseconds to wait for the user to stop typing before
                 // issuing the ajax request.
                 delay: 750,
+                dataType: "json",
                 async: true,
                 cache: false,
                 headers: {
@@ -51,62 +76,52 @@ var addBookForm = {
                 }
             }
         });
-
-        // setTimeout(() => {
-        //     $('#search_book').select2('open');
-        // }, 200);
-
-        $('#search_book').on('select2:select', addBookForm.handleSelect);
-        $('#search_book').on('select2:unselect', addBookForm.handleUnselect);
-        $('#search_book').on('select2:open', addBookForm.handleOpen);
-        // $('#search_book').val(null).trigger("change");
-        $('#manual_add_book_action').on('click', addBookForm.handleClickManualAddBook)
-        $('#book_info_form').on('submit', addBookForm.handleSubmit);
-        $('#manual_add_book_form').on('submit', addBookForm.handleSubmit);
-
-        $('#form_add_book').on('hidden.bs.modal', addBookForm.handleHiddenModal);
     },
     handleSelect: function (e) {
         // On récupère les données du livre sélectionné
-        let data = e.params.data;
+        var bookData = e.params.data;
 
-        // On réinitaliser les données des deux formulaires avant
-        // d'afficher les nouvelles données
-        addBookForm.formHiddenAction();
+        $.ajax({
+            type: 'POST',
+            url: urlAddAutoBook,
+            data: {},
+            dataType: "json",
+            async: true,
+            cache: false,
+            headers: {
+                "cache-control": "no-cache"
+              },
+            success: function(data)
+            {
+                if (data.form) {
+                    // On ajoute la view du formulaire à la DIV prévue à cet effet
+                    document.querySelector('#content_add_book_form').innerHTML = data.form;
 
-        // On affiche le formulaire d'information du livre et on cache
-        // l'éventuel formulaire d'ajout manuel
-        document.querySelector('#manual_add_book_form').style.display = 'none';
-        document.querySelector('#book_info_form').style.display = 'block';
-        // et on réinitialise l'image de couverture
-        document.querySelector('#book_image_form').src = addBookForm.initImage;
+                    // Pour chaque champ, on attribue la valeur
+                    for (const field in bookData) {
+                        valueBook = bookData[field];
+                        if (document.querySelector('#book_' + field)) {
+                            document.querySelector('#book_' + field).value = valueBook;
+                        }
 
-        // Pour chaque champ, on attribue la valeur
-        for (const field in data) {
-            valueBook = data[field];
-
-            if (document.querySelector('#' + field)) {
-                document.querySelector('#' + field).value = valueBook;
+                        if (field == 'image' && valueBook != null) {
+                            document.querySelector('#book_image_form').src = valueBook;
+                        }
+                    }
+                } else {
+                    // DEBUG
+                    console.log(data);
+                }
+            },
+            fail: function(e) {
+                console.log('Erreur Serveur');
+                console.log(e);
             }
-
-            if (field == 'image' && valueBook != null) {
-                document.querySelector('#book_image_form').src = valueBook;
-            }
-        }
+        });
     },
     handleUnselect: function() {
-        // Suppression des données dans tous les inputs
-        document.querySelectorAll('#book_info_form input').forEach(input => {
-            input.value = '';
-        });
-        // Suppression des données dans tous les textareas
-        document.querySelectorAll('#book_info_form textarea').forEach(textarea => {
-            textarea.value = '';
-        });
-        // On cache le formulaire d'information
-        document.querySelector('#book_info_form').style.display = 'none';
-
-        addBookForm.formHiddenAction();
+        // En cas de désélection, on supprime tout le contenu associé au formulaire d'ajout (auto ou manuel)        
+        document.querySelector('#content_add_book_form').innerHTML = '';
     },
     handleOpen: function() {
         /**
@@ -123,119 +138,196 @@ var addBookForm = {
         }
     },
     handleSubmit: function(e) {
-        // console.log('submit');
         // On stoppe la soumission du formulaire
         e.preventDefault();
 
-        // Récupération des données du formulaire dans un objet JS
-        let data = {};
-
-        if (e.target.id == 'book_info_form') {
-            data = {
-                reference: document.querySelector('[name="reference"]').value,
-                title: document.querySelector('[name="title"]').value,
-                subtitle: document.querySelector('[name="subtitle"]').value,
-                author: document.querySelector('input[name="author"]').value,
-                published_date: document.querySelector('[name="published_date"]').value,
-                description: document.querySelector('textarea[name="description"]').value,
-                litteral_category: document.querySelector('[name="litteral_category"]').value,
-                isbn_13: document.querySelector('[name="isbn_13"]').value,
-                isbn_10: document.querySelector('[name="isbn_10"]').value,
-                image: document.querySelector('[name="image"]').value,
-                note: document.querySelector('[name="note"]').value,
-                category: document.querySelector('[name="category_book"]').value,
-                comment: document.querySelector('[name="comment"]').value,
-            };
-        } else if (e.target.id == 'manual_add_book_form') {
-            data = {
-                reference: null,
-                title: document.querySelector('[name="manual_form_title"]').value,
-                subtitle: null,
-                author: document.querySelector('input[name="manual_form_author"]').value,
-                published_date: document.querySelector('[name="manual_form_published_date"]').value,
-                description: document.querySelector('textarea[name="manual_form_description"]').value,
-                litteral_category: document.querySelector('[name="manual_form_litteral_category"]').value,
-                isbn_13: null,
-                isbn_10: null,
-                image: null,
-                note: document.querySelector('[name="manual_form_note"]').value,
-                category: document.querySelector('[name="manual_form_category_book"]').value,
-                comment: document.querySelector('[name="manual_form_comment"]').value,
-            };
-        } else {
-            return;
-        }
-
+        // Gestion du formulaire
+        var $form = $(e.currentTarget);
         $.ajax({
-            url: urlAddBook,
-            method: "POST",
-            data: data,
-            dataType: 'json',
+            type: 'POST',
+            url: e.target.getAttribute('action'),
+            data: $form.serialize(),
+            dataType:"json",
             async: true,
             cache: false,
             headers: {
                 "cache-control": "no-cache"
               },
-        })
-        .done(function(data) {
-            // console.log('success');
-            // console.log(data);
-            if (data) {
-                addBookForm.formHiddenAction();
-                if (data.success) {
+            success: function(data)
+            {
+                if(!data.success) {
+                    // En cas d'erreur dans la soumission du formulaire
+                    if (data.form) {
+                        // On réaffiche la view du formulaire contenant les messages d'erreurs
+                        document.querySelector('#content_add_book_form').innerHTML = data.form;
+                    }
+                    if (data.message) {
+                        document.querySelector('#add_book_alert').classList.remove('alert-success');
+                        document.querySelector('#add_book_alert').classList.add('alert-danger');
+                        document.querySelector('#add_book_alert').textContent = data.message;
+                        document.querySelector('#add_book_alert').style.display = 'block';
+                        $('#add_book_alert').fadeOut(4000);
+                    }
+                } else {
+                    // En cas de succès
+                    document.querySelector('#content_add_book_form').innerHTML = ''; // On supprime le formulaire
                     document.querySelector('#add_book_alert').classList.remove('alert-danger');
                     document.querySelector('#add_book_alert').classList.add('alert-success');
                     document.querySelector('#add_book_alert').textContent = 'Livre ajouté';
                     document.querySelector('#add_book_alert').style.display = 'block';
                     $('#add_book_alert').fadeOut(4000);
-                } else {
-                    document.querySelector('#add_book_alert').classList.remove('alert-success');
-                    document.querySelector('#add_book_alert').classList.add('alert-danger');
-                    document.querySelector('#add_book_alert').textContent = data.message;
-                    document.querySelector('#add_book_alert').style.display = 'block';
-                    $('#add_book_alert').fadeOut(4000);
                 }
+            },
+            fail: function(e) {
+                console.log('Erreur Serveur');
+                console.log(e);
             }
-        })
-        .fail(function(error) {
-            console.log('Erreur Serveur');
-            console.log(error);
-        })
-        .always(function() {
-            // console.log('complete');
         });
     },
-    formHiddenAction: function() {
-        // Formulaire ajout autocomplété
-        document.querySelector('[name="note"]').selectedIndex = 0;
-        document.querySelector('[name="category_book"]').selectedIndex = 0;
-        document.querySelector('[name="comment"]').value = '';
-        document.querySelector('#book_info_form').style.display = 'none';
-
-        // Formulaire ajout manuel
-        document.querySelector('[name="manual_form_note"]').selectedIndex = 0;
-        document.querySelector('[name="manual_form_category_book"]').selectedIndex = 0;
-        document.querySelector('[name="manual_form_comment"]').value = '';
-        document.querySelector('[name="manual_form_title"]').value = '';
-        document.querySelector('[name="manual_form_author"]').value = '';
-        document.querySelector('[name="manual_form_published_date"]').value = '';
-        document.querySelector('[name="manual_form_description"]').value = '';
-        document.querySelector('[name="manual_form_litteral_category"]').value = '';
-        document.querySelector('#manual_add_book_form').style.display = 'none';
-    },
     handleClickManualAddBook: function() {
-        // On affiche le formulaire d'ajout manuel on cache
-        // l'éventuel formulaire d'ajout autocomplété
-        document.querySelector('#book_info_form').style.display = 'none';
-        document.querySelector('#manual_add_book_form').style.display = 'block';
+        // On affiche le formulaire d'ajout manuel
+        $.ajax({
+            type: 'POST',
+            url: urlAddManualBook,
+            data: {},
+            dataType: "json",
+            async: true,
+            cache: false,
+            headers: {
+                "cache-control": "no-cache"
+              },
+            success: function(data)
+            {
+                if (data.form) {
+                    // On ajoute la view du formulaire à la DIV prévue à cet effet
+                    document.querySelector('#content_add_book_form').innerHTML = data.form;
+                } else {
+                    // DEBUG
+                    console.log(data);
+                }
+            },
+            fail: function(e) {
+                console.log('Erreur Serveur');
+                console.log(e);
+            }
+        });
+    },
+    handleClickBookUpdate: function(e) {
+        // On renseigne le titre et l'image
+        document.querySelector('#update_book h2').textContent = e.target.dataset.title.trim();
+        document.querySelector('#update_book img').src = e.target.dataset.src.trim();
+
+        // On affiche le formulaire de modfication
+        $.ajax({
+            type: 'POST',
+            url: e.target.dataset.urlUpdate,
+            data: {},
+            dataType: "json",
+            async: true,
+            cache: false,
+            headers: {
+                "cache-control": "no-cache"
+                },
+            success: function(data)
+            {
+                if (data.form) {
+                    // On ajoute la view du formulaire à la DIV prévue à cet effet
+                    document.querySelector('#content_update_book_form').innerHTML = data.form;
+                } else {
+                    // DEBUG
+                    console.log(data);
+                }
+            },
+            fail: function(e) {
+                console.log('Erreur Serveur');
+                console.log(e);
+            }
+        });
+    },
+    handleUpdateSubmit: function(e) {
+        // On stoppe la soumission du formulaire
+        e.preventDefault();
+
+        // Gestion du formulaire
+        var $form = $(e.currentTarget);
+        $.ajax({
+            type: 'POST',
+            url: e.target.getAttribute('action'),
+            data: $form.serialize(),
+            dataType:"json",
+            async: true,
+            cache: false,
+            headers: {
+                "cache-control": "no-cache"
+              },
+            success: function(data)
+            {
+                if(!data.success) {
+                    // En cas d'erreur dans la soumission du formulaire
+                    if (data.form) {
+                        // On réaffiche la view du formulaire contenant les messages d'erreurs
+                        document.querySelector('#content_update_book_form').innerHTML = data.form;
+                    } else {
+                        // DEBUG
+                        console.log(data);
+                    }
+                } else {
+                    // En cas de succès, on réactualise la page en cours
+                    window.location.reload();
+                }
+            },
+            fail: function(e) {
+                console.log('Erreur Serveur');
+                console.log(e);
+            }
+        });
+    },
+    handleClickDelete: function(e) {
+        // On renseigne le titre et l'url permettant la suppression du livre
+        document.querySelector('#content_delete_book_form h4').textContent = e.target.dataset.title;
+        document.querySelector('#delete_confirmation_btn').href = e.target.dataset.urlDelete;
+    },
+    observe: function() {
+        /**
+         * MutationObserver 
+         * @link https://developer.mozilla.org/fr/docs/Web/API/MutationObserver
+         */ 
+
+        // Selectionne le noeud dont les mutations seront observées
+        var targetNode = document.querySelector('#book_modals');
+
+        // Options de l'observateur (quelles sont les mutations à observer)
+        var config = { attributes: true, childList: true, subtree: true };
+
+        // Créé une instance de l'observateur lié à la fonction de callback
+        var observer = new MutationObserver(mutationsList => {
+            // Fonction callback à éxécuter quand une mutation est observée
+            for(var mutation of mutationsList) {
+                if (mutation.type == 'childList') {
+                    // console.log('Un noeud enfant a été ajouté ou supprimé.');
+                    if (document.querySelector('#book_info_form')) {
+                        console.log('THERE1');
+                        document.querySelector('#book_info_form').addEventListener('submit', addBookForm.handleSubmit);
+                    }
+                    if (document.querySelector('#book_update_form')) {
+                        console.log('THERE2');
+                        document.querySelector('#book_update_form').addEventListener('submit', addBookForm.handleUpdateSubmit);
+                    }
+                }
+            }
+        });
+
+        // Commence à observer le noeud cible pour les mutations précédemment configurées
+        observer.observe(targetNode, config);
     },
     handleHiddenModal: function() {
         // if (document.querySelector('#add_first_book')) {
             // On recharge la page uniquement si aucun livre n'était précédemment enregistré
             // window.location.reload();
         // }
+        // Si la modal est fermé, on réactualise sur la page en cours
         window.location.reload();
-    }
+    },
 };
 
 document.addEventListener('DOMContentLoaded', addBookForm.init);

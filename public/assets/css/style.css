@@ -81,13 +81,8 @@
     font-size: 120%;
 }
 
-#book_info_form,
-#manual_add_book_form {
-    display: none;
-}
-
 #book_image_form {
-    max-width: 150px;
+    max-width: 200px;
     max-height: 200px;
 }
 

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Util\Image;
 use App\Entity\Book;
 use App\Entity\User;
+use App\Form\BookType;
 use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,10 +41,6 @@ class BookController extends AbstractController
                 return $this->redirectToRoute('home_page');
             }
         }
-
-        // Récupération des notes et tri décroissant
-        $notes = $this->notes();
-        rsort($notes);
 
         // Gestion de la liste des livres à afficher en fonction des filtres et ordres choisis
         $category = $request->query->get('category');
@@ -108,16 +105,12 @@ class BookController extends AbstractController
             'user' => $user,
             'slug' => $slug,
             'books' => $books,
-            'categories' => $categories,
-            'notes' => $notes
+            'categories' => $categories
         ]);
     }
 
     /**
      * @Route("/book-search", name="book_search", methods={"POST"})
-     * 
-     * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
-     * @link https://github.com/KnpLabs/KnpPaginatorBundle
      */
     public function bookSearch(Request $request)
     {
@@ -200,155 +193,106 @@ class BookController extends AbstractController
     }
 
     /**
-     * @Route("/book/new", name="book_add", methods={"POST"})
-     * 
-     * @link https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3
-     * @link https://github.com/KnpLabs/KnpPaginatorBundle
+     * @Route("/book/auto-new", name="book_auto_add", methods={"POST"})
      */
-    public function bookAdd(Request $request, EntityManagerInterface $em, BookRepository $bookRepository, CategoryRepository $categoryRepo, Image $imgService)
+    public function bookAutoAdd(Request $request, BookRepository $bookRepository, CategoryRepository $categoryRepo, Image $imgService)
     {
-        $request->isXmlHttpRequest();
+        // is it an Ajax request ?
+        if ($request->isXmlHttpRequest()) {
 
-        // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
-        // Récupération de l'utilisateur connecté
-        $currentUser = $this->getUser();
+            // Vérification si utilisateur connecté
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+            // Récupération de l'utilisateur connecté
+            $currentUser = $this->getUser();
 
-        // dd($request->request);
+            $book = new Book();
+            $form = $this->createForm(BookType::class, $book, [
+                'action' => $this->generateUrl('book_auto_add'),
+                'attr' => [
+                    'id' => 'book_info_form',
+                ],
+                'form_type' => 'auto'
+            ]);
 
-        if (!empty($request->request->get('reference'))) {
-            // Formulaire autocomplété
-            $reference = $request->request->get('reference');
+            $form->handleRequest($request);
+        
+            if ($form->isSubmitted() && $form->isValid()) {
+                $reference = $book->getReference();
 
-            if ($bookRepository->checkConstraint(intval($currentUser->getId()), $reference)) {
-                $response = [
-                    'success' => false,
-                    'message' => 'Livre déjà enregistré dans la bibliothèque'
-                ];
+                if ($bookRepository->checkConstraint(intval($currentUser->getId()), $reference)) {
+                    $response = [
+                        'success' => false,
+                        'message' => 'Livre déjà enregistré dans la bibliothèque'
+                    ];
 
-                return $this->json($response);
-            }
-
-            $title = (!empty($request->request->get('title')) ? $request->request->get('title') : 'N.C.');
-            $subtitle = (!empty($request->request->get('subtitle')) ? $request->request->get('subtitle') : null);
-            $author = (!empty($request->request->get('author')) ? $request->request->get('author') : null);
-            $published_date = (!empty($request->request->get('published_date')) ? $request->request->get('published_date') : null);
-            $description = (!empty($request->request->get('description')) ? $request->request->get('description') : null);
-            $litteral_category = (!empty($request->request->get('litteral_category')) ? $request->request->get('litteral_category') : null);
-            $isbn_13 = (!empty($request->request->get('isbn_13')) ? $request->request->get('isbn_13') : null);
-            $isbn_10 = (!empty($request->request->get('isbn_10')) ? $request->request->get('isbn_10') : null);
-            $comment = (!empty($request->request->get('comment')) ? $request->request->get('comment') : null);
-            // Traitement particulier pour l'image (utilisation du service Image)
-            $image = (!empty($request->request->get('image')) ? $request->request->get('image') : null);
-            if (is_null($image)) {
-                $file = null;
-            } else {
-                $file = $imgService->createFileImage($image, $reference);
-            }
-            // Traitement particulier pour la note
-            $note = (!empty($request->request->get('note') || $request->request->get('note') === '0') ? intval($request->request->get('note')) : null);
-            // On vérifie que la note est incluse dans la liste des notes possibles
-            // Sinon, on sette à "null" sa valeur
-            if (!in_array($note, $this->notes())) {
-                $note = null;
-            }
-
-            // Traitement particulier pour la catégorie
-            $category_id = (!empty($request->request->get('category')) ? intval($request->request->get('category')) : null);
-            if (!is_null($category_id)) {
-                $category = $categoryRepo->find($category_id);
-            } else {
-                $category = null;
-            }
-
-            $newBook = new Book();
-            $newBook->setReference($reference);
-            $newBook->setTitle($title);
-            $newBook->setSubtitle($subtitle);
-            $newBook->setAuthor($author);
-            $newBook->setPublishedDate($published_date);
-            $newBook->setDescription($description);
-            $newBook->setLitteralCategory($litteral_category);
-            $newBook->setIsbn13($isbn_13);
-            $newBook->setIsbn10($isbn_10);
-            $newBook->setImage($image);
-            $newBook->setFile($file);
-            $newBook->setUser($currentUser);
-            $newBook->setCategory($category);
-            $newBook->setNote($note);
-            $newBook->setComment($comment);
-
-            $em->persist($newBook);
-            $em->flush();
-
-            $response = [
-                'success' => true,
-                'message' => 'Enregistrement réussi'
-            ];
-        } else {
-            // Formulaire d'ajout manuel
-            if (!empty(trim($request->request->get('title'))) && strlen(trim($request->request->get('title'))) <= 250) {
-                $reference = 'custom-' . uniqid();
-                $title = trim($request->request->get('title'));
-                $subtitle = null;
-                $author = ((!empty($request->request->get('author')) && strlen(trim($request->request->get('author'))) <= 120) ? $request->request->get('author') : null);
-                $published_date = ((!empty($request->request->get('published_date')) && strlen(trim($request->request->get('published_date'))) <= 30) ? $request->request->get('published_date') : null);
-                $description = ((!empty($request->request->get('description')) && strlen(trim($request->request->get('description'))) <= 3000) ? $request->request->get('description') : null);
-                $litteral_category = ((!empty($request->request->get('litteral_category')) && strlen(trim($request->request->get('litteral_category'))) <= 120) ? $request->request->get('litteral_category') : null);
-                $isbn_13 = null;
-                $isbn_10 = null;
-                $comment = (!empty($request->request->get('comment')) ? $request->request->get('comment') : null);
-                $image = null;
-                $file = null;
-                // Traitement particulier pour la note
-                $note = (!empty($request->request->get('note') || $request->request->get('note') === '0') ? intval($request->request->get('note')) : null);
-                // On vérifie que la note est incluse dans la liste des notes possibles
-                // Sinon, on sette à "null" sa valeur
-                if (!in_array($note, $this->notes())) {
-                    $note = null;
+                    return $this->json($response);
                 }
 
-                // Traitement particulier pour la catégorie
-                $category_id = (!empty($request->request->get('category')) ? intval($request->request->get('category')) : null);
-                if (!is_null($category_id)) {
-                    $category = $categoryRepo->find($category_id);
-                } else {
-                    $category = null;
-                }
+                $image = $book->getImage();
+                $file = (!is_null($image) ? $imgService->createFileImage($image, $reference) : null);
+                $book->setFile($file);
+                $book->setUser($currentUser);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($book);
+                $entityManager->flush();
 
-                $newBook = new Book();
-                $newBook->setReference($reference);
-                $newBook->setTitle($title);
-                $newBook->setSubtitle($subtitle);
-                $newBook->setAuthor($author);
-                $newBook->setPublishedDate($published_date);
-                $newBook->setDescription($description);
-                $newBook->setLitteralCategory($litteral_category);
-                $newBook->setIsbn13($isbn_13);
-                $newBook->setIsbn10($isbn_10);
-                $newBook->setImage($image);
-                $newBook->setFile($file);
-                $newBook->setUser($currentUser);
-                $newBook->setCategory($category);
-                $newBook->setNote($note);
-                $newBook->setComment($comment);
 
-                $em->persist($newBook);
-                $em->flush();
-
-                $response = [
+                return $this->json([
                     'success' => true,
                     'message' => 'Enregistrement réussi'
-                ];
+                ]);
             } else {
-                $response = [
+        
+                return $this->json([
                     'success' => false,
-                    'message' => 'Titre manquant ou longueur non acceptée'
-                ];
+                    'form' => $this->renderView('book/_add_form.html.twig', ['form' => $form->createView()])
+                ]);
             }
         }
+    }
 
-        return $this->json($response);
+    /**
+     * @Route("/book/manual-new", name="book_manual_add", methods={"POST"})
+     */
+    public function bookManualAdd(Request $request, BookRepository $bookRepository, CategoryRepository $categoryRepo, Image $imgService)
+    {
+        // is it an Ajax request ?
+        if ($request->isXmlHttpRequest()) {
+
+            // Vérification si utilisateur connecté
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+            // Récupération de l'utilisateur connecté
+            $currentUser = $this->getUser();
+
+            $book = new Book();
+            $form = $this->createForm(BookType::class, $book, [
+                'action' => $this->generateUrl('book_manual_add'),
+                'attr' => [
+                    'id' => 'book_info_form',
+                ],
+                'form_type' => 'manual'
+            ]);
+
+            $form->handleRequest($request);
+        
+            if ($form->isSubmitted() && $form->isValid()) {
+                $book->setUser($currentUser);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($book);
+                $entityManager->flush();
+
+                return $this->json([
+                    'success' => true,
+                    'message' => 'Enregistrement réussi'
+                ]);
+            } else {
+        
+                return $this->json([
+                    'success' => false,
+                    'form' => $this->renderView('book/_add_form.html.twig', ['form' => $form->createView()])
+                ]);
+            }
+        }
     }
 
     /**
@@ -356,69 +300,54 @@ class BookController extends AbstractController
      */
     public function update($id, Book $book, Request $request, CategoryRepository $categoryRepo)
     {
-        // Vérification si utilisateur connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
-        // Récupération de l'utilisateur connecté
-        $currentUser = $this->getUser();
+        // is it an Ajax request ?
+        if ($request->isXmlHttpRequest()) {
+            // Vérification si utilisateur connecté
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+            // Récupération de l'utilisateur connecté
+            $currentUser = $this->getUser();
 
-        if ($book->getUser()->getId() != $currentUser->getId()) {
-            $this->addFlash(
-                'danger',
-                'Vous ne pouvez pas modifier/supprimer les informations d\'un tiers.'
-            );
-
-            return $this->redirectToRoute('home_page');
-        }
-
-        if ($request->request) {
-            // Traitement pour la note
-            $note = (!empty($request->request->get('note_update') || $request->request->get('note_update') === '0') ? intval($request->request->get('note_update')) : null);
-            // On vérifie que la note est incluse dans la liste des notes possibles
-            // Sinon, on sette à "null" sa valeur
-            if (!in_array($note, $this->notes())) {
-                $note = null;
+            if ($currentUser->getId() != $book->getUser()->getId()) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Modifications des données d\'un tiers interdites'
+                ]);
             }
 
-            // Traitement pour la catégorie
-            $category_id = (!empty($request->request->get('category_update')) ? intval($request->request->get('category_update')) : null);
-            if (!is_null($category_id)) {
-                $category = $categoryRepo->find($category_id);
+            $form = $this->createForm(BookType::class, $book, [
+                'action' => $this->generateUrl('book_update', [
+                    'id' => $id
+                ]),
+                'attr' => [
+                    'id' => 'book_update_form',
+                ],
+                'form_type' => 'update'
+            ]);
+
+            $form->handleRequest($request);
+        
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($book);
+                $entityManager->flush();
+
+                $this->addFlash(
+                    'success',
+                    'Modifications effectuées.'
+                );
+
+                return $this->json([
+                    'success' => true,
+                    'message' => 'Modifications effectuées'
+                ]);
             } else {
-                $category = null;
-            }
-
-            // Traitement pour le commentaire
-            $comment = (!empty($request->request->get('comment_update')) ? $request->request->get('comment_update') : null);
-
-            // Update du Book
-            $book->setNote($note);
-            $book->setCategory($category);
-            $book->setComment($comment);
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash(
-                'success',
-                'Modifications effectuées avec succès.'
-            );
-
-            // Si possible, on essaie de rediriger l'utilisateur vers la page précédente afin de conserver ses paramètres de filtres
-            $host = (!empty($request->server->get('HTTP_HOST')) ?  $request->server->get('HTTP_HOST') : null);
-            $referer = (!empty($request->server->get('HTTP_REFERER')) ? $request->server->get('HTTP_REFERER') : null);
-            if (!is_null($host) && !is_null($referer) && strpos($referer, $host)) {
-                return $this->redirect($referer);
-            } else {
-                return $this->redirectToRoute('book_list', [
-                    'slug' => $currentUser->getSlug()
+        
+                return $this->json([
+                    'success' => false,
+                    'form' => $this->renderView('book/_update_form.html.twig', ['form' => $form->createView()])
                 ]);
             }
         }
-
-        $this->addFlash(
-            'danger',
-            'Erreur lors de la modification.'
-        );
-
-        return $this->redirectToRoute('home_page');
     }
 
     /**
@@ -469,20 +398,5 @@ class BookController extends AbstractController
         return $this->redirectToRoute('book_list', [
             'slug' => $currentUser->getSlug()
         ]);
-    }
-
-    /**
-     * Permet d'obtenir un array de toutes les valeurs autorisées
-     * pour la note d'un livre
-     * 
-     * @return array
-     */
-    private function notes()
-    {
-        $notes = array();
-        for ($n = 0; $n <= 20; $n++) {
-            $notes[] = $n;
-        }
-        return $notes;
     }
 }

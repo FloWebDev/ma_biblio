@@ -82,8 +82,19 @@
                                     </p>
                                     {% endif %}
                                     {% if app.user and app.user.id == book.user.id %}
-                                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#user_book_{{ loop.index }}">Modifier</a>
-                                        <a href="{{ path('book_delete', {id: book.id}) }}" class="btn btn-danger btn_delete ml-1">Supprimer</a>
+                                        <a href="#" class="btn btn-primary update_book_btn" data-toggle="modal" data-target="#update_book"
+                                        data-title="{{ book.title }}"
+                                        data-src="{% if book.file %}
+                                                {{ asset(book_repo ~ '/' ~ book.file) }}
+                                            {% elseif book.image %}
+                                                {{ book.image }}
+                                            {% else %}
+                                                {{ asset('assets/media/default/book.png') }}
+                                            {% endif %}"
+                                        data-url-update="{{ path('book_update', {id: book.id}) }}">Modifier</a>
+                                        <a href="{{ path('book_delete', {id: book.id}) }}" class="btn btn-danger ml-1 book_delete_action" data-toggle="modal" data-target="#delete_book"
+                                        data-title="{{ book.title}}"
+                                        data-url-delete="{{ path('book_delete', {id: book.id}) }}">Supprimer</a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -103,78 +114,7 @@
 </section>
 
 
-                {% if books %}
-                    {% for book in books %}
-                    <div class="portfolio-modal modal fade" id="user_book_{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
-                        <div class="modal-dialog modal-xl" role="document">
-                            <div class="modal-content">
-                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
-                                </button>
-                                <div class="modal-body text-center">
-                                    <div class="container">
-                                        <div class="row justify-content-center">
-                                            <div class="col-lg-8">
-                                                <!-- Portfolio Modal - Title-->
-                                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">{{ book.title }}</h2>
-                                                <!-- Icon Divider-->
-                                                <div class="divider-custom">
-                                                    <div class="divider-custom-line"></div>
-                                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-                                                    <div class="divider-custom-line"></div>
-                                                </div>
-                                                <!-- Portfolio Modal - Image-->
-                                                {% if book.file %}
-                                                <img class="img-fluid rounded mb-5" src="{{ asset(book_repo ~ '/' ~ book.file) }}" alt="{{ book.title }}" style="max-width: 300px;">
-                                                {% elseif book.image %}
-                                                <img class="img-fluid rounded mb-5" src="{{ book.image }}" alt="{{ book.title }}" style="max-width: 300px;">
-                                                {% else %}
-                                                <img class="img-fluid rounded mb-5" src="{{ asset('assets/media/default/book.png') }}" alt="{{ book.title }}" style="max-width: 300px;">
-                                                {% endif %}
-                                                <!-- Book Modal - Text-->
-                                                {# <p>{{ book.description|raw }}</p> #}
 
-                                                {# FORMULAIRE DE MODIFICATION #}
-                                                <form action="{{ path('book_update', {id: book.id}) }}" method="POST">
-                                                <div class="form-group">
-                                                    <label for="note_update_{{ book.id }}">Note</label>
-                                                    <select class="form-control" id="note_update_{{ book.id }}" name="note_update">
-                                                        <option {% if book.note is same as (null) %}selected{% endif %} value="">Pas de note</option>
-                                                    {% for note in notes %}
-                                                        <option {% if book.note is same as (note) %}selected{% endif %} value="{{ note }}">{{ note }}</option>
-                                                    {% endfor %}
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="category_update_{{ book.id }}">Catégorie</label>
-                                                    <select class="form-control" id="category_update_{{ book.id }}" name="category_update">
-                                                    {% if categories %}
-                                                    {% for category in categories %}
-                                                        <option {% if book.category.id == category.id %}selected{% endif %} value="{{ category.id }}">{{ category.name }}</option>
-                                                    {% endfor %}
-                                                    {% endif %}
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="comment_update_{{ book.id }}">Commentaire</label>
-                                                    <textarea class="form-control" id="comment_update_{{ book.id }}" name="comment_update" rows="3">{{ book.comment }}</textarea>
-                                                    <small id="bbcodeHelp" class="form-text text-muted mb-3">
-                                                        BBCode autorisé : <u>[b]gras[/b]</u> - <i>[i]italique[/i]</i> - <u>[u]souligné[/u]</u> - <span style="color: red;">[red]rouge[/red]</span>
-                                                    </small>
-                                                </div>
-                                                <button type="submit" class="btn btn-info">Modifier</button>
-                                                <button class="btn btn-primary" href="#" data-dismiss="modal">Fermer</button>
-                                                </form>
-                                                {# FIN FORMULAIRE DE MODIFICATION #}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% endif %}
 
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
                     <div class="h1" id="add_book" data-toggle="modal" data-target="#form_add_book">
@@ -184,8 +124,14 @@
                         </span>
                     </div>
 
-                    {# Formulaire ajout nouveau livre #}
-                    {% include 'book/_add_book_form.html.twig' with {'user': user, 'notes': notes, 'categories': categories} %}
+                    <div id="book_modals">
+                        {# Formulaire ajout nouveau livre #}
+                        {% include 'book/_add_book_form.html.twig' %}
+                        {# Formulaire modification livre #}
+                        {% include 'book/_update_book_form.html.twig' %}
+                        {# Modal de suppression d'un livre #}
+                        {% include 'book/_delete_modal.html.twig' %}
+                    </div>
                 {% endif %}
 {% endblock %}
 
@@ -193,7 +139,8 @@
     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
         <script>
             var urlAjaxBookApi = "{{ path('book_search')|e('js') }}";
-            var urlAddBook = "{{ path('book_add')|e('js') }}";
+            var urlAddAutoBook = "{{ path('book_auto_add')|e('js') }}";
+            var urlAddManualBook = "{{ path('book_manual_add')|e('js') }}";
         </script>
         <script src="{{ asset('assets/select2/select2.min.js') }}"></script>
         <script src="{{ asset('assets/js/addBookForm.js') }}"></script>
