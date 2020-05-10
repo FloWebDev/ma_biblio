@@ -37,7 +37,7 @@ class DefaultController extends AbstractController
             // dd($data);
 
             $email = (new EmailMime())
-            ->from(new Address($this->getParameter('webmaster_email'), $this->getParameter('website_title')))
+            ->from(new Address($this->getParameter('website_email'), $this->getParameter('website_title')))
             ->to($this->getParameter('webmaster_email'))
             //->cc('cc@example.com')
             //->bcc('bcc@example.com')
