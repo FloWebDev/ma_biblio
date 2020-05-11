@@ -94,6 +94,11 @@ class User implements UserInterface, \Serializable, EquatableInterface
     private $active;
 
     /**
+     * @ORM\Column(type="string", length=130, nullable=true)
+     */
+    private $forgot_password;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Role", inversedBy="users")
      */
     private $role;
@@ -334,6 +339,18 @@ class User implements UserInterface, \Serializable, EquatableInterface
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getForgotPassword(): ?string
+    {
+        return $this->forgot_password;
+    }
+
+    public function setForgotPassword(?string $forgot_password): self
+    {
+        $this->forgot_password = $forgot_password;
 
         return $this;
     }

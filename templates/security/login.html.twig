@@ -38,9 +38,7 @@
            value="{{ csrf_token('authenticate') }}"
     >
     <small id="forgotPasswordHelp" class="form-text text-muted mb-2">
-    <i class="fas fa-exclamation-circle"></i> Mot de passe oublié ? Contactez directement l'administrateur du site.<br>
-    La génération automatique d'un nouveau mot de passe en cas d'oubli est une fonctionnalité qui sera développée très prochainement.
-    </small>
+    <a href="{{ path('ask_new_password') }}" style="color: red;"><i class="fas fa-exclamation-circle"></i> Mot de passe oublié ?</a></small>
 
     {#
         Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.

@@ -7,14 +7,22 @@ use App\Entity\User;
 use App\Util\Captcha;
 use App\Util\Slugger;
 use App\Form\UserType;
+use App\Util\ForgotPassword;
 use App\Repository\BookRepository;
 use App\Repository\UserRepository;
+use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email AS EmailMime;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Validator\Constraints\UserEmailConstraint;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Validator\Constraints\File as FileValidator;
@@ -239,7 +247,6 @@ class UserController extends AbstractController
 
             return $this->redirectToRoute('login');
         }
-
 
         return $this->render('user/sign_up.html.twig', [
             'captcha' => $captcha->createCaptcha(),
@@ -477,5 +484,117 @@ class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('admin_users');
+    }
+
+    /**
+     * @Route("/new-password", name="ask_new_password", methods={"GET", "POST"}, requirements={"id"="\d+"})
+     */
+    public function askNewPassword(Request $request, UserRepository $userRepository, ForgotPassword $forgotPwd, MailerInterface $mailer)
+    {
+        // On bloque l'accès à cette page si utilisateur connecté
+        if ($this->getUser()) {
+            return $this->redirectToRoute('home_page');
+        }
+
+        $form = $this->createFormBuilder(null)
+        ->add('email', EmailType::class, [
+            'label' => 'Votre adresse email (*)',
+            'help' => 'Indiquez votre adresse email pour recevoir un lien vous permettant de modifier votre mot de passe actuel. Le lien est valide 15 minutes',
+            'attr' => [
+                'placeholder' => 'email'
+            ],
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez renseigner votre adresse email.'
+                ]),
+                new Email([
+                    'mode' => 'loose',
+                    'message' => 'L\'adresse email saisie n\'est pas valide.'
+                ]),
+                new UserEmailConstraint([])
+            ]
+        ])
+        ->getForm();
+
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $user = $userRepository->findOneBy(['email' => $data['email']]);
+
+            $forgot_password = $forgotPwd->getEncryptSlug();
+            $forgot_password_url = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath() . '/forgot-password/' . $forgot_password;
+            // dump($forgot_password);
+            // dd($forgot_password_url);
+            $user->setForgotPassword($forgot_password);
+            $this->getDoctrine()->getManager()->flush();
+
+            $email = (new EmailMime())
+            ->from(new Address($this->getParameter('website_email'), $this->getParameter('website_title')))
+            ->to($user->getEmail())
+            ->subject($this->getParameter('website_title') . ' - Demande d\'un nouveau mot de passe')
+            ->text('Bonjour ' . ucfirst($user->getUsername()) . ', Suite à votre demande de réinitialisation de votre passe, merci de vous rendre sur le lien suivant pour enregistrer un nouveau mot de passe sécurisé :' . $forgot_password_url . 'Le lien est valide 15 minutes. Merci de ne pas répondre à ce message. Si besoin, utilisez le formulaire de contact présent sur la page d\'accueil du site. Bien à vous. ' . $this->getParameter('website_title'))
+            ->html('<p> Bonjour ' . ucfirst($user->getUsername()) . ',<br><br>Suite à votre demande de réinitialisation de votre passe, merci de vous rendre sur le lien suivant pour enregistrer un nouveau mot de passe sécurisé :<br><br>' . $forgot_password_url . '<br><br><b>Le lien est valide 15 minutes.</b><br><br>Merci de ne pas répondre à ce message. Si besoin, utilisez le formulaire de contact présent sur la page d\'accueil du site.<br><br>Bien à vous. <br><br>' . $this->getParameter('website_title') . '</p>');
+
+            $mailer->send($email);
+
+            $this->addFlash(
+                'success',
+                'Demande de nouveau mot de passe envoyée par email.'
+            );
+
+            return $this->redirectToRoute('home_page');
+        }
+
+        return $this->render('user/ask_new_password.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/forgot-password/{forgot_password}", name="forgot_password", methods={"GET", "POST"})
+     * @ParamConverter("user", options={"mapping": {"forgot_password": "forgot_password"}})
+     */
+    public function forgotPassword($forgot_password, User $user, ForgotPassword $forgotPwd, Request $request, UserPasswordEncoderInterface $encoder) {
+        // On bloque l'accès à cette page si utilisateur connecté
+        if ($this->getUser()) {
+            return $this->redirectToRoute('home_page');
+        }
+
+        if ($user) {
+            $check = $forgotPwd->check($forgot_password);
+            // dump('user OK');
+            // dd($check);
+            if (!$check) {
+                return $this->redirectToRoute('ask_new_password');
+            }
+            
+            $form    = $this->createForm(UserType::class, $user, [
+                'form_type' => 'forgot_password'
+                ]);
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $user->setForgotPassword(null);
+                // Encodage du mot de passe
+                $encodedPassword = $encoder->encodePassword($user, $user->getPassword());
+                $user->setPassword($encodedPassword);
+                $this->getDoctrine()->getManager()->flush();
+
+                $this->addFlash(
+                    'success',
+                    'Modification du mot de passe effectuée avec succès. Vous pouvez vous connecter dès maintenant.'
+                );
+
+                return $this->redirectToRoute('login');
+            }
+
+            return $this->render('user/forgot_password.html.twig', [
+                'form' => $form->createView()
+            ]);
+        } else {
+            return $this->redirectToRoute('ask_new_password');
+        }
     }
 }

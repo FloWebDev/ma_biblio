@@ -40,10 +40,140 @@ class UserType extends AbstractType
             $currentUser = $this->security->getUser();
             $user = $event->getData();
             $form = $event->getForm();
+            $form_type = $event->getForm()->getConfig()->getOptions()['form_type'];
 
-            if (is_null($user->getId())) {
-                // Cas d'une inscription
-                $form->add('password', RepeatedType::class, [
+            if (is_null($form_type)) {
+                if (is_null($user->getId())) {
+                    // Cas d'une inscription
+                    $form->add('password', RepeatedType::class, [
+                        'type' => PasswordType::class,
+                        'invalid_message' => 'La confirmation du mot de passe est incorrecte',
+                        'required' => true,
+                        'first_options'  => [
+                            'label' => 'Mot de passe (*)',
+                            'help' => 'Entre 8 et 18 caractères avec chiffres, lettres et caractères suivants autorisés !?*@#_-.$',
+                            'attr' => [
+                                'placeholder' => 'Création du mot de passe'
+                            ]
+                        ],
+                        'second_options' => [
+                            'label' => 'Confirmation du mot de passe (*)',
+                            'attr' => [
+                                'placeholder' => 'Confirmation du mot de passe'
+                            ]
+                        ],
+                        'constraints' => [
+                            new NotBlank([
+                                'message' => 'Mot de passe obligatoire'
+                            ]),
+                            new Length([
+                                'min' => 8,
+                                'max' => 18,
+                                'minMessage' => 'Mot de passe trop court. Minimum {{ limit }} caractères',
+                                'maxMessage' => 'Mot de passe trop long. Maximum {{ limit }} caractères',
+                            ])
+                        ]
+                    ])
+                        ->add('captcha', IntegerType::class, [
+                            'label' => 'Renseignez les 4 chiffres présents dans l\'image (*)',
+                            'mapped' => false,
+                            'constraints' => [
+                                new NotBlank([
+                                    'message' => 'Veuillez saisir le nombre affiché dans l\'image.'
+                                ]),
+                                new Length([
+                                    'min'        => 4,
+                                    'max'        => 4,
+                                    'minMessage' => 'Nombre de caractères minimum attendus : {{ limit }}',
+                                    'maxMessage' => 'Nombre de caractères maximum attendus : {{ limit }}'
+                                ]),
+                                new CaptchaConstraint()
+                            ]
+                        ]);
+                } else {
+                    // Cas d'une modification de profil
+                    $form->add('password', RepeatedType::class, [
+                        'type' => PasswordType::class,
+                        'invalid_message' => 'La confirmation du mot de passe est incorrecte',
+                        'required' => true,
+                        'first_options'  => [
+                            'label' => 'Modification du mot de passe (*)',
+                            'help' => 'Entre 8 et 18 caractères avec chiffres, lettres et caractères suivants autorisés !?*@#_-.$',
+                            'attr' => [
+                                'placeholder' => 'Nouveau mot de passe'
+                            ]
+                        ],
+                        'second_options' => [
+                            'label' => 'Confirmation du nouveau mot de passe (*)',
+                            'attr' => [
+                                'placeholder' => 'Confirmation du nouveau mot de passe'
+                            ]
+                        ],
+                        'constraints' => [
+                            // La saisie d'un mot de passe n'est pas obligatoire
+                            new Length([
+                                'min' => 8,
+                                'max' => 18,
+                                'minMessage' => 'Mot de passe trop court. Minimum {{ limit }} caractères',
+                                'maxMessage' => 'Mot de passe trop long. Maximum {{ limit }} caractères',
+                            ])
+                        ]
+                    ])
+                        ->add('avatar', FileType::class, [
+                            'label' => 'Avatar / photo de profil (PNG, JPEG)',
+                        ])
+                        ->add('bio', TextareaType::class, [
+                            'label' => 'Votre bio',
+                            'attr' => [
+                                'placeholder' => "Présentez-vous.\nQuels sont vos auteurs préférés ?\nVos livres préférés ?\nRacontez ce que vous voulez :-)",
+                                'rows' => 17
+                            ],
+                            'constraints' => [
+                                new Length([
+                                    'max' => 2500,
+                                    'maxMessage' => 'Votre bio ne doit pas dépasser {{ limit }} caractères.'
+                                ])
+                            ]
+                        ])
+                        ->add('public', ChoiceType::class, [
+                            'label' => 'Profil public',
+                            'choices' => [
+                                'Oui' => true,
+                                'Non' => false,
+                            ],
+                            'expanded' => false,
+                            'multiple' => false
+                        ]);
+    
+                    if ($currentUser->getRole()->getCode() == 'ROLE_ADMIN' && $currentUser->getId() != $user->getId()) {
+                        // Cas d'une modification par un Administrateur ET s'il ne s'agit pas de son propre compte
+                        $form->add('role', EntityType::class, [
+                            'label' => 'Rôle',
+                            'class' => Role::class,
+                            'expanded' => false,
+                            'multiple' => false,
+                            'constraints' => [
+                                new NotBlank([
+                                    'message' => 'Veuillez saisir un rôle.'
+                                ]),
+                            ]
+                        ])
+                            ->add('active', ChoiceType::class, [
+                                'label' => 'Profil actif',
+                                'choices' => [
+                                    'Oui' => true,
+                                    'Non' => false,
+                                ],
+                                'expanded' => false,
+                                'multiple' => false
+                            ]);
+                    }
+                }
+            } elseif ($form_type == 'forgot_password') {
+                // Cas du mot de passe oublié où l'utilisateur n'est donc pas connecté
+                $form->remove('username')
+                ->remove('email')
+                ->add('password', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'invalid_message' => 'La confirmation du mot de passe est incorrecte',
                     'required' => true,
@@ -71,101 +201,7 @@ class UserType extends AbstractType
                             'maxMessage' => 'Mot de passe trop long. Maximum {{ limit }} caractères',
                         ])
                     ]
-                ])
-                    ->add('captcha', IntegerType::class, [
-                        'label' => 'Renseignez les 4 chiffres présents dans l\'image (*)',
-                        'mapped' => false,
-                        'constraints' => [
-                            new NotBlank([
-                                'message' => 'Veuillez saisir le nombre affiché dans l\'image.'
-                            ]),
-                            new Length([
-                                'min'        => 4,
-                                'max'        => 4,
-                                'minMessage' => 'Nombre de caractères minimum attendus : {{ limit }}',
-                                'maxMessage' => 'Nombre de caractères maximum attendus : {{ limit }}'
-                            ]),
-                            new CaptchaConstraint()
-                        ]
-                    ]);
-            } else {
-                // Cas d'une modification de profil
-                $form->add('password', RepeatedType::class, [
-                    'type' => PasswordType::class,
-                    'invalid_message' => 'La confirmation du mot de passe est incorrecte',
-                    'required' => true,
-                    'first_options'  => [
-                        'label' => 'Modification du mot de passe (*)',
-                        'help' => 'Entre 8 et 18 caractères avec chiffres, lettres et caractères suivants autorisés !?*@#_-.$',
-                        'attr' => [
-                            'placeholder' => 'Nouveau mot de passe'
-                        ]
-                    ],
-                    'second_options' => [
-                        'label' => 'Confirmation du nouveau mot de passe (*)',
-                        'attr' => [
-                            'placeholder' => 'Confirmation du nouveau mot de passe'
-                        ]
-                    ],
-                    'constraints' => [
-                        // La saisie d'un mot de passe n'est pas obligatoire
-                        new Length([
-                            'min' => 8,
-                            'max' => 18,
-                            'minMessage' => 'Mot de passe trop court. Minimum {{ limit }} caractères',
-                            'maxMessage' => 'Mot de passe trop long. Maximum {{ limit }} caractères',
-                        ])
-                    ]
-                ])
-                    ->add('avatar', FileType::class, [
-                        'label' => 'Avatar / photo de profil (PNG, JPEG)',
-                    ])
-                    ->add('bio', TextareaType::class, [
-                        'label' => 'Votre bio',
-                        'attr' => [
-                            'placeholder' => "Présentez-vous.\nQuels sont vos auteurs préférés ?\nVos livres préférés ?\nRacontez ce que vous voulez :-)",
-                            'rows' => 17
-                        ],
-                        'constraints' => [
-                            new Length([
-                                'max' => 2500,
-                                'maxMessage' => 'Votre bio ne doit pas dépasser {{ limit }} caractères.'
-                            ])
-                        ]
-                    ])
-                    ->add('public', ChoiceType::class, [
-                        'label' => 'Profil public',
-                        'choices' => [
-                            'Oui' => true,
-                            'Non' => false,
-                        ],
-                        'expanded' => false,
-                        'multiple' => false
-                    ]);
-
-                if ($currentUser->getRole()->getCode() == 'ROLE_ADMIN' && $currentUser->getId() != $user->getId()) {
-                    // Cas d'une modification par un Administrateur ET s'il ne s'agit pas de son propre compte
-                    $form->add('role', EntityType::class, [
-                        'label' => 'Rôle',
-                        'class' => Role::class,
-                        'expanded' => false,
-                        'multiple' => false,
-                        'constraints' => [
-                            new NotBlank([
-                                'message' => 'Veuillez saisir un rôle.'
-                            ]),
-                        ]
-                    ])
-                        ->add('active', ChoiceType::class, [
-                            'label' => 'Profil actif',
-                            'choices' => [
-                                'Oui' => true,
-                                'Non' => false,
-                            ],
-                            'expanded' => false,
-                            'multiple' => false
-                        ]);
-                }
+                ]);
             }
         };
 
@@ -218,6 +254,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'form_type' => null
         ]);
     }
 }

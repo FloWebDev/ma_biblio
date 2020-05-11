@@ -103,8 +103,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             return new RedirectResponse($this->urlGenerator->generate('logout'));
         } else {
             // Sinon, on sette la dernière date de connexion
+            // et on sette à "null" le champ forgot_password
             $newDateTime = new \DateTime();
             $currentUser->setConnectedAt($newDateTime);
+            $currentUser->setForgotPassword(null); // cas où une valeur aurait été settée pour demander la modification du MDP
             $this->entityManager->flush();
         }
 
