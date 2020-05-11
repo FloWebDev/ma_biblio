@@ -2,11 +2,18 @@
 
 namespace App\Util;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+
 /**
  * @link https://phpsources.net/code/php/securite/85_crypter-et-decrypter-une-chaine-avec-lefonction-mcrypt-ecb
  */
 class ForgotPassword {
-    const KEY = 'ABCDEFG123!';
+    private $params;
+
+    public function __construct(ParameterBagInterface $params)
+    {
+        $this->params = $params;
+    }
 
     /**
      * Permet de générer un slug pour forgot_password
@@ -18,7 +25,7 @@ class ForgotPassword {
         $dateTime->modify('+15 minutes');
         $slug = uniqid() . '@' . $dateTime->format('Y-m-d H:i:s');
 
-        $encrypted_slug = openssl_encrypt($slug, 'AES-128-ECB', self::KEY);
+        $encrypted_slug = openssl_encrypt($slug, 'AES-128-ECB', $this->params->get('forgot_password_key'));
         $encrypted_slug = str_replace(['+', '/', '='], ['-', '_', ''], $encrypted_slug);
 
         return urlencode($encrypted_slug);
@@ -38,8 +45,7 @@ class ForgotPassword {
         // str_replace() en sens inverse de la méthode getEncryptSlug()
         $encrypted_slug = str_replace(['-', '_', ''], ['+', '/', '='], $encrypted_slug);
 
-        $slug = openssl_decrypt($encrypted_slug, 'AES-128-ECB',
-        self::KEY);
+        $slug = openssl_decrypt($encrypted_slug, 'AES-128-ECB', $this->params->get('forgot_password_key'));
 
         $explodeSlug = explode('@', $slug);
 

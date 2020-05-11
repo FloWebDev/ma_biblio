@@ -7,6 +7,7 @@ parameters:
     website_title: '%env(WEBSITE_TITLE)%'
     webmaster_email: '%env(WEBMASTER_EMAIL)%'
     website_email: '%env(WEBSITE_EMAIL)%'
+    forgot_password_key: '%env(FORGOT_PASSWORD_KEY)%'
     avatar_directory: '%kernel.project_dir%/public/assets/media/avatar'
     book_directory: '%kernel.project_dir%/public/assets/media/books/book'
 
