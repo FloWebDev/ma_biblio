@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Mise à jour profil - {{ website_title }}{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/viewPassword.css') }}">
+{% endblock %}
 
 {% block body %}
 <section class="page-section mt-5" id="user_update">
@@ -12,4 +15,8 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('assets/js/viewPassword.js') }}"></script>
 {% endblock %}
