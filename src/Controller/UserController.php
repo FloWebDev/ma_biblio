@@ -571,11 +571,25 @@ class UserController extends AbstractController
             
             $form    = $this->createForm(UserType::class, $user, [
                 'form_type' => 'forgot_password'
-                ]);
+                ]
+            );
+
+            // When creating a form to edit an already persisted item, the file form type still expects a File instance. 
+            // As the persisted entity now contains only the relative file path, you first have to concatenate the configured upload path with the stored filename and create a new File class:
+            $currentAvatar = $user->getAvatar();
+            if (!empty($currentAvatar)) {
+                $file = $this->getParameter('avatar_directory') . '/' . $currentAvatar;
+                if (file_exists($file)) {
+                    $user->setAvatar(new File($file));
+                } else {
+                    $user->setAvatar(null);
+                }
+            }
 
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+                $user->setAvatar($currentAvatar); // Sinon, problème constraint "file not found"
                 $user->setForgotPassword(null);
                 // Encodage du mot de passe
                 $encodedPassword = $encoder->encodePassword($user, $user->getPassword());
