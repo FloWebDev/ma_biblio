@@ -15,6 +15,19 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link rel="stylesheet" href="{{ asset('assets/css/startbootstrap-styles.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+
+        <!-- Google SearchConsole -->
+        <meta name="google-site-verification" content="Tbwd6z5xRpLuLE0FYiH3pGIm7B9pEQ5nKuN8bxgFvy8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-134175201-2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-134175201-2');
+        </script>
+
         {% block stylesheets %}
         {% endblock %}
     </head>
