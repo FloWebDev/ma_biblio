@@ -562,9 +562,9 @@ class UserController extends AbstractController
         }
 
         if ($user) {
+            // Vérification du délai associé au slug
             $check = $forgotPwd->check($forgot_password);
-            // dump('user OK');
-            // dd($check);
+
             if (!$check) {
                 return $this->redirectToRoute('ask_new_password');
             }
