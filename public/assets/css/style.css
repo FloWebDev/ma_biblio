@@ -93,3 +93,8 @@
 #add_book_alert {
     display: none;
 }
+
+/* Formulaire de contact */
+#contact_flash_message {
+    height: 35px;
+}

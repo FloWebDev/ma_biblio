@@ -94,7 +94,7 @@ var addBookForm = {
             success: function(data)
             {
                 if (data.form) {
-                    // On ajoute la view du formulaire à la DIV prévue à cet effet
+                    // On ajoute la view du formulaire dans la DIV prévue à cet effet
                     document.querySelector('#content_add_book_form').innerHTML = data.form;
 
                     // Pour chaque champ, on attribue la valeur
@@ -199,7 +199,7 @@ var addBookForm = {
             success: function(data)
             {
                 if (data.form) {
-                    // On ajoute la view du formulaire à la DIV prévue à cet effet
+                    // On ajoute la view du formulaire dans la DIV prévue à cet effet
                     document.querySelector('#content_add_book_form').innerHTML = data.form;
                 } else {
                     // DEBUG
@@ -231,7 +231,7 @@ var addBookForm = {
             success: function(data)
             {
                 if (data.form) {
-                    // On ajoute la view du formulaire à la DIV prévue à cet effet
+                    // On ajoute la view du formulaire dans la DIV prévue à cet effet
                     document.querySelector('#content_update_book_form').innerHTML = data.form;
                 } else {
                     // DEBUG

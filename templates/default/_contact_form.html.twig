@@ -1,0 +1,10 @@
+{{ form_start(contact_form, {'attr': {'novalidate': 'novalidate'}}) }}
+{{ form_row(contact_form.email) }}
+{{ form_row(contact_form.object) }}
+{{ form_row(contact_form.body) }}
+{# Ajout de l'image captcha générée par le service Captcha #}
+<p><img src="{{ 'data:image/jpeg;base64,' ~ captcha }}" class="img-fluid" alt="captcha" title="captcha"></p>
+{{ form_row(contact_form.captcha) }}
+{# Bouton de validation du formulaire #}
+<input type="submit" class="btn btn-primary" value="Envoyer">
+{{ form_end(contact_form) }}

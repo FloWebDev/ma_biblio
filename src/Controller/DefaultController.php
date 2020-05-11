@@ -27,36 +27,8 @@ class DefaultController extends AbstractController
      * 
      * @Route("/", name="home_page", methods={"GET", "POST"})
      */
-    public function homePage(Request $request, PostRepository $postRepository, MailerInterface $mailer, Captcha $captcha)
+    public function homePage(Request $request, PostRepository $postRepository)
     {
-        $contactForm = $this->createContactForm();
-        $contactForm->handleRequest($request);
-
-        if ($contactForm->isSubmitted() && $contactForm->isValid()) {
-            $data = $contactForm->getData();
-            // dd($data);
-
-            $email = (new EmailMime())
-            ->from(new Address($this->getParameter('website_email'), $this->getParameter('website_title')))
-            ->to($this->getParameter('webmaster_email'))
-            //->cc('cc@example.com')
-            //->bcc('bcc@example.com')
-            ->replyTo($data['email'])
-            //->priority(Email::PRIORITY_HIGH)
-            ->subject($this->getParameter('website_title') . ' - ' . $data['object'])
-            ->text($data['body'])
-            ->html('<p>' . nl2br($data['body']) . '</p>');
-
-            $mailer->send($email);
-        
-            $this->addFlash(
-                'success',
-                'Email envoyé avec succès.'
-            );
-
-            return $this->redirectToRoute('home_page');
-        }
-
         $preStarBook = Book::BOOK;
         shuffle($preStarBook);
 
@@ -82,11 +54,54 @@ class DefaultController extends AbstractController
 
         return $this->render('default/index.html.twig', [
             'star_book'      => $starBook,
-            'captcha' => $captcha->createCaptcha(),
-            'contact_form' => $contactForm->createView(),
             'posts1' => $posts1,
             'posts2' => $posts2
         ]);
+    }
+
+    /**
+     * @link https://symfony.com/doc/current/mailer.html
+     * 
+     * @Route("/contact", name="contact", methods={"POST"})
+     */
+    public function contact(Request $request, PostRepository $postRepository, MailerInterface $mailer, Captcha $captcha)
+    {
+        // is it an Ajax request ?
+        if ($request->isXmlHttpRequest()) {
+            $contactForm = $this->createContactForm();
+            $contactForm->handleRequest($request);
+    
+            if ($contactForm->isSubmitted() && $contactForm->isValid()) {
+                $data = $contactForm->getData();
+                $email = (new EmailMime())
+                ->from(new Address($this->getParameter('website_email'), $this->getParameter('website_title')))
+                ->to($this->getParameter('webmaster_email'))
+                ->replyTo($data['email'])
+                ->subject($this->getParameter('website_title') . ' - ' . $data['object'])
+                ->text($data['body'])
+                ->html('<p>' . nl2br($data['body']) . '</p>');
+    
+                $mailer->send($email);
+            
+                $this->addFlash(
+                    'success',
+                    'Email envoyé avec succès.'
+                );
+    
+                return $this->json([
+                    'success' => true,
+                    'form' => null
+                ]);
+            } else {
+                return $this->json([
+                    'success' => false,
+                    'form' => $this->renderView('default/_contact_form.html.twig', [
+                        'contact_form' => $contactForm->createView(),
+                        'captcha' => $captcha->createCaptcha()
+                    ])
+                ]);
+            }
+        }
     }
 
     /**
@@ -129,6 +144,7 @@ class DefaultController extends AbstractController
 
         // https://symfony.com/doc/current/form/without_class.html
         $form = $this->createFormBuilder(null)
+        ->setAction($this->generateUrl('contact'))
         ->add('email', EmailType::class, [
             'label' => 'Votre adresse email (*)',
             'attr' => [
