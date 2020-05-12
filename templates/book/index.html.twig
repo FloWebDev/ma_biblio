@@ -143,6 +143,6 @@
             var urlAddManualBook = "{{ path('book_manual_add')|e('js') }}";
         </script>
         <script src="{{ asset('assets/select2/select2.min.js') }}"></script>
-        <script src="{{ asset('assets/js/addBookForm.js') }}"></script>
+        <script src="{{ asset('assets/js/addBookForm.js') }}{{ assets_version }}"></script>
     {% endif %}
 {% endblock %}

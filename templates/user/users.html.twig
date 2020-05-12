@@ -22,7 +22,7 @@
             {% if user.avatar %}
             <img class="card-img-top img-fluid mx-auto avatar_profil" src="{{ asset(avatar_repo ~ '/' ~ user.avatar) }}" alt="avatar-{{ user.username|lower }}" style="width: 150px;">
             {% else %}
-            <img class="card-img-top img-fluid mx-auto avatar_profil" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar-{{ user.username|lower }}" style="width: 150px;">
+            <img class="card-img-top img-fluid mx-auto avatar_profil" src="{{ asset('/assets/media/default/avatar.jpg') }}{{ assets_version }}" alt="avatar-{{ user.username|lower }}" style="width: 150px;">
             {% endif %}
             <h5 class="card-title text-center mt-2">{{ user.username|capitalize }} {% if user.role.code == 'ROLE_ADMIN' %}<i class="fas fa-star text-warning" title="Administrateur du site"></i>{% endif %}</h5>
             <div class="card-body mb-1 p-2">

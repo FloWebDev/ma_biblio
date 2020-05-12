@@ -19,7 +19,7 @@
         {% if user.avatar %}
             <img class="card-img-top" src="{{ asset(avatar_repo ~ '/' ~ user.avatar) }}" alt="avatar-{{ user.username }}" title="Avatar de {{ user.username|capitalize }}" id="avatar_profil">
         {% else %}
-            <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}" alt="avatar-{{ user.username }}" title="Avatar de {{ user.username|capitalize }}" id="avatar_profil">
+            <img class="card-img-top" src="{{ asset('/assets/media/default/avatar.jpg') }}{{ assets_version }}" alt="avatar-{{ user.username }}" title="Avatar de {{ user.username|capitalize }}" id="avatar_profil">
         {% endif %}
         {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
         <div class="text-center mt-1 my-3">
@@ -134,6 +134,6 @@
 
 {% block javascripts %}
     {% if is_granted('ROLE_ADMIN') or is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user.id == user.id %}
-    <script src="{{ asset('assets/js/uploadAvatar.js') }}"></script>
+    <script src="{{ asset('assets/js/uploadAvatar.js') }}{{ assets_version }}"></script>
     {% endif %}
 {% endblock %}

@@ -7,14 +7,14 @@
         <meta name="keywords" content="bibliothèque,bibliotheque,librairie,virtuelle">
         <meta name="author" content="Florian Mathevon">
         <title>{% block title %}{{ website_title }} - Bibliothèque virtuelle{% endblock %}</title>
-        <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
+        <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}{{ assets_version }}" type="image/x-icon">
         <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
         <!-- @font-face-->
-        <link rel="stylesheet" href="{{ asset('assets/css/font.css') }}" type="text/css">
+        <link rel="stylesheet" href="{{ asset('assets/css/font.css') }}{{ assets_version }}" type="text/css">
         <!-- Core theme CSS (includes Bootstrap)-->
-        <link rel="stylesheet" href="{{ asset('assets/css/startbootstrap-styles.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/startbootstrap-styles.css') }}{{ assets_version }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}{{ assets_version }}">
 
         <!-- Google SearchConsole -->
         <meta name="google-site-verification" content="Tbwd6z5xRpLuLE0FYiH3pGIm7B9pEQ5nKuN8bxgFvy8" />
@@ -51,9 +51,9 @@
         {# <script src="assets/mail/jqBootstrapValidation.js"></script> #}
         {# <script src="assets/mail/contact_me.js"></script> #}
         <!-- Core theme JS-->
-        <script src="{{ asset('assets/js/startbootstrap-scripts.js') }}"></script>
-        <script src="{{ asset('assets/js/main.js') }}"></script>
-        <script src="{{ asset('assets/js/socialNetwork.js') }}"></script>
+        <script src="{{ asset('assets/js/startbootstrap-scripts.js') }}{{ assets_version }}"></script>
+        <script src="{{ asset('assets/js/main.js') }}{{ assets_version }}"></script>
+        <script src="{{ asset('assets/js/socialNetwork.js') }}{{ assets_version }}"></script>
 
         {% block javascripts %}
         {% endblock %}

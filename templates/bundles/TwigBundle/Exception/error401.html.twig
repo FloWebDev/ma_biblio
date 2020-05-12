@@ -7,8 +7,8 @@
         <meta name="keywords" content="bibliothèque,bibliotheque,librairie,virtuelle">
         <meta name="author" content="Florian Mathevon">
         <title>{% block title %}{{ website_title }} - Erreur {{ status_code }}{% endblock %}</title>
-        <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
-        <link rel="stylesheet" href="{{ asset('assets/css/error.css') }}">
+        <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}{{ assets_version }}" type="image/x-icon">
+        <link rel="stylesheet" href="{{ asset('assets/css/error.css') }}{{ assets_version }}">
     </head>
 <body id="page-top">
 	<div class="error-page-wrap">

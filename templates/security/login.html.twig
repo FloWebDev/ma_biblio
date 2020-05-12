@@ -2,7 +2,7 @@
 
 {% block title %}Connexion - {{ website_title }}{% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('assets/css/viewPassword.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/viewPassword.css') }}{{ assets_version }}">
 {% endblock %}
 
 {% block body %}
@@ -61,5 +61,5 @@
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('assets/js/viewPassword.js') }}"></script>
+<script src="{{ asset('assets/js/viewPassword.js') }}{{ assets_version }}"></script>
 {% endblock %}

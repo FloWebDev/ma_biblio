@@ -3,5 +3,6 @@ twig:
     form_themes: ['bootstrap_4_layout.html.twig']
     globals:
         website_title: '%env(WEBSITE_TITLE)%'
+        assets_version: '%env(ASSETS_VERSION)%'
         avatar_repo: '/assets/media/avatar'
         book_repo: '/assets/media/books/book'
