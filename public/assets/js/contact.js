@@ -39,7 +39,6 @@ var contact = {
 
         // Gestion du formulaire de contact
         var $form = $(e.currentTarget);
-        console.log($form);
         $.ajax({
             type: 'POST',
             url: e.target.getAttribute('action'),
@@ -52,7 +51,6 @@ var contact = {
             },
             success: function(data)
             {
-                console.log(data);
                 if(!data.success) {
                     // En cas d'erreur dans la soumission du formulaire
                     if (data.form) {
@@ -65,10 +63,11 @@ var contact = {
                 } else {
                     // En cas de succès
                     // window.location.reload();
-                    console.log(document.querySelector('#contact_flash_message div').style.display);
-                    document.querySelector('#contact_flash_message div').style.display = 'block';
-                    document.querySelector('#contact_flash_message div').textContent = 'Message envoyé avec succès.';
-                    $('#contact_flash_message div').fadeOut(10000);
+                    if (data.message) {
+                        document.querySelector('#contact_flash_message div').style.display = 'block';
+                        document.querySelector('#contact_flash_message div').textContent = data.message;
+                        $('#contact_flash_message div').fadeOut(10000);
+                    }
                     contact.displayForm();
                 }
             },

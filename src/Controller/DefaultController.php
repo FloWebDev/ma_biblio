@@ -82,14 +82,10 @@ class DefaultController extends AbstractController
                 ->html('<p>' . nl2br($data['body']) . '</p>');
     
                 $mailer->send($email);
-            
-                $this->addFlash(
-                    'success',
-                    'Email envoyé avec succès.'
-                );
     
                 return $this->json([
                     'success' => true,
+                    'message' => 'Message envoyé avec succès.',
                     'form' => null
                 ]);
             } else {
