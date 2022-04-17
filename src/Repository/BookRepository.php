@@ -32,8 +32,7 @@ class BookRepository extends ServiceEntityRepository
         $sql = "SELECT COUNT(id) AS nb FROM book";
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute([]);
-        $res = $stmt->fetch();
+        $res = $stmt->executeQuery([])->fetchAssociative();
 
         return $res['nb'];
     }
@@ -59,8 +58,7 @@ class BookRepository extends ServiceEntityRepository
             AND note IS NOT NULL;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        $res = $stmt->fetch();
+        $res = $stmt->executeQuery(['id' => $id])->fetchAssociative();
 
         return $res['moy'];
     }
@@ -107,8 +105,7 @@ class BookRepository extends ServiceEntityRepository
             ORDER BY category.order_z ASC, category.name ASC;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        $res = $stmt->fetchAll();
+        $res = $stmt->executeQuery(['id' => $id])->fetchAllAssociative();
 
         return $res;
     }
@@ -164,11 +161,10 @@ class BookRepository extends ServiceEntityRepository
             AND reference = :reference;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute([
+        $res = $stmt->executeQuery([
             'user_id' => $userId,
             'reference' => $bookRef
-        ]);
-        $res = $stmt->fetch();
+        ])->fetchAssociative();
 
         $res = ($res['nb'] > 0 ? true : false);
 
@@ -190,8 +186,7 @@ class BookRepository extends ServiceEntityRepository
             $sql = "SELECT count(id) AS c FROM book WHERE file = :file;";
     
             $stmt = $conn->prepare($sql);
-            $stmt->execute(['file' => $file]);
-            $res = $stmt->fetch();
+            $res = $stmt->executeQuery(['file' => $file])->fetchAssociative();
 
             $res = $res['c'] > 0 ? true : false;
         }

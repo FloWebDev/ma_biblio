@@ -52,8 +52,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $sql = "SELECT * FROM app_user WHERE id = :id;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        $res = $stmt->fetch();
+        $res = $stmt->executeQuery(['id' => $id])->fetchAssociative();
 
         return $res;
     }
@@ -74,8 +73,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $sql = "SELECT count(id) AS nb FROM app_user WHERE slug = :slug;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['slug' => $slug]);
-        $res = $stmt->fetch();
+        $res = $stmt->executeQuery(['slug' => $slug])->fetchAssociative();
 
         $res = ($res['nb'] > 0 ? true : false);
 
@@ -103,8 +101,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             SELECT count(id) FROM app_user WHERE not public";
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $res = $stmt->fetchAll();
+        $res = $stmt->executeQuery()->fetchAllAssociative();
 
         if (is_array($res) && count($res) == 5) {
             $res = [

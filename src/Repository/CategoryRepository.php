@@ -39,7 +39,7 @@ class CategoryRepository extends ServiceEntityRepository
             WHERE category_id = :id";
 
         $stmt = $conn->prepare($sql);
-        $res = $stmt->execute([
+        $res = $stmt->executeStatement([
             'id' => $id,
         ]);
 
@@ -48,7 +48,7 @@ class CategoryRepository extends ServiceEntityRepository
             $sql = "DELETE FROM category WHERE id = :id;";
 
             $stmt = $conn->prepare($sql);
-            $res = $stmt->execute([
+            $res = $stmt->executeStatement([
                 'id' => $id,
             ]);
         }

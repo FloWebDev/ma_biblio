@@ -9,8 +9,8 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Util\Slugger;
 use App\Entity\Category;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
